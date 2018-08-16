@@ -10,6 +10,8 @@
 
 
 
+#include <cmath>
+
 /******************************************************************************
 * FUNCTION NAME: mean_STTC_dir                                                *
 *                                                                             *
@@ -48,7 +50,7 @@ double std_STTC_dir(double const arr[SHIFTS_NUM]) {
 	double mean = mean_STTC_dir(arr), st_dev = 0.0;
 
 		for (int i = 0; i < SHIFTS_NUM; i++) {
-			st_dev += (arr[i] - mean) / SHIFTS_NUM;
+			st_dev += pow((arr[i] - mean), 2) / SHIFTS_NUM;
 		}
 	return st_dev;
 }
