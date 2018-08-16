@@ -20,7 +20,7 @@
 *           which fall within Δt before each firing event of B by the number  *
 *            of firing events of A.                                           *
 *                                                                             *
-* RETURNS: A double > 0 and < 1.                                              *
+* RETURNS: A double >= 0 and <= 1.                                            *
 *                                                                             *
 * I/O: None.                                                                  *
 *                                                                             *
