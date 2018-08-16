@@ -51,5 +51,5 @@ double std_STTC_dir(double const arr[SHIFTS_NUM]) {
 		for (int i = 0; i < SHIFTS_NUM; i++) {
 			st_dev += pow((arr[i] - mean), 2) / SHIFTS_NUM;
 		}
-	return st_dev;
+	return sqrt(st_dev);
 }
