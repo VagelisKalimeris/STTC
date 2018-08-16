@@ -10,3 +10,23 @@
 
 
 
+/******************************************************************************
+* FUNCTION NAME: mean_STTC_dir                                                *
+*                                                                             *
+* ARGUMENTS: An array containing the shifted per pair STTC results.           *
+*                                                                             *
+* PURPOSE: Calculates the mean value.                                         *
+*                                                                             *
+* RETURNS: The mean value.                                                    *
+*                                                                             *
+* I/O: None.                                                                  *
+*                                                                             *
+******************************************************************************/
+double mean_STTC_dir(double const arr[SHIFTS_NUM]) {
+	double sum = 0.0;
+
+	for (int i = 0; i < SHIFTS_NUM; i++) {
+		sum += arr[i];
+	}
+	return sum / (double) SHIFTS_NUM;
+}
