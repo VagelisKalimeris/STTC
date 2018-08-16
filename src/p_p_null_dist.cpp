@@ -30,3 +30,25 @@ double mean_STTC_dir(double const arr[SHIFTS_NUM]) {
 	}
 	return sum / (double) SHIFTS_NUM;
 }
+
+
+/******************************************************************************
+* FUNCTION NAME: std_STTC_dir                                                 *
+*                                                                             *
+* ARGUMENTS: An array containing the shifted per pair STTC results.           *
+*                                                                             *
+* PURPOSE: Calculates the standard deviation.                                 *
+*                                                                             *
+* RETURNS: The standard deviation.                                            *
+*                                                                             *
+* I/O: None.                                                                  *
+*                                                                             *
+******************************************************************************/
+double std_STTC_dir(double const arr[SHIFTS_NUM]) {
+	double mean = mean_STTC_dir(arr), st_dev = 0.0;
+
+		for (int i = 0; i < SHIFTS_NUM; i++) {
+			st_dev += (arr[i] - mean) / SHIFTS_NUM;
+		}
+	return st_dev;
+}
