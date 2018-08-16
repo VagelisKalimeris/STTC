@@ -77,5 +77,5 @@ double sign_thresh_A_B(double mean, double st_dev);
 
 
 
-// Helper function. Generates random integers in the range 0 - TIME_STAMPS.
+// Helper function. Generates random integers in the range 0 - (TIME_STAMPS-1).
 int random_gen();
