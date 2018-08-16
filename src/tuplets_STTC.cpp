@@ -33,7 +33,7 @@ double P_A_B_minus(const vector<int> &time_line_A,
 	
 	/* all the spikes of A are before or after the tiles of B */
 	if(((time_line_A.back() < (time_line_B.front() - Dt)) ||
-				((time_line_B.back() < time_line_A.front()))) {
+				((time_line_B.back() < time_line_A.front())))){
 	    return P;
 	}
 	
