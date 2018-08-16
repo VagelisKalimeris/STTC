@@ -56,7 +56,7 @@ double P_B_A_plus(const vector<int> &time_line_B,
 *                                                                             *
 * PURPOSE: Calculates the the correlation between spike trains for the spikes *
 *           of B that follows spikes of A and the spikes of A that proceeds   *
-*            spikes of B.                                                 *
+*            spikes of B.                                                     *
 *                                                                             *
 * RETURNS: The STTC value(double) of the pair A,B.                            *
 *                                                                             *
