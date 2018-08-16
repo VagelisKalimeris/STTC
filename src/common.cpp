@@ -32,7 +32,7 @@ double T_A_plus(const vector<int> &time_line_A, int Dt){
 		T = time_line_A.size() / double(TIME_STAMPS);
 	}
 	else {
-		int s = 0, last_spike = 0;
+	    int s = 0, last_spike = 0;
 	    for (auto &spike : time_line_A){ // for each spike
 	       	for (int j = 0; j < Dt_1; ++j){ // check all the next
 			if((spike + j <= TIME_STAMPS) && (spike+j > last_spike))
