@@ -11,7 +11,7 @@
 
 
 /******************************************************************************
-* FUNCTION NAME: STTC_AB_C                                                     *
+* FUNCTION NAME: STTC_AB_C                                                    *
 *                                                                             *
 * ARGUMENTS: Three neuron's timelines(references to vectors), and a time      *
 *             interval(int).                                                  *
