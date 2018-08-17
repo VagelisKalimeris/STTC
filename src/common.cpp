@@ -3,12 +3,16 @@
 *                                                                             *
 * PROJECT NAME: STTC Analyses                                                 *
 *                                                                             *
-* FILE NAME: common.cpp                                                       *
+* FILE NAME: common.hpp                                                       *
 *                                                                             *
 *******************************************************************************
 ******************************************************************************/
 
 
+
+#include <cmath>
+#include<vector>
+using namespace std;
 
 /******************************************************************************
 * FUNCTION NAME: T_A_plus                                                     *
@@ -32,13 +36,14 @@ double T_A_plus(const vector<int> &time_line_A, int Dt){
 		T = time_line_A.size() / double(TIME_STAMPS);
 	}
 	else {
-	    int s = 0, last_spike = 0;
+		int s = 0, last_spike = 0;
 	    for (auto &spike : time_line_A){ // for each spike
 	       	for (int j = 0; j < Dt_1; ++j){ // check all the next
-			if((spike + j <= TIME_STAMPS) && (spike+j > last_spike))
+				if((spike + j <= TIME_STAMPS) && (spike+j > last_spike)){
 					++s;
+	          }
 	       	}
-		last_spike = spike + Dt; //  keep the last spike
+		   	last_spike = spike + Dt; //  keep the last spike
 	    }
 	    T = s / double(TIME_STAMPS);
 	}
@@ -68,14 +73,14 @@ double T_B_minus(const vector<int> &time_line_B, int Dt){
 		T = time_line_B.size() / double(TIME_STAMPS);
 	}
 	else {
-	    int s = 0, last_spike = -1; // -1 counts the case: 1st spike-j=0
+		int s = 0, last_spike = -1; // -1 counts the case: first spike-j = zero
 	    for (auto &spike : time_line_B){ // for each spike 
-	       for (int j = 0; j < Dt_1; ++j){ // check previous spikes
+	       for (int j = 0; j < Dt_1; ++j){ // check all the previous spikes
 	          if((spike - j) > last_spike){
 				  ++s;
 	          }
 	       }
-	       last_spike = spike; // keep the first spike
+		   last_spike = spike; // keep the first spike
 	    }
 	    T = s / double(TIME_STAMPS);
 	}
@@ -97,4 +102,37 @@ double T_B_minus(const vector<int> &time_line_B, int Dt){
 double sign_thresh_A_B(double mean, double st_dev)
 {
 	return mean + (3 * st_dev);
+}
+
+
+/******************************************************************************
+* FUNCTION NAME: circular_shift                                               *
+*                                                                             *
+* ARGUMENTS: A vector representing the firings of a neuron, and a random      *
+*             number between 0 and the maximum number of time events.         *
+*                                                                             *
+* PURPOSE: Shifts forward each firing of a neuron by a random number.         *
+*                                                                             *
+* RETURNS: None.                                                              *
+*                                                                             *
+* I/O: None.                                                                  *
+*                                                                             *
+******************************************************************************/
+void circular_shift(vector<int> &time_line, int random) {
+	int max = time_line.back();
+	vector<int>::iterator front_it = time_line.begin();
+
+	for (int i = 0; i < time_line.size(); i++) {
+		int temp = time_line[i] + random;
+
+		if ((temp) < max) {
+			time_line[i] = temp;
+		}
+		else {
+			time_line.erase(time_line.begin() + i);
+			temp = temp - max - 1;
+			time_line.insert(front_it, temp);
+			front_it++;
+		}
+	}
 }
