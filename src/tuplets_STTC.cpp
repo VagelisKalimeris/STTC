@@ -10,13 +10,17 @@
 
 
 
+#include <cmath>
+#include<vector>
+using namespace std;
+
 /******************************************************************************
 * FUNCTION NAME: P_A_B_minus                                                  *
 *                                                                             *
 * ARGUMENTS: Two neuron's timelines(references to vectors), and a time        *
 *             interval(int).                                                  *
 *                                                                             *
-* PURPOSE: Calculates the fraction of the number of the firing events of A    *
+* PURPOSE: Calculates the fraction of the number of the firing events of A 	  *
 *           which fall within Δt before each firing event of B by the number  *
 *            of firing events of A.                                           *
 *                                                                             *
@@ -33,7 +37,7 @@ double P_A_B_minus(const vector<int> &time_line_A,
 	
 	/* all the spikes of A are before or after the tiles of B */
 	if(((time_line_A.back() < (time_line_B.front() - Dt)) ||
-				((time_line_B.back() < time_line_A.front())))){
+								 ((time_line_B.back() < time_line_A.front())))) {
 	    return P;
 	}
 	
@@ -42,7 +46,7 @@ double P_A_B_minus(const vector<int> &time_line_A,
 		/* the spike of A is in the tile of spike of B, 
 			where tile of B is [tB - Dt, tB] */
 		if((time_line_A[i] >= (time_line_B[j] - Dt)) &&
-					  (time_line_A[i] <= time_line_B[j])) {
+										   (time_line_A[i] <= time_line_B[j])) {
 			s++;
 			i++;
 		}
