@@ -9,6 +9,24 @@
 ******************************************************************************/
 
 
+
+/******************************************************************************
+* FUNCTION NAME: circ_STTC_A_B                                                *
+*                                                                             *
+* ARGUMENTS: A pre-existing array to store the results. Two neuron's          *
+*             timelines(references to vectors), and a time interval(int).     *
+*                                                                             *
+* PURPOSE: Calculates SHIFTS_NUM random STTC values.                          *
+*                                                                             *
+* RETURNS: None.                                                              *
+*                                                                             *
+* I/O: None.                                                                  *
+*                                                                             *
+******************************************************************************/
+void circ_STTC_A_B(double results_arr[SHIFTS_NUM], 
+	   const vector<int> &time_line_A, const vector<int> &time_line_B, int Dt);
+
+
 /******************************************************************************
 * FUNCTION NAME: mean_STTC_dir                                                *
 *                                                                             *
