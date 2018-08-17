@@ -44,8 +44,8 @@ double P_A_B_minus(const vector<int> &time_line_A,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double P_B_A_plus(const vector<int> &time_line_B,
-                                       const vector<int> &time_line_A, int Dt);
+double P_B_A_plus(const vector<int> &time_line_A,
+                                       const vector<int> &time_line_B, int Dt);
 
 
 /******************************************************************************
@@ -63,5 +63,5 @@ double P_B_A_plus(const vector<int> &time_line_B,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double STTC_A_B(const vector<int> &time_line_B, const vector<int> &time_line_A,
+double STTC_A_B(const vector<int> &time_line_A, const vector<int> &time_line_B,
                                                                        int Dt);
