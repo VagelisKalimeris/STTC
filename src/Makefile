@@ -17,7 +17,7 @@ tuplets.o : tuplets_STTC.c tuplets_STTC.h common.h
 triplets.o : triplets_STTC.c triplets_STTC.h common.h
 	gcc -c ${COMPILE_FLAGS} triplets_STTC.c
 
-pp_null_dist.o : pp_null_dist.c pp_null_dist.h common.h
+pp_null_dist.o : pp_null_dist.c pp_null_dist.h tuplets_STTC.h common.h
 	gcc -c ${COMPILE_FLAGS} pp_null_dist.c
 
 
