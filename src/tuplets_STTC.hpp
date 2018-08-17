@@ -35,7 +35,7 @@ double P_A_B_minus(const vector<int> &time_line_A,
 * ARGUMENTS: Two neuron's timelines(references to vectors), and a time        *
 *             interval(int).                                                  *
 *                                                                             *
-* PURPOSE: Calculates the fraction of the number of the firing events of B 	  *
+* PURPOSE: Calculates the fraction of the number of the firing events of B    *
 *           which fall within Δt after each firing event of A by the number   *
 *            of firing events of A.                                           *
 *                                                                             *
