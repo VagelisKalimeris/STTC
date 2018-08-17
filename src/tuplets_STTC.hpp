@@ -16,7 +16,7 @@
 * ARGUMENTS: Two neuron's timelines(references to vectors), and a time        *
 *             interval(int).                                                  *
 *                                                                             *
-* PURPOSE: Calculates the fraction of the number of the firing events of A 	  *
+* PURPOSE: Calculates the fraction of the number of the firing events of A    *
 *           which fall within Δt before each firing event of B by the number  *
 *            of firing events of A.                                           *
 *                                                                             *
