@@ -10,8 +10,12 @@
 
 
 
+#include <cmath>
+#include<vector>
+using namespace std;
+
 /******************************************************************************
-* FUNCTION NAME: STTC_AB_C                                                    *
+* FUNCTION NAME: STTC_AB_C                                                     *
 *                                                                             *
 * ARGUMENTS: Three neuron's timelines(references to vectors), and a time      *
 *             interval(int).                                                  *
@@ -25,7 +29,7 @@
 *                                                                             *
 ******************************************************************************/
 double STTC_AB_C(const vector<int> &time_line_A, const vector<int> &time_line_B,
-                                             const vector<int> &time_line_C, Dt) 
+                                         const vector<int> &time_line_C, int Dt) 
 {
   int nApBCA = N_AplusB_CA(time_line_A, time_line_B, time_line_C, Dt);
   int nBmACA =  N_BminusA_CA(time_line_A, time_line_B, time_line_C, Dt);
