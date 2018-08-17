@@ -40,8 +40,6 @@ double P_A_B_minus(const vector<int> &time_line_A,
                                ((time_line_B.back() < time_line_A.front())))) {
 	    return P;
 	}
-	
-	
 	while((i < time_line_A.size()) && (j < time_line_B.size())){
 		/* the spike of A is in the tile of spike of B, 
 			where tile of B is [tB - Dt, tB] */
