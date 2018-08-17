@@ -11,6 +11,33 @@
 
 
 #include <cmath>
+#include<vector>
+using namespace std;
+
+/******************************************************************************
+* FUNCTION NAME: circ_STTC_A_B                                                *
+*                                                                             *
+* ARGUMENTS: A pre-existing array to store the results. Two neuron's          *
+*             timelines(references to vectors), and a time interval(int).     *
+*                                                                             *
+* PURPOSE: Calculates SHIFTS_NUM random STTC values.                          *
+*                                                                             *
+* RETURNS: None.                                                              *
+*                                                                             *
+* I/O: None.                                                                  *
+*                                                                             *
+******************************************************************************/
+void circ_STTC_A_B(double results_arr[SHIFTS_NUM], 
+	    const vector<int> &time_line_A, const vector<int> &time_line_B, int Dt)
+{
+	for (int i = 0; i < SHIFTS_NUM; i++) {
+		vector<int> to_shift = time_line_A;
+
+		circular_shift(to_shift, SHIFTS_NUM);
+		results_arr[i] = STTC_A_B(to_shift, time_line_B, Dt);
+	}
+}
+
 
 /******************************************************************************
 * FUNCTION NAME: mean_STTC_dir                                                *
@@ -54,3 +81,4 @@ double std_STTC_dir(double const arr[SHIFTS_NUM]) {
 		}
 	return sqrt(st_dev);
 }
+
