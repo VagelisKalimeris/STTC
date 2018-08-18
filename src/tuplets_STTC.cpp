@@ -62,6 +62,54 @@ double P_A_B_minus(const vector<int> &time_line_A,
 }
 
 
+/******************************************************************************
+* FUNCTION NAME: P_B_A_plus                                                   *
+*                                                                             *
+* ARGUMENTS: Two neuron's timelines(references to vectors), and a time        *
+*             interval(int).                                                  *
+*                                                                             *
+* PURPOSE: Calculates the fraction of the number of the firing events of B    *
+*           which fall within Δt after each firing event of A by the number   *
+*            of firing events of B.                                           *
+*                                                                             *
+* RETURNS: A double >= 0 and <= 1.                                            *
+*                                                                             *
+* I/O: None.                                                                  *
+*                                                                             *
+******************************************************************************/
+double P_B_A_plus(const vector<int> &time_line_A,
+                                        const vector<int> &time_line_B, int Dt)
+{
+	double P = 0.0;
+	int i = 0, j = 0, s = 0;
+	
+	/* all spikes of B are before or after tiles of A */
+	if((time_line_B.back() < time_line_A.front()) || 
+                           ((time_line_A.back() + Dt) < time_line_B.front())) {
+	    return P;
+	}
+	while((i < time_line_B.size()) && (j < time_line_A.size())){
+		/* spike of B is within tile of spike of A [tA, tA + Dt] */
+		if((time_line_B[i] >= time_line_A[j]) &&
+                                   (time_line_B[i] <= (time_line_B[j] + Dt))) {
+			s++;
+			i++;
+		}
+		/* spike of B is before tile of spike of A [tA, tA + Dt] */
+		else if(time_line_B[i] < time_line_A[j]) {
+			i++;
+		}
+		/* spike of B is after tile of spike of A [tA, tA + Dt] */
+		else if(time_line_B[i] > (time_line_A[j] + Dt)) {
+			j++;
+		}
+	}
+	
+	P = s / double(time_line_B.size());
+	
+	return P;
+}
+
 
 /******************************************************************************
 * FUNCTION NAME: STTC_A_B                                                     *
