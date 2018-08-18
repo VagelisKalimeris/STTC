@@ -1,7 +1,7 @@
 COMPILE_FLAGS =  -Wall -Wextra -g
 
 
-sttc : main.o common.o tuplets.o triplets.o pp_null_dist.o
+sttc : main.o common.o tuplets.o triplets.o pp_null_dist.o cond_null_dist.o
 	gcc ${COMPILE_FLAGS} main.o common.o tuplets.o triplets.o pp_null_dist.o -o sttc
 
 
@@ -19,6 +19,9 @@ triplets.o : triplets_STTC.c triplets_STTC.h common.h
 
 pp_null_dist.o : pp_null_dist.c pp_null_dist.h tuplets_STTC.h common.h
 	gcc -c ${COMPILE_FLAGS} pp_null_dist.c
+
+cond_null_dist.o : cond_null_dist.c triplets_STTC.h common.h
+	gcc -c ${COMPILE_FLAGS} cond_null_dist.c
 
 
 
