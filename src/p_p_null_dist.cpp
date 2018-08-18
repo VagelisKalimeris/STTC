@@ -20,20 +20,20 @@ using namespace std;
 * ARGUMENTS: A pre-existing array to store the results. Two neuron's          *
 *             timelines(references to vectors), and a time interval(int).     *
 *                                                                             *
-* PURPOSE: Calculates SHIFTS_NUM random STTC values.                          *
+* PURPOSE: Calculates circ_shifts_num random STTC values.                     *
 *                                                                             *
 * RETURNS: None.                                                              *
 *                                                                             *
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-void circ_STTC_A_B(double results_arr[SHIFTS_NUM], 
+void circ_STTC_A_B(double results_arr[], int circ_shifts_num, 
 	    const vector<int> &time_line_A, const vector<int> &time_line_B, int Dt)
 {
-	for (int i = 0; i < SHIFTS_NUM; i++) {
+	for (int i = 0; i < circ_shifts_num; i++) {
 		vector<int> to_shift = time_line_A;
 
-		circular_shift(to_shift, SHIFTS_NUM);
+		circular_shift(to_shift, circ_shifts_num);
 		results_arr[i] = STTC_A_B(to_shift, time_line_B, Dt);
 	}
 }
@@ -51,13 +51,13 @@ void circ_STTC_A_B(double results_arr[SHIFTS_NUM],
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double mean_STTC_dir(double const arr[SHIFTS_NUM]) {
+double mean_STTC_dir(double const arr[], int circ_shifts_num) {
 	double sum = 0.0;
 
-	for (int i = 0; i < SHIFTS_NUM; i++) {
+	for (int i = 0; i < circ_shifts_num; i++) {
 		sum += arr[i];
 	}
-	return sum / (double) SHIFTS_NUM;
+	return sum / (double) circ_shifts_num;
 }
 
 
@@ -73,11 +73,11 @@ double mean_STTC_dir(double const arr[SHIFTS_NUM]) {
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double std_STTC_dir(double const arr[SHIFTS_NUM]) {
-	double mean = mean_STTC_dir(arr), st_dev = 0.0;
+double std_STTC_dir(double const arr[], int circ_shifts_num) {
+	double mean = mean_STTC_dir(arr, circ_shifts_num), st_dev = 0.0;
 
-		for (int i = 0; i < SHIFTS_NUM; i++) {
-			st_dev += pow((arr[i] - mean), 2) / SHIFTS_NUM;
+		for (int i = 0; i < circ_shifts_num; i++) {
+			st_dev += pow((arr[i] - mean), 2) / circ_shifts_num;
 		}
 	return sqrt(st_dev);
 }
