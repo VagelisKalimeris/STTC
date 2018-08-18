@@ -31,7 +31,7 @@ void circ_STTC_A_B_C(double results_arr[], int circ_shifts_num,
                  const vector<int> &time_line_A, const vector<int> &time_line_B, 
                                          const vector<int> &time_line_C, int Dt)
 {
-	if (sign_trpl_limit(time_line_A, time_line_C)) { // NOT FINISHED!!!
+	if (sign_trpl_limit(time_line_A, time_line_C)) { // NOT FINISHED!
 		for (int i = 0; i < circ_shifts_num; i++) {
 			vector<int> to_shift = time_line_C;
 
