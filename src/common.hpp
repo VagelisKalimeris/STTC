@@ -24,7 +24,8 @@
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double T_A_plus(const vector<int> &time_line_A, int Dt);
+double T_A_plus(const vector<int> &time_line_A, int total_time_samples, 
+                                                                       int Dt);
 
 
 /******************************************************************************
@@ -41,7 +42,8 @@ double T_A_plus(const vector<int> &time_line_A, int Dt);
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double T_B_minus(const vector<int> &time_line_B, int Dt);
+double T_B_minus(const vector<int> &time_line_B, int total_time_samples, 
+                                                                       int Dt);
 
 
 /******************************************************************************
@@ -75,5 +77,6 @@ double sign_thresh_A_B(double mean, double st_dev);
 
 
 
-// Helper function. Generates random integers in the range 0 - (TIME_STAMPS-1).
+// Helper function. Generates random integers 
+// in the range 0 - (total_time_samples-1).
 int random_gen();
