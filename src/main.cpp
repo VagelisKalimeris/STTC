@@ -5,11 +5,12 @@
 #include <sstream>
 
 #define NEURONS 183
-#define TIME_STAMPS 11970
-#define SHIFTS_NUM 50
+// total_time_samples 11970
+// circ_shifts_num 50
 
 using namespace std;
 
+// This main function is for testing purposes only.
 int main()
 {
 	vector<int> spike_trains[NEURONS];
@@ -27,16 +28,16 @@ int main()
 		}
 	}
 
-  // int l = 0;
-	// for (int neur = 0; neur < NEURONS; neur++) {
-	// 	for (int fire = 0; fire < spike_trains[neur].size(); fire++) {
-	// 		cout<<spike_trains[neur][fire]<<' '<<endl;
-  //     l++;
-	// 	}
-	// 	cout<<endl;
-	// }
-  //
-  // cout<<endl<<l<<endl;
+ 	int l = 0;
+	for (int neur = 0; neur < NEURONS; neur++) {
+		for (int fire = 0; fire < spike_trains[neur].size(); fire++) {
+			cout<<spike_trains[neur][fire]<<' '<<endl;
+      	l++;
+		}
+		cout<<endl;
+	}
+  
+  	cout<<endl<<l<<endl;
 	data.close();
 	return 0;
 }
