@@ -36,7 +36,8 @@ void circ_STTC_A_B_C(double results_arr[], int circ_shifts_num,
 			vector<int> to_shift = time_line_C;
 
 			circular_shift(to_shift, circ_shifts_num);
-			results_arr[i] = STTC_AB_C(time_line_A, time_line_B, to_shift, Dt);
+			results_arr[i] = STTC_AB_C(time_line_A, time_line_B, 
+                                                                 to_shift, Dt);
 		}
 	}
 }
