@@ -40,7 +40,7 @@ int main(int argc, char const *argv[])
 {
 // command line arguments
     const int total_time_samples = stoi(argv[2]),
-                           circ_shifts_num = stoi(argv[3]), Dt = stoi(argv[3]);
+                           circ_shifts_num = stoi(argv[3]), Dt = stoi(argv[4]);
 // Our data structure
     vector<int> spike_trains[NEURONS];
 // Open File
