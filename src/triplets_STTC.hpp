@@ -31,25 +31,6 @@ double T_A_plus_tripl(const vector<int> &time_line_A,
 
 
 /******************************************************************************
-* FUNCTION NAME: N_AplusB_CA                                                  *
-*                                                                             *
-* ARGUMENTS: Three neuron's timelines(references to vectors), and a time      *
-*             interval(int).                                                  *
-*                                                                             *
-* PURPOSE: The number of firing events of B that falls within the tiles Δt    *
-*           after the firing events of the reduced spike train A.             *
-*                                                                             *
-*                                                                             *
-* RETURNS: A number(int) of events.                                           *
-*                                                                             *
-* I/O: None.                                                                  *
-*                                                                             *
-******************************************************************************/
-int N_AplusB_CA(const vector<int> &time_line_A, const vector<int> &time_line_B,
-                                       const vector<int> &time_line_C, int Dt);
-
-
-/******************************************************************************
 * FUNCTION NAME: N_BminusA_CA                                                 *
 *                                                                             *
 * ARGUMENTS: Three neuron's timelines(references to vectors), and a time      *
@@ -66,6 +47,25 @@ int N_AplusB_CA(const vector<int> &time_line_A, const vector<int> &time_line_B,
 ******************************************************************************/
 int N_BminusA_CA(const vector<int> &time_line_A, const vector<int> &time_line_B,
                                         const vector<int> &time_line_C, int Dt);
+
+
+/******************************************************************************
+* FUNCTION NAME: N_AplusB_CA                                                  *
+*                                                                             *
+* ARGUMENTS: Three neuron's timelines(references to vectors), and a time      *
+*             interval(int).                                                  *
+*                                                                             *
+* PURPOSE: The number of firing events of B that falls within the tiles Δt    *
+*           after the firing events of the reduced spike train A.             *
+*                                                                             *
+*                                                                             *
+* RETURNS: A number(int) of events.                                           *
+*                                                                             *
+* I/O: None.                                                                  *
+*                                                                             *
+******************************************************************************/
+int N_AplusB_CA(const vector<int> &time_line_A, const vector<int> &time_line_B,
+                                       const vector<int> &time_line_C, int Dt);
 
 
 /******************************************************************************

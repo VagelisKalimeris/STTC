@@ -30,34 +30,39 @@ using namespace std;
 *                                                                             *
 ******************************************************************************/
 double P_A_B_minus(const vector<int> &time_line_A,
-                                       const vector<int> &time_line_B, int Dt)
+					const vector<int> &time_line_B, const int Dt)
 {
 	double P = 0.0;
-	int i = 0, j = 0, s = 0;
+	int a = 0, b = 0, N = 0;
 	
-	/* all the spikes of A are before or after the tiles of B */
-	if(((time_line_A.back() < (time_line_B.front() - Dt)) ||
-                               ((time_line_B.back() < time_line_A.front())))) {
+	/* all spikes of A are before tiles of B */
+	if(time_line_A.back() < (time_line_B.front() - Dt)) {
 	    return P;
 	}
-	while((i < time_line_A.size()) && (j < time_line_B.size())){
-		/* the spike of A is in the tile of spike of B, 
-			where tile of B is [tB - Dt, tB] */
-		if((time_line_A[i] >= (time_line_B[j] - Dt)) &&
-                                          (time_line_A[i] <= time_line_B[j])) {
-			s++;
-			i++;
+	/* all spikes of A are after tiles of B */
+	if(time_line_B.back() < time_line_A.front()) {
+	    return P;
+	}
+	
+	while((a < time_line_A.size()) && (b < time_line_B.size())) {
+		/* spike of A is within tile of spike of B [tB, tB + Dt] */
+		if((time_line_A[a] >= (time_line_B[b] - Dt)) && 
+										(time_line_A[a] <= time_line_B[b])) {
+			N++;
+			a++;
 		}
-		/* the spike of A is before the tile of spike of B */
-		else if(time_line_A[i] < (time_line_B[j] - Dt)){
-			i++;
+		/* spike of A is before tile of spike of B [tB, tB + Dt] */
+		else if(time_line_A[a] < (time_line_B[b] - Dt)) {
+			a++;
 		}
-		/* the spike of A is after the tile of spike of B */
-		else if(time_line_A[i] > time_line_B[j]){
-			j++;
+		/* spike of A is after tile of spike of B [tB, tB + Dt] */
+		else if(time_line_A[a] > time_line_B[b]) {
+			b++;
 		}
 	}
-	P = s / double(time_line_A.size());
+	
+	P = N / double(time_line_A.size());
+	
 	return P;
 }
 
@@ -78,34 +83,38 @@ double P_A_B_minus(const vector<int> &time_line_A,
 *                                                                             *
 ******************************************************************************/
 double P_B_A_plus(const vector<int> &time_line_A,
-                                        const vector<int> &time_line_B, int Dt)
+					const vector<int> &time_line_B, int Dt)
 {
 	double P = 0.0;
-	int i = 0, j = 0, s = 0;
+	int a = 0, b = 0, N = 0;
 	
-	/* all spikes of B are before or after tiles of A */
-	if((time_line_B.back() < time_line_A.front()) || 
-                           ((time_line_A.back() + Dt) < time_line_B.front())) {
+	/* all spikes of B are before tiles of A */
+	if(time_line_B.back() < time_line_A.front()) {
 	    return P;
 	}
-	while((i < time_line_B.size()) && (j < time_line_A.size())){
+	/* all spikes of B are after tiles of A */
+	if((time_line_A.back() + Dt) < time_line_B.front()) {
+	    return P;
+	}
+	
+	while((a < time_line_A.size()) && (b < time_line_B.size())) {
 		/* spike of B is within tile of spike of A [tA, tA + Dt] */
-		if((time_line_B[i] >= time_line_A[j]) &&
-                                   (time_line_B[i] <= (time_line_B[j] + Dt))) {
-			s++;
-			i++;
+		if((time_line_B[b] >= time_line_A[a]) && 
+								(time_line_B[b] <= (time_line_A[a] + Dt))) {
+			N++;
+			b++;
 		}
 		/* spike of B is before tile of spike of A [tA, tA + Dt] */
-		else if(time_line_B[i] < time_line_A[j]) {
-			i++;
+		else if(time_line_B[b] < time_line_A[a]) {
+			b++;
 		}
 		/* spike of B is after tile of spike of A [tA, tA + Dt] */
-		else if(time_line_B[i] > (time_line_A[j] + Dt)) {
-			j++;
+		else if(time_line_B[b] > (time_line_A[a] + Dt)) {
+			a++;
 		}
 	}
 	
-	P = s / double(time_line_B.size());
+	P = N / double(time_line_B.size());
 	
 	return P;
 }
