@@ -3,7 +3,7 @@
 *                                                                             *
 * PROJECT NAME: STTC Analyses                                                 *
 *                                                                             *
-* FILE NAME: common.hpp                                                       *
+* FILE NAME: common.cpp                                                       *
 *                                                                             *
 *******************************************************************************
 ******************************************************************************/
@@ -31,25 +31,25 @@ using namespace std;
 double T_A_plus(const vector<int> &time_line_A, int total_time_samples, 
                                                                         int Dt)
 {
-	double T = 0.0;
-	const int Dt_1 = Dt + 1;
-	if (Dt == 0) {
-		// if Dt is zero then return mean
-		T = time_line_A.size() / double(total_time_samples);
-	}
-	else {
-		int s = 0, last_spike = 0;
-	    for (auto &spike : time_line_A){ // for each spike
-	       	for (int j = 0; j < Dt_1; ++j){ // check all the next
+    double T = 0.0;
+    const int Dt_1 = Dt + 1;
+    if (Dt == 0) {
+        // if Dt is zero then return mean
+        T = time_line_A.size() / double(total_time_samples);
+    }
+    else {
+        int s = 0, last_spike = 0;
+        for (auto &spike : time_line_A){ // for each spike
+               for (int j = 0; j < Dt_1; ++j){ // check all the next
                 if((spike + j <= total_time_samples) && (spike+j > last_spike)){
-					++s;
-	          }
-	       	}
-		   	last_spike = spike + Dt; //  keep the last spike
-	    }
-	    T = s / double(total_time_samples);
-	}
-	return T;
+                    ++s;
+              }
+               }
+               last_spike = spike + Dt; //  keep the last spike
+        }
+        T = s / double(total_time_samples);
+    }
+    return T;
 }
 
 
@@ -70,25 +70,25 @@ double T_A_plus(const vector<int> &time_line_A, int total_time_samples,
 double T_B_minus(const vector<int> &time_line_B, int total_time_samples, 
                                                                         int Dt)
 {
-	double T = 0.0;
-	const int Dt_1 = Dt + 1;
-	if (Dt == 0) {
-		// if Dt is zero then return mean
-		T = time_line_B.size() / double(total_time_samples);
-	}
-	else {
+    double T = 0.0;
+    const int Dt_1 = Dt + 1;
+    if (Dt == 0) {
+        // if Dt is zero then return mean
+        T = time_line_B.size() / double(total_time_samples);
+    }
+    else {
         int s = 0, last_spike = -1; // -1 counts the case: first spike-j = zero
-	    for (auto &spike : time_line_B){ // for each spike 
-	       for (int j = 0; j < Dt_1; ++j){ // check all the previous spikes
-	          if((spike - j) > last_spike){
-				  ++s;
-	          }
-	       }
-		   last_spike = spike; // keep the first spike
-	    }
-	    T = s / double(total_time_samples);
-	}
-	return T;
+        for (auto &spike : time_line_B){ // for each spike 
+           for (int j = 0; j < Dt_1; ++j){ // check all the previous spikes
+              if((spike - j) > last_spike){
+                  ++s;
+              }
+           }
+           last_spike = spike; // keep the first spike
+        }
+        T = s / double(total_time_samples);
+    }
+    return T;
 }
 
 
@@ -105,7 +105,7 @@ double T_B_minus(const vector<int> &time_line_B, int total_time_samples,
 ******************************************************************************/
 double sign_thresh_A_B(double mean, double st_dev)
 {
-	return mean + (3 * st_dev);
+    return mean + (3 * st_dev);
 }
 
 
@@ -123,20 +123,20 @@ double sign_thresh_A_B(double mean, double st_dev)
 *                                                                             *
 ******************************************************************************/
 void circular_shift(vector<int> &time_line, int random) {
-	int max = time_line.back();
-	vector<int>::iterator front_it = time_line.begin();
+    int max = time_line.back();
+    vector<int>::iterator front_it = time_line.begin();
 
-	for (int i = 0; i < time_line.size(); i++) {
-		int temp = time_line[i] + random;
+    for (int i = 0; i < time_line.size(); i++) {
+        int temp = time_line[i] + random;
 
-		if ((temp) < max) {
-			time_line[i] = temp;
-		}
-		else {
-			time_line.erase(time_line.begin() + i);
-			temp = temp - max - 1;
-			time_line.insert(front_it, temp);
-			++front_it;
-		}
-	}
+        if ((temp) < max) {
+            time_line[i] = temp;
+        }
+        else {
+            time_line.erase(time_line.begin() + i);
+            temp = temp - max - 1;
+            time_line.insert(front_it, temp);
+            ++front_it;
+        }
+    }
 }
