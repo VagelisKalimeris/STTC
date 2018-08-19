@@ -1,13 +1,13 @@
-# STTC ANALYSES
+# `STTC ANALYSES`
 
-# GENERAL DESCRIPTION
+### `GENERAL DESCRIPTION`
 
-1. Directional STTC
+#### 1. `Directional STTC`
 
 To incorporate the temporal order of the firing events of two neurons, we extended the STTC as follows: the fraction of the number of the firing events of A which fall within Δt before each firing event of B by the number of firing events of A is computed (𝑃𝐴𝐵−). The firing events that have this property increase the positive correlation (Fig. 1). Similarly, the fraction of the number of firing events of B that fall within Δt after each firing event of A by the number of firing events of B is estimated(𝑃𝐵𝐴+). In this way we estimate the correlation between spike trains for the spikes of B that follows spikes of A and the spikes of A that proceeds spikes of B.
 
 
-2. Conditional STTC of two neurons, given the firing of a third one
+#### 2. `Conditional STTC of two neurons, given the firing of a third one`
 
 To estimate the temporal correlation of two neurons, given that a third neuron is firing, we defined the
 conditional STTC as follows: we identify the firing events of A which follow within an interval of Δt of a
@@ -20,14 +20,14 @@ the firing events of spike train B is estimated (𝑵𝑩−𝑨). The spikes th
 positive correlation between A and B given the spike train C.
 
 
-3. Per pair threshold null distribution test for directional STTC
+#### 3. `Per pair threshold null distribution test for directional STTC`
 
 For a given pair (A,B) we circular shift the spike train of the neuron A 50 times and estimate the directional STTC between the circular shifted spike trains A and the spike train B . Based on these 50 values we estimate the mean value (mean_sttc_direct) and the standard deviation (std_sttc_direct). The significant threshold corresponds to:
 Significant threshold = mean_sttc_direct + 3 std_sttc_direct
 If the directional STTC value of the given pair (A, B) is greater than the threshold, then we consider the edge between this pair as significant. In this approach we set one significant threshold value per pair, based on the 50 produced values and compare each pair (A,B) with the corresponding significant threshold value.
 
 
-4. Null distribution for conditional STTC
+#### 4. `Null distribution for conditional STTC`
 
 For a given triplet A->B|C we circular shift the spike train of the neuron C 50 times and estimate the conditional STTC between A->B and the circular shifted spike trains C. Based on these 50 values we estimate the mean value (mean_sttc_cond) and the standard deviation (std_sttc_cond). The significant threshold corresponds to:
 Significant threshold = mean_sttc_cond + 3 std_sttc_cond
