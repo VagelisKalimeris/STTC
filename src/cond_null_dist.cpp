@@ -28,8 +28,8 @@ using namespace std;
 *                                                                             *
 ******************************************************************************/
 void circ_STTC_A_B_C(double results_arr[], int circ_shifts_num, 
-                 const vector<int> &time_line_A, const vector<int> &time_line_B, 
-                                         const vector<int> &time_line_C, int Dt)
+                const vector<int> &time_line_A, const vector<int> &time_line_B, 
+                                        const vector<int> &time_line_C, int Dt)
 {
     for (int i = 0; i < circ_shifts_num; i++) {
         vector<int> to_shift = time_line_C;
