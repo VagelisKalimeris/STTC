@@ -15,6 +15,152 @@
 using namespace std;
 
 /******************************************************************************
+* FUNCTION NAME: N_BminusA_CA                                                 *
+*                                                                             *
+* ARGUMENTS: Three neuron's timelines(references to vectors), and a time      *
+*             interval(int).                                                  *
+*                                                                             *
+* PURPOSE: The number of firing events of the reduced spike train A that      *
+*             falls within the tiles Δt after the firing events of spike      *
+*              train B.                                                       *
+*                                                                             *
+* RETURNS: A number(int) of events.                                           *
+*                                                                             *
+* I/O: None.                                                                  *
+*                                                                             *
+******************************************************************************/
+int N_BminusA_CA(const vector<int> &time_line_A, 
+					const vector<int> &time_line_B, 
+					const vector<int> &time_line_C, int Dt)
+{
+	int N = 0;
+	int a = 0, b = 0, c = 0;
+	
+	/* all spikes of A are before tiles of C */
+	if(time_line_A.back() < time_line_C.front()) {
+	    return N;
+	}
+	/* all spikes of A are after tiles of C */
+	if((time_line_C.back() + Dt) < time_line_A.front()) {
+	    return N;
+	}
+	/* all spikes of A are before tiles of B */
+	if(time_line_A.back() < (time_line_B.front() - Dt)) {
+	    return N;
+	}
+	/* all spikes of A are after tiles of B */
+	if(time_line_B.back() < time_line_A.front()) {
+	    return N;
+	}
+	
+	while((a < time_line_A.size()) && (b < time_line_B.size()) && 
+													(c < time_line_C.size())) {
+		/* spike of A is within tile of spike of C [tC, tC + Dt] */
+		if((time_line_A[a] >= time_line_C[c]) && 
+								(time_line_A[a] <= (time_line_C[c] + Dt))) {
+			/* spike of A is within tile of spike of B [tB, tB + Dt] */
+			if((time_line_A[a] >= (time_line_B[b] - Dt)) && 
+										(time_line_A[a] <= time_line_B[b])) {
+				N++;
+				a++;
+			}
+			/* spike of A is before tile of spike of B [tB, tB + Dt] */
+			else if(time_line_A[a] < (time_line_B[b] - Dt)) {
+				a++;
+			}
+			/* spike of A is after tile of spike of B [tB, tB + Dt] */
+			else if(time_line_A[a] > time_line_B[b]) {
+				b++;
+			}
+		}
+		/* spike of A is before tile of spike of C [tC, tC + Dt] */
+		else if(time_line_A[a] < time_line_C[c]) {
+			a++;
+		}
+		/* spike of A is after tile of spike of C [tC, tC + Dt] */
+		else if(time_line_A[a] > (time_line_C[c] + Dt)) {
+			c++;
+		}
+	}
+	
+	return N;
+}
+
+
+/******************************************************************************
+* FUNCTION NAME: N_AplusB_CA                                                  *
+*                                                                             *
+* ARGUMENTS: Three neuron's timelines(references to vectors), and a time      *
+*             interval(int).                                                  *
+*                                                                             *
+* PURPOSE: The number of firing events of B that falls within the tiles Δt    *
+*           after the firing events of the reduced spike train A.             *
+*                                                                             *
+*                                                                             *
+* RETURNS: A number(int) of events.                                           *
+*                                                                             *
+* I/O: None.                                                                  *
+*                                                                             *
+******************************************************************************/
+int N_AplusB_CA(const vector<int> &time_line_A, 
+				const vector<int> &time_line_B, 
+				const vector<int> &time_line_C, int Dt)
+{
+	int N = 0;
+	int a = 0, b = 0, c = 0;
+	
+	/* all spikes of A are before tiles of C */
+	if(time_line_A.back() < time_line_C.front()) {
+	    return N;
+	}
+	/* all spikes of A are after tiles of C */
+	if((time_line_C.back() + Dt) < time_line_A.front()) {
+	    return N;
+	}
+	/* all spikes of B are before tiles of A */
+	if(time_line_B.back() < time_line_A.front()) {
+	    return N;
+	}
+	/* all spikes of B are after tiles of A */
+	if((time_line_A.back() + Dt) < time_line_B.front()) {
+	    return N;
+	}
+	
+	while((a < time_line_A.size()) && (b < time_line_B.size()) && 
+													(c < time_line_C.size())) {
+		/* spike of A is within tile of spike of C [tC, tC + Dt] */
+		if((time_line_A[a] >= time_line_C[c]) && 
+								(time_line_A[a] <= (time_line_C[c] + Dt))) {
+			/* spike of B is within tile of spike of A [tA, tA + Dt] */
+			if((time_line_B[b] >= time_line_A[a]) && 
+								(time_line_B[b] <= (time_line_A[a] + Dt))) {
+				N++;
+				b++;
+			}
+			/* spike of B is before tile of spike of A [tA, tA + Dt] */
+			else if(time_line_B[b] < time_line_A[a]) {
+				b++;
+			}
+			/* spike of B is after tile of spike of A [tA, tA + Dt] */
+			else if(time_line_B[b] > (time_line_A[a] + Dt)) {
+				a++;
+			}
+		}
+		/* spike of A is before tile of spike of C [tC, tC + Dt] */
+		else if(time_line_A[a] < time_line_C[c]) {
+			a++;
+		}
+		/* spike of A is after tile of spike of C [tC, tC + Dt] */
+		else if(time_line_A[a] > (time_line_C[c] + Dt)) {
+			c++;
+		}
+	}
+	
+	return N;
+}
+
+
+/******************************************************************************
 * FUNCTION NAME: STTC_AB_C                                                    *
 *                                                                             *
 * ARGUMENTS: Three neuron's timelines(references to vectors), and a time      *
