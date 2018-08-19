@@ -36,13 +36,19 @@ using namespace std;
 * I/O: Opens/Reads a file containing the spike trains.                        *
 *                                                                             *
 ******************************************************************************/
-int main()
+int main(int argc, char const *argv[])
 {
+// command line arguments
+	const int total_time_samples = stoi(argv[2]),
+                           circ_shifts_num = stoi(argv[3]), Dt = stoi(argv[3]);
+// Our data structure
 	vector<int> spike_trains[NEURONS];
+// Open File
 	ifstream data;
 	data.open("../psm_avalanche", ifstream::in);
 	string line;
 
+// Store each neuron firing (1's) to the data structure
 	int count = 0;
 	while (getline(data, line)) {
 		for (int n = 0; n < NEURONS; n++) {
@@ -53,16 +59,17 @@ int main()
 		}
 	}
 
- 	int l = 0;
+// Print the data structure and total number of firings in experiment
+ 	int total_firings = 0;
 	for (int neur = 0; neur < NEURONS; neur++) {
 		for (int fire = 0; fire < spike_trains[neur].size(); fire++) {
 			cout<<spike_trains[neur][fire]<<' '<<endl;
-      	l++;
+      	total_firings++;
 		}
 		cout<<endl;
 	}
-  
-  	cout<<endl<<l<<endl;
+  	cout<<endl<<total_firings<<endl;
+  	
 	data.close();
 	return 0;
 }
