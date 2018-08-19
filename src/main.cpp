@@ -1,3 +1,15 @@
+/******************************************************************************
+*******************************************************************************
+*                                                                             *
+* PROJECT NAME: STTC Analyses                                                 *
+*                                                                             *
+* FILE NAME: main.cpp                                                         *
+*                                                                             *
+*******************************************************************************
+******************************************************************************/
+
+
+
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -10,7 +22,20 @@
 
 using namespace std;
 
-// This main function is for testing purposes only.
+
+/******************************************************************************
+* FUNCTION NAME: main                                                         *
+*                                                                             *
+* ARGUMENTS: The total numbers of: Neurons, Time Samples, Circular Shifts.    *
+*             And the size of the tile Δt.                                    *
+*                                                                             *
+* PURPOSE: This main function is for testing purposes only.                   *
+*                                                                             *
+* RETURNS: 0 on program comletion.                                            *
+*                                                                             *
+* I/O: Opens/Reads a file containing the spike trains.                        *
+*                                                                             *
+******************************************************************************/
 int main()
 {
 	vector<int> spike_trains[NEURONS];
