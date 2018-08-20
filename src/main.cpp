@@ -71,23 +71,34 @@ int main(int argc, char const *argv[])
     }
 
 // Calculate conditional STTC
-    for (int i = 0; i < NEURONS; i++) {
-        for (int j = 0; j < NEURONS; j++) {
+    int ttl_sgnfcnt_trplts = 0;
+    vector<double> to_shift;
+    double shifted_res_arr[circ_shifts_num];
+
+    for (int i = 0; i < NEURONS; i++) { // Neuron A
+        for (int j = 0; j < NEURONS; j++) { // Neuron B
             if (i == j) {continue;}
-            double shifted_res_arr[circ_shifts_num];
-            for (int k = 0; k < NEURONS; k++) {
+            for (int k = 0; k < NEURONS; k++) { // Neuron C
                 if (j == k || i == k) {continue;}
                 if (!sign_trpl_limit(spike_trains[i], spike_trains[k] ,Dt)) {
-                    continue;
+                    continue; // Reduced A spike train has < 5 spikes
                 }
-                for (int shift = 0; shift < circ_shifts_num; shift++) {
-                    vector<int> to_shift = spike_trains[k];
+                double trip_sttc = STTC_AB_C(spike_trains[i], spike_trains[j]
+                                                        , spike_trains[k], Dt);
+                double shifted_res_arr[circ_shifts_num]; //stores shifted sttc's
+                to_shift = spike_trains[k];
 
+                for (int shift = 0; shift < circ_shifts_num; shift++) {
                     circular_shift(to_shift, circ_shifts_num);
                     shifted_res_arr[k] = STTC_AB_C(time_line_A, time_line_B, 
                                                                  to_shift, Dt);
                 }
-                if ()
+                double mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
+                double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
+                double threshhold = sign_thresh(mean, st_dev);
+                if ( trip_sttc > threshhold) {
+                    ttl_sgnfcnt_trplts++;
+                }
             }
         }
     } 
