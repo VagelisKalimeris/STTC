@@ -11,7 +11,7 @@
 
 
 #include <cmath>
-#include<vector>
+#include <vector>
 using namespace std;
 
 /******************************************************************************
@@ -63,7 +63,7 @@ double T_B_minus(const vector<int> &time_line_B, int total_time_samples,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-void circular_shift(vector<int> &time_line, int random);
+void circular_shift(vector<int> &time_line, unsigned int random);
 
 
 /******************************************************************************
@@ -96,3 +96,7 @@ double sign_thresh(double mean, double st_dev);
 ******************************************************************************/
 bool sign_trpl_limit(const vector<int> &time_line_A, 
                                         const vector<int> &time_line_C, int Dt);
+
+// Helper function. Generates random integers 
+// in the range 0 - (total_time_samples-1).
+unsigned int random_gen(unsigned int max_number);

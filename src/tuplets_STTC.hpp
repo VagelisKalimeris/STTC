@@ -64,4 +64,4 @@ double P_B_A_plus(const vector<int> &time_line_A,
 *                                                                             *
 ******************************************************************************/
 double STTC_A_B(const vector<int> &time_line_A, const vector<int> &time_line_B,
-                                                                       int Dt);
+                                               int total_time_samples, int Dt);
