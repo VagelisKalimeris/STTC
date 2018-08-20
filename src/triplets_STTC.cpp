@@ -14,6 +14,50 @@
 #include<vector>
 using namespace std;
 
+double T_A_plus_tripl(const vector<int> &time_line_A,
+	const vector<int> &time_line_C, int total_time_samples, int Dt) {
+	double T = 0.0;
+	int a = 0, c = 0, s = 0, last = -1;
+
+	/* all spikes of A are before tiles of C */
+	if (time_line_A.back() < time_line_C.front()) {
+		return T;
+	}
+	/* all spikes of A are after tiles of C */
+	if ((time_line_C.back() + Dt) < time_line_A.front()) {
+		return T;
+	}
+
+	while ((a < time_line_A.size()) && (c < time_line_C.size())) {
+		/* spike of A is within tile of spike of C [tC, tC + Dt] */
+		if ((time_line_A[a] >= time_line_C[c]) && (time_line_A[a] <= (time_line_C[c] + Dt))) {
+			/* check if last calculated tile is before spike of A */
+			if (last < time_line_A[a]) {
+				/* add Dt + 1 */
+				s += Dt;
+			}
+			else {
+				/* add Dt + 1 - (tA'_prev + Dt + 1 - tA'_curr) */
+				s += time_line_A[a] + Dt - last;
+			}
+			last = time_line_A[a] + Dt;
+			a++;
+		}
+		/* spike of A is before tile of spike of C [tC, tC + Dt] */
+		else if (time_line_A[a] < time_line_C[c]) {
+			a++;
+		}
+		/* spike of A is after tile of spike of C [tC, tC + Dt] */
+		else if (time_line_A[a] > (time_line_C[c] + Dt)) {
+			c++;
+		}
+	}
+
+	T = s / double(total_time_samples);
+
+	return T;
+}
+
 /******************************************************************************
 * FUNCTION NAME: N_BminusA_CA                                                 *
 *                                                                             *

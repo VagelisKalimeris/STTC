@@ -26,7 +26,7 @@
 *                                                                             *
 ******************************************************************************/
 double T_A_plus_tripl(const vector<int> &time_line_A,
-                                       const vector<int> &time_line_C, int Dt);
+              const vector<int> &time_line_C, int total_time_samples, int Dt);
 
 
 
