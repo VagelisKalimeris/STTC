@@ -38,8 +38,8 @@ using namespace std;
 int main(int argc, char const *argv[])
 {
 // command line arguments
-    const int total_time_samples = stoi(argv[2]),
-                           circ_shifts_num = stoi(argv[3]), Dt = stoi(argv[3]);
+    const int NEURONS = stoi(argv[1]),
+                           circ_shifts_num = stoi(argv[2]), Dt = stoi(argv[3]);
 // Shifted spike trains will be copied here
     vector<int> to_shift;
 // STTC values of shifted spike trains
@@ -56,7 +56,7 @@ int main(int argc, char const *argv[])
     string line;
 
 // Store each neuron's firing (1's) to the data structure
-    int count = 0;
+    int count = 0, total_time_samples = 0;
     while (getline(data, line)) {
         for (int n = 0; n < NEURONS; n++) {
             if (line[n] == '1') {
@@ -64,6 +64,7 @@ int main(int argc, char const *argv[])
             }
             count++;
         }
+        total_time_samples++;
     }
 
 
