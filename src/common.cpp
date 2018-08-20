@@ -130,7 +130,7 @@ double sign_thresh(double mean, double st_dev)
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-void circular_shift(vector<int> &time_line, int random) {
+void circular_shift(vector<int> &time_line, unsigned int random) {
     int max = time_line.back();
     vector<int>::iterator front_it = time_line.begin();
 
@@ -180,7 +180,8 @@ bool sign_trpl_limit(const vector<int> &time_line_A,
     
     while((a < time_line_A.size()) && (c < time_line_C.size())) {
         /* spike of A is within tile of spike of C [tC, tC + Dt] */
-        if((time_line_A[a] >= time_line_C[c]) && (time_line_A[a] <= (time_line_C[c] + Dt))) {
+        if((time_line_A[a] >= time_line_C[c]) && 
+                                  (time_line_A[a] <= (time_line_C[c] + Dt))) {
             s++;
             a++;
         }
@@ -195,4 +196,12 @@ bool sign_trpl_limit(const vector<int> &time_line_A,
     }
     
     return (s > 5);
+}
+
+
+// Helper function. Generates random integers 
+// in the range 0 - (total_time_samples-1).
+int random_gen(unsigned int max_number) {
+    auto machine = std::uniform_int_distribution<unsigned int>(0, max_number);
+    return machine(std::mt19937(std::random_device()));
 }
