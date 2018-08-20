@@ -3,7 +3,7 @@
 *                                                                             *
 * PROJECT NAME: STTC Analyses                                                 *
 *                                                                             *
-* FILE NAME: common.hpp                                                       *
+* FILE NAME: common.cpp                                                       *
 *                                                                             *
 *******************************************************************************
 ******************************************************************************/
@@ -31,25 +31,25 @@ using namespace std;
 double T_A_plus(const vector<int> &time_line_A, int total_time_samples, 
                                                                         int Dt)
 {
-	double T = 0.0;
-	const int Dt_1 = Dt + 1;
-	if (Dt == 0) {
-		// if Dt is zero then return mean
-		T = time_line_A.size() / double(total_time_samples);
-	}
-	else {
-		int s = 0, last_spike = 0;
-	    for (auto &spike : time_line_A){ // for each spike
-	       	for (int j = 0; j < Dt_1; ++j){ // check all the next
+    double T = 0.0;
+    const int Dt_1 = Dt + 1;
+    if (Dt == 0) {
+        // if Dt is zero then return mean
+        T = time_line_A.size() / double(total_time_samples);
+    }
+    else {
+        int s = 0, last_spike = 0;
+        for (auto &spike : time_line_A){ // for each spike
+               for (int j = 0; j < Dt_1; ++j){ // check all the next
                 if((spike + j <= total_time_samples) && (spike+j > last_spike)){
-					++s;
-	          }
-	       	}
-		   	last_spike = spike + Dt; //  keep the last spike
-	    }
-	    T = s / double(total_time_samples);
-	}
-	return T;
+                    ++s;
+              }
+               }
+               last_spike = spike + Dt; //  keep the last spike
+        }
+        T = s / double(total_time_samples);
+    }
+    return T;
 }
 
 
@@ -70,25 +70,25 @@ double T_A_plus(const vector<int> &time_line_A, int total_time_samples,
 double T_B_minus(const vector<int> &time_line_B, int total_time_samples, 
                                                                         int Dt)
 {
-	double T = 0.0;
-	const int Dt_1 = Dt + 1;
-	if (Dt == 0) {
-		// if Dt is zero then return mean
-		T = time_line_B.size() / double(total_time_samples);
-	}
-	else {
+    double T = 0.0;
+    const int Dt_1 = Dt + 1;
+    if (Dt == 0) {
+        // if Dt is zero then return mean
+        T = time_line_B.size() / double(total_time_samples);
+    }
+    else {
         int s = 0, last_spike = -1; // -1 counts the case: first spike-j = zero
-	    for (auto &spike : time_line_B){ // for each spike 
-	       for (int j = 0; j < Dt_1; ++j){ // check all the previous spikes
-	          if((spike - j) > last_spike){
-				  ++s;
-	          }
-	       }
-		   last_spike = spike; // keep the first spike
-	    }
-	    T = s / double(total_time_samples);
-	}
-	return T;
+        for (auto &spike : time_line_B){ // for each spike 
+           for (int j = 0; j < Dt_1; ++j){ // check all the previous spikes
+              if((spike - j) > last_spike){
+                  ++s;
+              }
+           }
+           last_spike = spike; // keep the first spike
+        }
+        T = s / double(total_time_samples);
+    }
+    return T;
 }
 
 
@@ -103,9 +103,9 @@ double T_B_minus(const vector<int> &time_line_B, int total_time_samples,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double sign_thresh_A_B(double mean, double st_dev)
+double sign_thresh(double mean, double st_dev)
 {
-	return mean + (3 * st_dev);
+    return mean + (3 * st_dev);
 }
 
 
@@ -122,21 +122,78 @@ double sign_thresh_A_B(double mean, double st_dev)
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-void circular_shift(vector<int> &time_line, int random) {
-	int max = time_line.back();
-	vector<int>::iterator front_it = time_line.begin();
+void circular_shift(vector<int> &time_line, unsigned int random) {
+    int max = time_line.back();
+    vector<int>::iterator front_it = time_line.begin();
 
-	for (int i = 0; i < time_line.size(); i++) {
-		int temp = time_line[i] + random;
+    for (int i = 0; i < time_line.size(); i++) {
+        int temp = time_line[i] + random;
 
-		if ((temp) < max) {
-			time_line[i] = temp;
-		}
-		else {
-			time_line.erase(time_line.begin() + i);
-			temp = temp - max - 1;
-			time_line.insert(front_it, temp);
-			++front_it;
-		}
-	}
+        if ((temp) < max) {
+            time_line[i] = temp;
+        }
+        else {
+            time_line.erase(time_line.begin() + i);
+            temp = temp - max - 1;
+            time_line.insert(front_it, temp);
+            ++front_it;
+        }
+    }
+}
+
+
+/******************************************************************************
+* FUNCTION NAME: sign_trpl_limit                                              *
+*                                                                             *
+* ARGUMENTS: Two neuron's timelines(references to vectors), and a time        *
+*             interval(int).                                                  *
+*                                                                             *
+* PURPOSE: Calculates if the number of firing events of ‘reduced A’ is        *
+*           greater than 5 or not.                                            *
+*                                                                             *
+* RETURNS: True or False.                                                     *
+*                                                                             *
+* I/O: None.                                                                  *
+*                                                                             *
+******************************************************************************/
+bool sign_trpl_limit(const vector<int> &time_line_A, 
+                                        const vector<int> &time_line_C, int Dt)
+{
+        int s = 0, a = 0, c = 0;
+    
+    /* all spikes of A are before tiles of C */
+    if(time_line_A.back() < time_line_C.front()) {
+        return false;
+    }
+    /* all spikes of A are after tiles of C */
+    if((time_line_C.back() + Dt) < time_line_A.front()) {
+        return false;
+    }
+    
+    while((a < time_line_A.size()) && (c < time_line_C.size())) {
+        /* spike of A is within tile of spike of C [tC, tC + Dt] */
+        if((time_line_A[a] >= time_line_C[c]) && 
+                                  (time_line_A[a] <= (time_line_C[c] + Dt))) {
+            s++;
+            a++;
+        }
+        /* spike of A is before tile of spike of C [tC, tC + Dt] */
+        else if(time_line_A[a] < time_line_C[c]) {
+            a++;
+        }
+        /* spike of A is after tile of spike of C [tC, tC + Dt] */
+        else if(time_line_A[a] > (time_line_C[c] + Dt)) {
+            c++;
+        }
+    }
+    
+    return (s > 5);
+}
+
+
+// Helper function. Generates random integers 
+// in the range 0 - (total_time_samples-1).
+int random_gen(unsigned int max_number) {
+    auto machine = std::uniform_int_distribution<unsigned int>(0, max_number);
+    return machine(std::mt19937(std::random_device()));
 }
