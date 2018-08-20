@@ -22,7 +22,6 @@
 
 using namespace std;
 
-
 /******************************************************************************
 * FUNCTION NAME: main                                                         *
 *                                                                             *
@@ -41,8 +40,16 @@ int main(int argc, char const *argv[])
 // command line arguments
     const int total_time_samples = stoi(argv[2]),
                            circ_shifts_num = stoi(argv[3]), Dt = stoi(argv[3]);
-// Our data structure
+// Shifted spike trains will be copied here
+    vector<int> to_shift;
+// STTC values of shifted spike trains
+    double shifted_res_arr[circ_shifts_num];
+// Our main data structure
     vector<int> spike_trains[NEURONS];
+// Caclulation variables
+    int ttl_sgnfcnt_tuplets = 0, ttl_sgnfcnt_triplets = 0;
+    double tupl_sttc, trip_sttc, mean, st_dev, threshold;
+
 // Open File
     ifstream data;
     data.open("../psm_avalanche", ifstream::in);
@@ -61,47 +68,56 @@ int main(int argc, char const *argv[])
 
 
 // Calculate per pair STTC
-    for (int i = 0; i < NEURONS; i++) {
-        for (int j = 0; j < NEURONS; j++) {
-            if (i == j) {continue;}
-            for (int shift = 0; shift < circ_shifts_num; shift++) {
-
-            }
-        }
-    }
-
-// Calculate conditional STTC
-    int ttl_sgnfcnt_trplts = 0;
-    vector<double> to_shift;
-    double shifted_res_arr[circ_shifts_num];
-
     for (int i = 0; i < NEURONS; i++) { // Neuron A
         for (int j = 0; j < NEURONS; j++) { // Neuron B
-            if (i == j) {continue;}
+            if (i == j) {continue;} // Skip same neurons
+            tupl_sttc = STTC_A_B(spike_trains[i], spike_trains[j], Dt);
+
+            for (int shift = 0; shift < circ_shifts_num; shift++) {
+                to_shift = spike_trains[i];
+                circular_shift(to_shift, circ_shifts_num);
+                shifted_res_arr[shift] = STTC_A_B(spike_trains[i], 
+                                                          spike_trains[j], Dt);
+            }
+            mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
+            st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
+            threshold = sign_thresh(mean, st_dev);
+            if ( tupl_sttc > threshold) {
+                    ttl_sgnfcnt_tuplets++;
+                }
+        }
+    }
+    cout<<"Number of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<endl; 
+
+
+// Calculate conditional STTC
+    for (int i = 0; i < NEURONS; i++) { // Neuron A
+        for (int j = 0; j < NEURONS; j++) { // Neuron B
+            if (i == j) {continue;} // Skip same neurons
             for (int k = 0; k < NEURONS; k++) { // Neuron C
-                if (j == k || i == k) {continue;}
+                if (j == k || i == k) {continue;} // Skip same neurons
                 if (!sign_trpl_limit(spike_trains[i], spike_trains[k] ,Dt)) {
                     continue; // Reduced A spike train has < 5 spikes
                 }
-                double trip_sttc = STTC_AB_C(spike_trains[i], spike_trains[j]
+                trip_sttc = STTC_AB_C(spike_trains[i], spike_trains[j]
                                                         , spike_trains[k], Dt);
-                double shifted_res_arr[circ_shifts_num]; //stores shifted sttc's
-                to_shift = spike_trains[k];
 
                 for (int shift = 0; shift < circ_shifts_num; shift++) {
+                    to_shift = spike_trains[k];
                     circular_shift(to_shift, circ_shifts_num);
-                    shifted_res_arr[k] = STTC_AB_C(time_line_A, time_line_B, 
-                                                                 to_shift, Dt);
+                    shifted_res_arr[shift] = STTC_AB_C(spike_trains[i], 
+                                                spike_trains[j], to_shift, Dt);
                 }
-                double mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
-                double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
-                double threshhold = sign_thresh(mean, st_dev);
-                if ( trip_sttc > threshhold) {
-                    ttl_sgnfcnt_trplts++;
+                mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
+                st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
+                threshold = sign_thresh(mean, st_dev);
+                if ( trip_sttc > threshold) {
+                    ttl_sgnfcnt_triplets++;
                 }
             }
         }
-    } 
+    }
+    cout<<"Number of total significant triplets: "<<ttl_sgnfcnt_triplets<<endl; 
 
 // Print the data structure and total number of firings in experiment
     int total_firings = 0;
