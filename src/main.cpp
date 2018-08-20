@@ -40,7 +40,7 @@ int main(int argc, char const *argv[])
 {
 // command line arguments
     const int total_time_samples = stoi(argv[2]),
-                           circ_shifts_num = stoi(argv[3]), Dt = stoi(argv[4]);
+                           circ_shifts_num = stoi(argv[3]), Dt = stoi(argv[3]);
 // Our data structure
     vector<int> spike_trains[NEURONS];
 // Open File
@@ -48,7 +48,7 @@ int main(int argc, char const *argv[])
     data.open("../psm_avalanche", ifstream::in);
     string line;
 
-// Store each neuron firing (1's) to the data structure
+// Store each neuron's firing (1's) to the data structure
     int count = 0;
     while (getline(data, line)) {
         for (int n = 0; n < NEURONS; n++) {
@@ -59,17 +59,50 @@ int main(int argc, char const *argv[])
         }
     }
 
+
+// Calculate per pair STTC
+    for (int i = 0; i < NEURONS; i++) {
+        for (int j = 0; j < NEURONS; j++) {
+            if (i == j) {continue;}
+            for (int shift = 0; shift < circ_shifts_num; shift++) {
+
+            }
+        }
+    }
+
+// Calculate conditional STTC
+    for (int i = 0; i < NEURONS; i++) {
+        for (int j = 0; j < NEURONS; j++) {
+            if (i == j) {continue;}
+            double shifted_res_arr[circ_shifts_num];
+            for (int k = 0; k < NEURONS; k++) {
+                if (j == k || i == k) {continue;}
+                if (!sign_trpl_limit(spike_trains[i], spike_trains[k] ,Dt)) {
+                    continue;
+                }
+                for (int shift = 0; shift < circ_shifts_num; shift++) {
+                    vector<int> to_shift = spike_trains[k];
+
+                    circular_shift(to_shift, circ_shifts_num);
+                    shifted_res_arr[k] = STTC_AB_C(time_line_A, time_line_B, 
+                                                                 to_shift, Dt);
+                }
+                if ()
+            }
+        }
+    } 
+
 // Print the data structure and total number of firings in experiment
-     int total_firings = 0;
+    int total_firings = 0;
     for (int neur = 0; neur < NEURONS; neur++) {
         for (int fire = 0; fire < spike_trains[neur].size(); fire++) {
             cout<<spike_trains[neur][fire]<<' '<<endl;
-          total_firings++;
+        total_firings++;
         }
         cout<<endl;
     }
-      cout<<endl<<total_firings<<endl;
-      
+    cout<<endl<<total_firings<<endl;
+    
     data.close();
     return 0;
 }

@@ -14,29 +14,7 @@
 #include<vector>
 using namespace std;
 
-/******************************************************************************
-* FUNCTION NAME: circ_STTC_A_B                                                *
-*                                                                             *
-* ARGUMENTS: A pre-existing array to store the results. Two neuron's          *
-*             timelines(references to vectors), and a time interval(int).     *
-*                                                                             *
-* PURPOSE: Calculates circ_shifts_num random STTC values.                     *
-*                                                                             *
-* RETURNS: None.                                                              *
-*                                                                             *
-* I/O: None.                                                                  *
-*                                                                             *
-******************************************************************************/
-void circ_STTC_A_B(double results_arr[], int circ_shifts_num, 
-        const vector<int> &time_line_A, const vector<int> &time_line_B, int Dt)
-{
-    for (int i = 0; i < circ_shifts_num; i++) {
-        vector<int> to_shift = time_line_A;
 
-        circular_shift(to_shift, circ_shifts_num);
-        results_arr[i] = STTC_A_B(to_shift, time_line_B, Dt);
-    }
-}
 
 
 /******************************************************************************

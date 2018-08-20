@@ -30,8 +30,8 @@ using namespace std;
 *                                                                             *
 ******************************************************************************/
 int N_BminusA_CA(const vector<int> &time_line_A, 
-                    const vector<int> &time_line_B, 
-                    const vector<int> &time_line_C, int Dt)
+                                                const vector<int> &time_line_B, 
+                                        const vector<int> &time_line_C, int Dt)
 {
     int N = 0;
     int a = 0, b = 0, c = 0;
@@ -103,8 +103,8 @@ int N_BminusA_CA(const vector<int> &time_line_A,
 *                                                                             *
 ******************************************************************************/
 int N_AplusB_CA(const vector<int> &time_line_A, 
-                const vector<int> &time_line_B, 
-                const vector<int> &time_line_C, int Dt)
+                                                const vector<int> &time_line_B, 
+                                        const vector<int> &time_line_C, int Dt)
 {
     int N = 0;
     int a = 0, b = 0, c = 0;
