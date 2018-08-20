@@ -31,25 +31,33 @@ using namespace std;
 double T_A_plus(const vector<int> &time_line_A, int total_time_samples, 
                                                                         int Dt)
 {
-    double T = 0.0;
-    const int Dt_1 = Dt + 1;
-    if (Dt == 0) {
-        // if Dt is zero then return mean
-        T = time_line_A.size() / double(total_time_samples);
-    }
-    else {
-        int s = 0, last_spike = 0;
-        for (auto &spike : time_line_A){ // for each spike
-               for (int j = 0; j < Dt_1; ++j){ // check all the next
-                if((spike + j <= total_time_samples) && (spike+j > last_spike)){
-                    ++s;
-              }
-               }
-               last_spike = spike + Dt; //  keep the last spike
-        }
-        T = s / double(total_time_samples);
-    }
-    return T;
+	double T = 0.0;
+	const int Dt_1 = Dt + 1;
+	if (Dt == 0) {
+		// if Dt is zero then return mean
+		T = time_line_A.size() / double(total_time_samples);
+	}
+	else {
+		int s = 0, last_spike = -1;
+		for (auto &spike : time_line_A) { // for each spike
+			//check if in spike is in [spike + D,spike)
+			if (last_spike < spike) {
+				s += Dt + 1; // sum the Dt include spike
+			}
+			else {
+				// else sum the distance of the current +dt from last
+				s += spike + Dt - last_spike;
+			}
+			last_spike = spike + Dt; //  keep the last spike
+		}
+		// if there are some spikes Dt places after total_stamps
+		// calculate them and remove them
+		if (last_spike != -1 && last_spike >= total_time_samples) {
+			s -= last_spike + 1 - total_time_samples;
+		}
+		T = s / double(total_time_samples);
+	}
+	return T;
 }
 
 
