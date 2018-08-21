@@ -33,7 +33,7 @@ void circ_STTC_A_B_C(double results_arr[], int circ_shifts_num,
 
         circular_shift(to_shift, circ_shifts_num);
         results_arr[i] = STTC_AB_C(time_line_A, time_line_B, to_shift, 
-                                                       total_time_samples, Dt);
+                                                        total_time_samples, Dt);
     }
 }
 
@@ -66,11 +66,10 @@ bool sign_trpl_limit(const vector<int> &time_line_A,
         return false;
     }
     
-    while((a < static_cast<int> (time_line_A.size())) && 
-                                 (c < static_cast<int> (time_line_C.size()))) {
+    while((a < time_line_A.size()) && (c < time_line_C.size())) {
         /* spike of A is within tile of spike of C [tC, tC + Dt] */
         if((time_line_A[a] >= time_line_C[c]) && 
-                                   (time_line_A[a] <= (time_line_C[c] + Dt))) {
+                                    (time_line_A[a] <= (time_line_C[c] + Dt))) {
             s++;
             a++;
         }
@@ -84,4 +83,5 @@ bool sign_trpl_limit(const vector<int> &time_line_A,
         }
     }
     
-    return (s > 5);}
+    return (s > 5);
+}

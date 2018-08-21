@@ -34,7 +34,7 @@ using namespace std;
 ******************************************************************************/
 void circ_STTC_A_B(double results_arr[], int circ_shifts_num, 
                 const vector<int> &time_line_A, const vector<int> &time_line_B, 
-               const vector<int> &time_line_C, int total_time_samples, int Dt);
+                const vector<int> &time_line_C, int total_time_samples, int Dt);
 
 
 /******************************************************************************
@@ -52,4 +52,4 @@ void circ_STTC_A_B(double results_arr[], int circ_shifts_num,
 *                                                                             *
 ******************************************************************************/
 bool sign_trpl_limit(const vector<int> &time_line_A, 
-                                       const vector<int> &time_line_C, int Dt);
+                                        const vector<int> &time_line_C, int Dt);

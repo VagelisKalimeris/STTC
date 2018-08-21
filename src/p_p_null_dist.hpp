@@ -32,7 +32,7 @@ using namespace std;
 *                                                                             *
 ******************************************************************************/
 void circ_STTC_A_B(double results_arr[], int circ_shifts_num, 
-       const vector<int> &time_line_A, const vector<int> &time_line_B, int Dt);
+        const vector<int> &time_line_A, const vector<int> &time_line_B, int Dt);
 
 
 /******************************************************************************

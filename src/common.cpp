@@ -137,7 +137,7 @@ void circular_shift(vector<int> &time_line, unsigned int random) {
     int max = time_line.back();
     vector<int>::iterator front_it = time_line.begin();
 
-    for (int i = 0; i < static_cast<int> (time_line.size()); i++) {
+    for (int i = 0; i < time_line.size(); i++) {
         int temp = time_line[i] + random;
 
         if ((temp) < max) {
