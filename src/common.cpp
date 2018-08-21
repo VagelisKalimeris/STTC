@@ -30,7 +30,7 @@ double T_A_plus(const vector<int> &time_line_A, int total_time_samples,
                                                                         int Dt)
 {
 	double T = 0.0;
-	const int Dt_1 = Dt + 1;
+	
 	if (Dt == 0) {
 		// if Dt is zero then return mean
 		T = time_line_A.size() / double(total_time_samples);
@@ -77,23 +77,28 @@ double T_B_minus(const vector<int> &time_line_B, int total_time_samples,
                                                                         int Dt)
 {
     double T = 0.0;
-    const int Dt_1 = Dt + 1;
-    if (Dt == 0) {
-        // if Dt is zero then return mean
+    int s = 0, last = -1;
+    
+    if(Dt == 0) {
         T = time_line_B.size() / double(total_time_samples);
     }
     else {
-        int s = 0, last_spike = -1; // -1 counts the case: first spike-j = zero
-        for (auto &spike : time_line_B){ // for each spike 
-           for (int j = 0; j < Dt_1; ++j){ // check all the previous spikes
-              if((spike - j) > last_spike){
-                  ++s;
-              }
-           }
-           last_spike = spike; // keep the first spike
+        for(int b = 0; b < time_line_B.size(); ++b) {
+            /* check if last calculated tile is before tile of spike of B */
+            if(last < (time_line_B[b] - Dt)) {
+                /* add Dt + 1 */
+                s += Dt + 1;
+            }
+            else {
+                /* add tB'_curr - tB'_prev */
+                s += time_line_B[b] - last;
+            }
+            last = time_line_B[b];
         }
+
         T = s / double(total_time_samples);
     }
+    
     return T;
 }
 
