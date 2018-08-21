@@ -10,6 +10,14 @@
 
 
 
+
+#include <cmath>
+#include<vector>
+
+#include "common.hpp"
+
+using namespace std;
+
 /******************************************************************************
 * FUNCTION NAME: N_AplusB_CA                                                  *
 *                                                                             *

@@ -10,6 +10,14 @@
 
 
 
+#include <cmath>
+#include<vector>
+
+#include "common.hpp"
+#include "tuplets_STTC.hpp"
+#include "triplets_STTC.hpp"
+
+using namespace std;
 
 /******************************************************************************
 * FUNCTION NAME: circ_STTC_A_B_C                                              *
@@ -26,7 +34,7 @@
 ******************************************************************************/
 void circ_STTC_A_B(double results_arr[], int circ_shifts_num, 
                 const vector<int> &time_line_A, const vector<int> &time_line_B, 
-                                       const vector<int> &time_line_C, int Dt);
+               const vector<int> &time_line_C, int total_time_samples, int Dt);
 
 
 /******************************************************************************

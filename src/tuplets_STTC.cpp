@@ -9,10 +9,7 @@
 ******************************************************************************/
 
 
-
-#include <cmath>
-#include<vector>
-using namespace std;
+#include "tuplets_STTC.hpp"
 
 /******************************************************************************
 * FUNCTION NAME: P_A_B_minus                                                  *
@@ -44,10 +41,11 @@ double P_A_B_minus(const vector<int> &time_line_A,
         return P;
     }
     
-    while((a < time_line_A.size()) && (b < time_line_B.size())) {
+    while((a < static_cast<int> (time_line_A.size())) && 
+                                 (b < static_cast<int> (time_line_B.size()))) {
         /* spike of A is within tile of spike of B [tB, tB + Dt] */
         if((time_line_A[a] >= (time_line_B[b] - Dt)) && 
-                                        (time_line_A[a] <= time_line_B[b])) {
+                                          (time_line_A[a] <= time_line_B[b])) {
             N++;
             a++;
         }
@@ -97,10 +95,11 @@ double P_B_A_plus(const vector<int> &time_line_A,
         return P;
     }
     
-    while((a < time_line_A.size()) && (b < time_line_B.size())) {
+    while((a < static_cast<int> (time_line_A.size())) && 
+                                (b < static_cast<int> (time_line_B.size()))) {
         /* spike of B is within tile of spike of A [tA, tA + Dt] */
         if((time_line_B[b] >= time_line_A[a]) && 
-                                (time_line_B[b] <= (time_line_A[a] + Dt))) {
+                                  (time_line_B[b] <= (time_line_A[a] + Dt))) {
             N++;
             b++;
         }
@@ -139,7 +138,7 @@ double STTC_A_B(const vector<int> &time_line_A, const vector<int> &time_line_B,
                                                 int total_time_samples, int Dt)
 {
   double pABm = P_A_B_minus(time_line_A, time_line_B, Dt);
-  double tBm = T_B_minus(time_line_B, Dt);
+  double tBm = T_B_minus(time_line_B, total_time_samples, Dt);
   double pBAp = P_B_A_plus(time_line_B, time_line_A, Dt);
   double tAp = T_A_plus(time_line_A, total_time_samples, Dt);
 
