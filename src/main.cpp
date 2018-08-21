@@ -70,13 +70,12 @@ int main(int argc, char const *argv[])
     vector<int> spike_trains[neurons];
 
 // Store each neuron's firing (1's) to the data structure
-    int count = 0, total_time_samples = 0;
+    int total_time_samples = 0;
     while (getline(data, line)) {
         for (int n = 0; n < neurons; n++) {
             if (line[n] == '1') {
-                spike_trains[n].push_back(count);
+                spike_trains[n].push_back(total_time_samples);
             }
-            count++;
         }
         total_time_samples++;
     }
