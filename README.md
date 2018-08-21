@@ -34,3 +34,4 @@ Significant threshold = mean_sttc_cond + 3 std_sttc_cond
 A second limitation in order to consider a triplet as significant is that the number of firing events of A that follows ΔΤ after each spike of C (‘reduced A’).
 If the conditional STTC of the given triplet is greater than the significant threshold and the number of firing events of ‘reduced A’ is greater than 5, then we consider this triplet as significant.
 In this approach we set one significant threshold value per triplet, based on the 50 produced values and compare each triplet (A-> B)|C with the corresponding significant threshold value.
+
