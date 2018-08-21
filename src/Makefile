@@ -8,15 +8,16 @@
 
 
 
-COMPILE_FLAGS =  -Wall -Wextra -g
+COMPILE_FLAGS =  -Wall -Wextra -g -std=c++11
 
 
-sttc : main.o common.o tuplets.o triplets.o p_p_null_dist.o cond_null_dist.o
-	g++ ${COMPILE_FLAGS} -o sttc main.o common.o tuplets.o triplets.o pp_null_dist.o cond_null_dist.o 
+sttc : main.o 
+	g++ ${COMPILE_FLAGS} -o sttc main.o  
 
 
-main.o : main.cpp common.hpp tuplets_STTC.hpp triplets_STTC.hpp p_p_null_dist.hpp cond_null_dist.hpp
-	g++ -c ${COMPILE_FLAGS} main.cpp
+main.o : main.cpp common.hpp tuplets_STTC.hpp triplets_STTC.hpp p_p_null_dist.hpp \
+		cond_null_dist.hpp common.o tuplets.o triplets.o p_p_null_dist.o cond_null_dist.o
+	g++ -c ${COMPILE_FLAGS} main.cpp 
 
 common.o : common.cpp common.hpp
 	g++ -c ${COMPILE_FLAGS} common.cpp

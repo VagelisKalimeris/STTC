@@ -126,7 +126,7 @@ void circular_shift(vector<int> &time_line, unsigned int random) {
     int max = time_line.back();
     vector<int>::iterator front_it = time_line.begin();
 
-    for (int i = 0; i < time_line.size(); i++) {
+    for (size_t i = 0; i < time_line.size(); i++) {
         int temp = time_line[i] + random;
 
         if ((temp) < max) {
@@ -159,7 +159,8 @@ void circular_shift(vector<int> &time_line, unsigned int random) {
 bool sign_trpl_limit(const vector<int> &time_line_A, 
                                         const vector<int> &time_line_C, int Dt)
 {
-        int s = 0, a = 0, c = 0;
+    int s = 0;
+    size_t a = 0, c = 0;
     
     /* all spikes of A are before tiles of C */
     if(time_line_A.back() < time_line_C.front()) {
@@ -194,6 +195,6 @@ bool sign_trpl_limit(const vector<int> &time_line_A,
 // Helper function. Generates random integers 
 // in the range 0 - (total_time_samples-1).
 unsigned int random_gen(unsigned int max_number) {
-    auto machine = std::uniform_int_distribution<unsigned int>(0, max_number);
-    return machine(std::mt19937(std::random_device()));
+    auto machine = uniform_int_distribution<unsigned int>(0, max_number);
+    return machine(mt19937(random_device()));
 }
