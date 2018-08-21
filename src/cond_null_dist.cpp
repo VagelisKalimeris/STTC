@@ -9,10 +9,7 @@
 ******************************************************************************/
 
 
-
-#include <cmath>
-#include<vector>
-using namespace std;
+#include "cond_null_dist.hpp"
 
 /******************************************************************************
 * FUNCTION NAME: circ_STTC_A_B_C                                              *
@@ -29,14 +26,14 @@ using namespace std;
 ******************************************************************************/
 void circ_STTC_A_B_C(double results_arr[], int circ_shifts_num, 
                 const vector<int> &time_line_A, const vector<int> &time_line_B, 
-                                        const vector<int> &time_line_C, int Dt)
+                const vector<int> &time_line_C, int total_time_samples, int Dt)
 {
     for (int i = 0; i < circ_shifts_num; i++) {
         vector<int> to_shift = time_line_C;
 
         circular_shift(to_shift, circ_shifts_num);
-        results_arr[i] = STTC_AB_C(time_line_A, time_line_B, 
-                             to_shift, Dt);
+        results_arr[i] = STTC_AB_C(time_line_A, time_line_B, to_shift, 
+                                                       total_time_samples, Dt);
     }
 }
 
@@ -69,10 +66,11 @@ bool sign_trpl_limit(const vector<int> &time_line_A,
         return false;
     }
     
-    while((a < time_line_A.size()) && (c < time_line_C.size())) {
+    while((a < static_cast<int> (time_line_A.size())) && 
+                                 (c < static_cast<int> (time_line_C.size()))) {
         /* spike of A is within tile of spike of C [tC, tC + Dt] */
         if((time_line_A[a] >= time_line_C[c]) && 
-                                 (time_line_A[a] <= (time_line_C[c] + Dt))) {
+                                   (time_line_A[a] <= (time_line_C[c] + Dt))) {
             s++;
             a++;
         }

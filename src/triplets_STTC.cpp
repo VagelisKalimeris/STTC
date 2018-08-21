@@ -9,10 +9,70 @@
 ******************************************************************************/
 
 
+#include "triplets_STTC.hpp"
 
-#include <cmath>
-#include<vector>
-using namespace std;
+/******************************************************************************
+* FUNCTION NAME: N_AplusB_CA                                                  *
+*                                                                             *
+* ARGUMENTS: Two neuron's timelines(references to vectors), and a time        *
+*             interval(int).                                                  *
+*                                                                             *
+* PURPOSE: Calculates the fraction of the total recording time which is       *
+*           covered by the tiles +Δt after each spike of A, that fall within  *
+*            the tiles Δt after each spike of C.                              *
+*                                                                             *
+* RETURNS: The total time(double).                                            *
+*                                                                             *
+* I/O: None.                                                                  *
+*                                                                             *
+******************************************************************************/
+double T_A_plus_tripl(const vector<int> &time_line_A, 
+                const vector<int> &time_line_C, int total_time_samples, int Dt)
+{
+    double T = 0.0;
+    int a = 0, c = 0, s = 0, last = -1;
+    
+    /* all spikes of A are before tiles of C */
+    if(time_line_A.back() < time_line_C.front()) {
+        return T;
+    }
+    /* all spikes of A are after tiles of C */
+    if((time_line_C.back() + Dt) < time_line_A.front()) {
+        return T;
+    }
+    
+    while((a < static_cast<int> (time_line_A.size())) && 
+                                    (c < static_cast<int> (time_line_C.size()))) {
+        /* spike of A is within tile of spike of C [tC, tC + Dt] */
+        if((time_line_A[a] >= time_line_C[c]) &&
+                                    (time_line_A[a] <= (time_line_C[c] + Dt))) {
+            /* check if last calculated tile is before spike of A */
+            if(last < time_line_A[a]) {
+                /* add Dt + 1 */
+                s = s + Dt + 1;
+            }
+            else{
+                /* add Dt + 1 - (tA'_prev + Dt + 1 - tA'_curr) */
+                s = s + Dt + time_line_A[a] - last;
+            }
+            last = time_line_A[a] + Dt;
+            a++;
+        }
+        /* spike of A is before tile of spike of C [tC, tC + Dt] */
+        else if(time_line_A[a] < time_line_C[c]) {
+            a++;
+        }
+        /* spike of A is after tile of spike of C [tC, tC + Dt] */
+        else if(time_line_A[a] > (time_line_C[c] + Dt)) {
+            c++;
+        }
+    }
+    
+    T = s / double(total_time_samples);
+    
+    return T;
+}
+
 
 double T_A_plus_tripl(const vector<int> &time_line_A,
 	const vector<int> &time_line_C, int total_time_samples, int Dt) {
@@ -97,8 +157,9 @@ int N_BminusA_CA(const vector<int> &time_line_A,
         return N;
     }
     
-    while((a < time_line_A.size()) && (b < time_line_B.size()) && 
-                                                    (c < time_line_C.size())) {
+    while((a < static_cast<int> (time_line_A.size())) && 
+                                 (b < static_cast<int> (time_line_B.size())) && 
+                                 (c < static_cast<int> (time_line_C.size()))) {
         /* spike of A is within tile of spike of C [tC, tC + Dt] */
         if((time_line_A[a] >= time_line_C[c]) && 
                                 (time_line_A[a] <= (time_line_C[c] + Dt))) {
@@ -170,8 +231,9 @@ int N_AplusB_CA(const vector<int> &time_line_A,
         return N;
     }
     
-    while((a < time_line_A.size()) && (b < time_line_B.size()) && 
-                                                    (c < time_line_C.size())) {
+    while((a < static_cast<int> (time_line_A.size())) && 
+                                 (b < static_cast<int> (time_line_B.size())) && 
+                                 (c < static_cast<int> (time_line_C.size()))) {
         /* spike of A is within tile of spike of C [tC, tC + Dt] */
         if((time_line_A[a] >= time_line_C[c]) && 
                                 (time_line_A[a] <= (time_line_C[c] + Dt))) {
@@ -223,7 +285,7 @@ double STTC_AB_C(const vector<int> &time_line_A, const vector<int> &time_line_B,
 {
   int nApBCA = N_AplusB_CA(time_line_A, time_line_B, time_line_C, Dt);
   int nBmACA =  N_BminusA_CA(time_line_A, time_line_B, time_line_C, Dt);
-  double tApt = T_A_plus_tripl(time_line_A, time_line_C, Dt);
+  double tApt = T_A_plus_tripl(time_line_A, time_line_C, total_time_samples, Dt);
   double tBm = T_B_minus(time_line_B, total_time_samples, Dt);
   int nA = time_line_A.size(), nB = time_line_A.size();
 

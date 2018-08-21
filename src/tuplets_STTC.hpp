@@ -10,6 +10,13 @@
 
 
 
+#include <cmath>
+#include<vector>
+
+#include "common.hpp"
+
+using namespace std;
+
 /******************************************************************************
 * FUNCTION NAME: P_A_B_minus                                                  *
 *                                                                             *

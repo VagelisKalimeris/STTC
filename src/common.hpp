@@ -12,6 +12,8 @@
 
 #include <cmath>
 #include <vector>
+#include <random>
+
 using namespace std;
 
 /******************************************************************************
@@ -79,23 +81,6 @@ void circular_shift(vector<int> &time_line, unsigned int random);
 ******************************************************************************/
 double sign_thresh(double mean, double st_dev);
 
-
-/******************************************************************************
-* FUNCTION NAME: sign_trpl_limit                                              *
-*                                                                             *
-* ARGUMENTS: Two neuron's timelines(references to vectors), and a time        *
-*             interval(int).                                                  *
-*                                                                             *
-* PURPOSE: Calculates if the number of firing events of ‘reduced A’ is        *
-*           greater than 5 or not.                                            *
-*                                                                             *
-* RETURNS: True or False.                                                     *
-*                                                                             *
-* I/O: None.                                                                  *
-*                                                                             *
-******************************************************************************/
-bool sign_trpl_limit(const vector<int> &time_line_A, 
-                                        const vector<int> &time_line_C, int Dt);
 
 // Helper function. Generates random integers 
 // in the range 0 - (total_time_samples-1).
