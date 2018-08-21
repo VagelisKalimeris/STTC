@@ -45,7 +45,7 @@ int main(int argc, char const *argv[])
 {
 // Prevent warning: unused parameter 'argc'
     (void) argc;
-// command line arguments
+// Command Line Arguments. First give random sample size, then tile size. 
     const int circ_shifts_num = stoi(argv[1]), Dt = stoi(argv[2]);
 // Shifted spike trains will be copied here
     vector<int> to_shift;
@@ -63,7 +63,7 @@ int main(int argc, char const *argv[])
 
 // Get total number of neurons from file
     getline(data, line);
-    const int neurons = line.length();
+    const int neurons = line.length() - 1;
     data.seekg(0, data.beg);
 
 // Our main data structure
@@ -79,7 +79,7 @@ int main(int argc, char const *argv[])
         }
         total_time_samples++;
     }
-
+cout<<neurons<<endl;
 // Start random sequence
     srand(time(NULL));
 
@@ -141,7 +141,7 @@ int main(int argc, char const *argv[])
     cout<<"\nThe data structure: "<<endl;
     for (int neur = 0; neur < neurons; neur++) {
         for (size_t fire = 0; fire < spike_trains[neurons].size(); fire++) {
-            cout<<spike_trains[neur][fire]<<' '<<endl;
+            cout<<spike_trains[neur][fire]<<' ';
         total_firings++;
         }
         cout<<endl;
