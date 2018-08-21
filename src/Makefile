@@ -11,29 +11,28 @@
 COMPILE_FLAGS =  -Wall -Wextra -g
 
 
-sttc : main.o common.o tuplets.o triplets.o pp_null_dist.o cond_null_dist.o
-    gcc ${COMPILE_FLAGS} main.o common.o tuplets.o triplets.o pp_null_dist.o -o sttc
+sttc : main.o common.o tuplets.o triplets.o p_p_null_dist.o cond_null_dist.o
+	g++ ${COMPILE_FLAGS} -o sttc main.o common.o tuplets.o triplets.o pp_null_dist.o cond_null_dist.o 
 
 
-main.o : main.c
-    gcc -c ${COMPILE_FLAGS} main.c
+main.o : main.cpp common.hpp tuplets_STTC.hpp triplets_STTC.hpp p_p_null_dist.hpp cond_null_dist.hpp
+	g++ -c ${COMPILE_FLAGS} main.cpp
 
-common.o : common.c common.h
-    gcc -c ${COMPILE_FLAGS} common.c
+common.o : common.cpp common.hpp
+	g++ -c ${COMPILE_FLAGS} common.cpp
 
-tuplets.o : tuplets_STTC.c tuplets_STTC.h common.h
-    gcc -c ${COMPILE_FLAGS} tuplets_STTC.c
+tuplets.o : tuplets_STTC.cpp tuplets_STTC.hpp common.hpp
+	g++ -c ${COMPILE_FLAGS} tuplets_STTC.cpp
 
-triplets.o : triplets_STTC.c triplets_STTC.h common.h
-    gcc -c ${COMPILE_FLAGS} triplets_STTC.c
+triplets.o : triplets_STTC.cpp triplets_STTC.hpp common.hpp
+	g++ -c ${COMPILE_FLAGS} triplets_STTC.cpp
 
-pp_null_dist.o : pp_null_dist.c pp_null_dist.h tuplets_STTC.h common.h
-    gcc -c ${COMPILE_FLAGS} pp_null_dist.c
+p_p_null_dist.o : p_p_null_dist.cpp p_p_null_dist.hpp tuplets_STTC.hpp common.hpp
+	g++ -c ${COMPILE_FLAGS} pp_null_dist.cpp
 
-cond_null_dist.o : cond_null_dist.c triplets_STTC.h common.h
-    gcc -c ${COMPILE_FLAGS} cond_null_dist.c
-
+cond_null_dist.o : cond_null_dist.cpp cond_null_dist.hpp triplets_STTC.hpp common.hpp
+	g++ -c ${COMPILE_FLAGS} cond_null_dist.cpp
 
 
 clean :
-    -rm *.o sttc
+	-rm *.o sttc

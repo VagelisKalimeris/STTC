@@ -193,7 +193,7 @@ bool sign_trpl_limit(const vector<int> &time_line_A,
 
 // Helper function. Generates random integers 
 // in the range 0 - (total_time_samples-1).
-int random_gen(unsigned int max_number) {
+unsigned int random_gen(unsigned int max_number) {
     auto machine = std::uniform_int_distribution<unsigned int>(0, max_number);
     return machine(std::mt19937(std::random_device()));
 }
