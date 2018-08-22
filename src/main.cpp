@@ -75,7 +75,7 @@ int main(int argc, char const *argv[])
     while (getline(data, line)) {
         for (int n = 0; n < neurons; n++) {
             if (line[n] == '1') {
-                spike_trains[n].push_back(total_time_samples + 1);
+                spike_trains[n].push_back(total_time_samples);
             }
         }
         total_time_samples++;
@@ -151,7 +151,7 @@ int main(int argc, char const *argv[])
     for (int neur = 0; neur < neurons; neur++) {
         cout<<"No "<<neur + 1<<" neuron's spikes:\n";
         for (size_t fire = 0; fire < spike_trains[neur].size(); fire++) {
-            cout<<spike_trains[neur][fire]<<' ';
+            cout<<spike_trains[neur][fire] + 1<<' ';
         total_firings++;
         }
         cout<<endl<<endl;
