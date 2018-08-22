@@ -255,7 +255,6 @@ double STTC_AB_C(const vector<int> &time_line_A, const vector<int> &time_line_B,
                                                         total_time_samples, Dt);
     double nA = double(time_line_A.size()), nB = double(time_line_B.size());
     
-    //cout<<"N_BminusA_CA: "<<nBmACA<<"\nT_B_minus: "<<tBm<<"\nN_AplusB_CA: "<<nApBCA<<"\nT_A_plus_tripl: "<<tApt<<endl;
     return 0.5 * ((((nBmACA / nA) - tBm) / (1.0 - ((nBmACA / nA) * tBm))) + 
                     (((nApBCA / nB) - tApt) / (1.0 - ((nApBCA / nB) * tApt))));
 }
