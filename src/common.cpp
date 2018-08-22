@@ -151,7 +151,7 @@ void circular_shift(vector<int> &time_line, unsigned int random,
         }
         else {
             time_line.erase(time_line.begin() + i);
-            temp = temp - total_time_samples - 1;
+            temp = temp - total_time_samples;
             time_line.insert(front_it, temp);
             ++front_it;
         }
