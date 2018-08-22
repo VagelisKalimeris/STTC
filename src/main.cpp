@@ -127,7 +127,7 @@ int main(int argc, char const *argv[])
                 cout<<"TRIPLE STTC: "<<trip_sttc<<endl;
                 for (int shift = 0; shift < circ_shifts_num; shift++) {
                     to_shift = spike_trains[k];
-                    unsigned int random = random_gen(total_time_samples);
+                    unsigned int random = 5; //random_gen(total_time_samples);
                     circular_shift(to_shift, random, total_time_samples);
                     shifted_res_arr[shift] = STTC_AB_C(spike_trains[i], 
                             spike_trains[j], to_shift, total_time_samples, Dt);
