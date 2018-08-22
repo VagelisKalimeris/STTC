@@ -30,20 +30,31 @@ double T_A_plus(const vector<int> &time_line_A, int total_time_samples,
                                                                         int Dt)
 {
     double T = 0.0;
-    const int Dt_1 = Dt + 1;
+    
+    if(time_line_A.size() == 0) {
+        return T;
+    }
     if (Dt == 0) {
         // if Dt is zero then return mean
         T = time_line_A.size() / double(total_time_samples);
     }
     else {
-        int s = 0, last_spike = 0;
-        for (auto &spike : time_line_A){ // for each spike
-               for (int j = 0; j < Dt_1; ++j){ // check all the next
-                if((spike + j <= total_time_samples) && (spike+j > last_spike)){
-                    ++s;
-              }
-               }
-               last_spike = spike + Dt; //  keep the last spike
+        int s = 0, last_spike = -1;
+        for (auto &spike : time_line_A) { // for each spike
+            //check if in spike is in [spike + D,spike)
+            if (last_spike < spike) {
+                s += Dt + 1; // sum the Dt include spike
+            }
+            else {
+                // else sum the distance of the current +dt from last
+                s += spike + Dt - last_spike;
+            }
+            last_spike = spike + Dt; //  keep the last spike
+        }
+        // if there are some spikes Dt places after total_stamps
+        // calculate them and remove them
+        if (last_spike != -1 && last_spike >= total_time_samples) {
+            s -= last_spike + 1 - total_time_samples;
         }
         T = s / double(total_time_samples);
     }
@@ -69,23 +80,31 @@ double T_B_minus(const vector<int> &time_line_B, int total_time_samples,
                                                                         int Dt)
 {
     double T = 0.0;
-    const int Dt_1 = Dt + 1;
-    if (Dt == 0) {
-        // if Dt is zero then return mean
+    int s = 0, last = -1;
+    
+    if(time_line_B.size() == 0) {
+        return T;
+    }
+    if(Dt == 0) {
         T = time_line_B.size() / double(total_time_samples);
     }
     else {
-        int s = 0, last_spike = -1; // -1 counts the case: first spike-j = zero
-        for (auto &spike : time_line_B){ // for each spike 
-           for (int j = 0; j < Dt_1; ++j){ // check all the previous spikes
-              if((spike - j) > last_spike){
-                  ++s;
-              }
-           }
-           last_spike = spike; // keep the first spike
+        for(unsigned int b = 0; b < time_line_B.size(); ++b) {
+            /* check if last calculated tile is before tile of spike of B */
+            if(last < (time_line_B[b] - Dt)) {
+                /* add Dt + 1 */
+                s += Dt + 1;
+            }
+            else {
+                /* add tB'_curr - tB'_prev */
+                s += time_line_B[b] - last;
+            }
+            last = time_line_B[b];
         }
+
         T = s / double(total_time_samples);
     }
+    
     return T;
 }
 
@@ -132,7 +151,7 @@ void circular_shift(vector<int> &time_line, unsigned int random,
         }
         else {
             time_line.erase(time_line.begin() + i);
-            temp = temp - total_time_samples - 1;
+            temp = temp - total_time_samples;
             time_line.insert(front_it, temp);
             ++front_it;
         }
@@ -144,7 +163,7 @@ void circular_shift(vector<int> &time_line, unsigned int random,
 // Helper function. Generates random integers 
 // in the range 0 - (total_time_samples-1).
 unsigned int random_gen(unsigned int max_number) {
-    return rand() % max_number;
+    return 1 + rand() % max_number;
 }
 
 /*{
