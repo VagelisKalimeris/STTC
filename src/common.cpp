@@ -103,7 +103,7 @@ double T_B_minus(const vector<int> &time_line_B, int total_time_samples,
 ******************************************************************************/
 double sign_thresh(double mean, double st_dev)
 {
-    return mean + (3 * st_dev);
+    return mean + (3.0 * st_dev);
 }
 
 
@@ -120,19 +120,19 @@ double sign_thresh(double mean, double st_dev)
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-void circular_shift(vector<int> &time_line, unsigned int random) {
-    int max = time_line.back();
+void circular_shift(vector<int> &time_line, unsigned int random, 
+                                                      int total_time_samples) {
     vector<int>::iterator front_it = time_line.begin();
 
     for (int i = 0; i < static_cast<int> (time_line.size()); i++) {
         int temp = time_line[i] + random;
 
-        if ((temp) < max) {
+        if ((temp) < total_time_samples) {
             time_line[i] = temp;
         }
         else {
             time_line.erase(time_line.begin() + i);
-            temp = temp - max - 1;
+            temp = temp - total_time_samples - 1;
             time_line.insert(front_it, temp);
             ++front_it;
         }

@@ -65,7 +65,8 @@ double T_B_minus(const vector<int> &time_line_B, int total_time_samples,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-void circular_shift(vector<int> &time_line, unsigned int random);
+void circular_shift(vector<int> &time_line, unsigned int random, 
+													   int total_time_samples);
 
 
 /******************************************************************************
