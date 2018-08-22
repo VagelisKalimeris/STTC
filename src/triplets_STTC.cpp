@@ -30,7 +30,8 @@ double T_A_plus_tripl(const vector<int> &time_line_A,
                 const vector<int> &time_line_C, int total_time_samples, int Dt)
 {
 	double T = 0.0;
-	int a = 0, c = 0, s = 0, last = -1;
+	int s = 0, last = -1;
+    unsigned int a = 0, c = 0;
 
 	/* all spikes of A are before tiles of C */
 	if (time_line_A.back() < time_line_C.front()) {
@@ -91,7 +92,7 @@ int N_BminusA_CA(const vector<int> &time_line_A,
         const vector<int> &time_line_B, const vector<int> &time_line_C, int Dt)
 {
     int N = 0;
-    int a = 0, b = 0, c = 0;
+    unsigned int a = 0, b = 0, c = 0;
     
     /* all spikes of A are before tiles of C */
     if(time_line_A.back() < time_line_C.front()) {
@@ -163,7 +164,7 @@ int N_AplusB_CA(const vector<int> &time_line_A,
         const vector<int> &time_line_B, const vector<int> &time_line_C, int Dt)
 {
     int N = 0;
-    int a = 0, b = 0, c = 0;
+    unsigned int a = 0, b = 0, c = 0;
     
     /* all spikes of A are before tiles of C */
     if(time_line_A.back() < time_line_C.front()) {

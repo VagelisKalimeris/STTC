@@ -29,7 +29,8 @@
 bool sign_trpl_limit(const vector<int> &time_line_A, 
                                         const vector<int> &time_line_C, int Dt)
 {
-    int s = 0, a = 0, c = 0;
+    int s = 0;
+    unsigned int a = 0, c = 0;
     
     /* all spikes of A are before tiles of C */
     if(time_line_A.back() < time_line_C.front()) {

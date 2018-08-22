@@ -83,7 +83,7 @@ double T_B_minus(const vector<int> &time_line_B, int total_time_samples,
         T = time_line_B.size() / double(total_time_samples);
     }
     else {
-        for(int b = 0; b < time_line_B.size(); ++b) {
+        for(unsigned int b = 0; b < time_line_B.size(); ++b) {
             /* check if last calculated tile is before tile of spike of B */
             if(last < (time_line_B[b] - Dt)) {
                 /* add Dt + 1 */
@@ -137,7 +137,7 @@ void circular_shift(vector<int> &time_line, unsigned int random,
                                                       int total_time_samples) {
     vector<int>::iterator front_it = time_line.begin();
 
-    for (int i = 0; i < time_line.size(); i++) {
+    for (unsigned int i = 0; i < time_line.size(); i++) {
         int temp = time_line[i] + random;
 
         if ((temp) < total_time_samples) {
