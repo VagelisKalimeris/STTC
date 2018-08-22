@@ -31,6 +31,9 @@ double T_A_plus(const vector<int> &time_line_A, int total_time_samples,
 {
 	double T = 0.0;
 	
+    if(time_line_A.size() == 0) {
+        return T;
+    }
 	if (Dt == 0) {
 		// if Dt is zero then return mean
 		T = time_line_A.size() / double(total_time_samples);
@@ -79,6 +82,9 @@ double T_B_minus(const vector<int> &time_line_B, int total_time_samples,
     double T = 0.0;
     int s = 0, last = -1;
     
+    if(time_line_B.size() == 0) {
+        return T;
+    }
     if(Dt == 0) {
         T = time_line_B.size() / double(total_time_samples);
     }

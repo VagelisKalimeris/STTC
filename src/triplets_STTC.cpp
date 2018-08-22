@@ -32,7 +32,10 @@ double T_A_plus_tripl(const vector<int> &time_line_A,
 	double T = 0.0;
 	int s = 0, last = -1;
     unsigned int a = 0, c = 0;
-
+    
+    if(time_line_A.size() == 0 || time_line_C.size() == 0) {
+        return T;
+    }
 	/* all spikes of A are before tiles of C */
 	if (time_line_A.back() < time_line_C.front()) {
 		return T;
@@ -49,7 +52,7 @@ double T_A_plus_tripl(const vector<int> &time_line_A,
 			/* check if last calculated tile is before spike of A */
 			if (last < time_line_A[a]) {
 				/* add Dt + 1 */
-				s += Dt;
+				s += Dt + 1;
 			}
 			else {
 				/* add Dt + 1 - (tA'_prev + Dt + 1 - tA'_curr) */
@@ -67,6 +70,9 @@ double T_A_plus_tripl(const vector<int> &time_line_A,
 			c++;
 		}
 	}
+    if((last != -1) && (last >= total_time_samples)){
+        s -= last + 1 - total_time_samples;
+    }
 
 	T = s / double(total_time_samples);
 
@@ -94,6 +100,10 @@ int N_BminusA_CA(const vector<int> &time_line_A,
     int N = 0;
     unsigned int a = 0, b = 0, c = 0;
     
+    if(time_line_A.size() == 0 || time_line_B.size() == 0 || 
+                                                    time_line_C.size() == 0) {
+        return N;
+    }
     /* all spikes of A are before tiles of C */
     if(time_line_A.back() < time_line_C.front()) {
         return N;
@@ -166,6 +176,10 @@ int N_AplusB_CA(const vector<int> &time_line_A,
     int N = 0;
     unsigned int a = 0, b = 0, c = 0;
     
+    if(time_line_A.size() == 0 || time_line_B.size() == 0 || 
+                                                    time_line_C.size() == 0) {
+        return N;
+    }
     /* all spikes of A are before tiles of C */
     if(time_line_A.back() < time_line_C.front()) {
         return N;

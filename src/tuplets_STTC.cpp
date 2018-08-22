@@ -30,8 +30,12 @@ double P_A_B_minus(const vector<int> &time_line_A,
                                         const vector<int> &time_line_B, int Dt)
 {
     double P = 0.0;
-    unsigned int a = 0, b = 0, N = 0;
+    int N = 0;
+    unsigned int a = 0, b = 0;
     
+    if(time_line_A.size() == 0 || time_line_B.size() == 0) {
+        return P;
+    }
     /* all spikes of A are before tiles of B */
     if(time_line_A.back() < (time_line_B.front() - Dt)) {
         return P;
@@ -83,8 +87,12 @@ double P_B_A_plus(const vector<int> &time_line_A,
                                         const vector<int> &time_line_B, int Dt)
 {
     double P = 0.0;
-    unsigned int a = 0, b = 0, N = 0;
+    int N = 0;
+    unsigned int a = 0, b = 0;
     
+    if(time_line_A.size() == 0 || time_line_B.size() == 0) {
+        return P;
+    }
     /* all spikes of B are before tiles of A */
     if(time_line_B.back() < time_line_A.front()) {
         return P;
