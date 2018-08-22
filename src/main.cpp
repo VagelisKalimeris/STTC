@@ -63,7 +63,7 @@ int main(int argc, char const *argv[])
 
 // Get total number of neurons from file
     getline(data, line);
-    const int neurons = 10; //line.length() - 1;
+    const int neurons = line.length() - 1;
     data.seekg(0, data.beg);
 
 // Our main data structure
@@ -79,7 +79,7 @@ int main(int argc, char const *argv[])
         }
         total_time_samples++;
     }
-    cout<<total_time_samples<<endl;
+    // cout<<total_time_samples<<endl;
 // Start random sequence
     srand(time(NULL));
 
@@ -89,16 +89,17 @@ int main(int argc, char const *argv[])
             if (i == j) {continue;} // Skip same neurons
             tupl_sttc = STTC_A_B(spike_trains[i], spike_trains[j], 
                                                        total_time_samples, Dt);
-            cout<<"TUPLE STTC: "<<tupl_sttc<<endl;
+            // cout<<"TUPLE STTC: "<<tupl_sttc<<endl;
             for (int shift = 0; shift < circ_shifts_num; shift++) {
                 to_shift = spike_trains[i];
-                unsigned int random = 5;//random_gen(total_time_samples);
+                unsigned int random = random_gen(total_time_samples);
                 // cout<<random<<endl;
                 circular_shift(to_shift, random, total_time_samples);
                 shifted_res_arr[shift] = STTC_A_B(to_shift, 
                                       spike_trains[j], total_time_samples, Dt);
-                //cout<<shifted_res_arr[shift]<<endl;
-                // for(int y=0; y<to_shift.size(); ++y)
+                // cout<<shifted_res_arr[shift]<<endl;
+                // cout<<endl;
+                // for(size_t y = 0; y<to_shift.size(); ++y)
                 //     cout << spike_trains[i][y] <<' '<< to_shift[y] <<endl;
             }
             // cout<<endl;
@@ -124,13 +125,16 @@ int main(int argc, char const *argv[])
                 }
                 trip_sttc = STTC_AB_C(spike_trains[i], spike_trains[j]
                                     , spike_trains[k], total_time_samples, Dt);
-                cout<<"TRIPLE STTC: "<<trip_sttc<<endl;
+                // cout<<"TRIPLE STTC: "<<trip_sttc<<endl;
                 for (int shift = 0; shift < circ_shifts_num; shift++) {
                     to_shift = spike_trains[k];
-                    unsigned int random = 5; //random_gen(total_time_samples);
+                    unsigned int random = random_gen(total_time_samples);
                     circular_shift(to_shift, random, total_time_samples);
                     shifted_res_arr[shift] = STTC_AB_C(spike_trains[i], 
                             spike_trains[j], to_shift, total_time_samples, Dt);
+                    // cout<<endl;
+                    // for(size_t y = 0; y<to_shift.size(); ++y)
+                    // cout << spike_trains[i][y] <<' '<< to_shift[y] <<endl;
                 }
                 mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
                 st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
