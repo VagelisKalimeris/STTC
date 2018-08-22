@@ -44,7 +44,7 @@ double P_A_B_minus(const vector<int> &time_line_A,
     while((a < time_line_A.size()) && (b < time_line_B.size())) {
         /* spike of A is within tile of spike of B [tB, tB + Dt] */
         if((time_line_A[a] >= (time_line_B[b] - Dt)) && 
-                                            time_line_A[a] <= time_line_B[b])) {
+                                        (time_line_A[a] <= time_line_B[b])) {
             N++;
             a++;
         }
