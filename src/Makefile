@@ -36,4 +36,4 @@ cond_null_dist.o : cond_null_dist.cpp cond_null_dist.hpp triplets_STTC.hpp commo
 
 
 clean :
-	-rm *.o sttc
+	-rm *.o sttc output

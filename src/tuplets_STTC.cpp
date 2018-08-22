@@ -145,10 +145,10 @@ double STTC_A_B(const vector<int> &time_line_A, const vector<int> &time_line_B,
 {
     double pABm = P_A_B_minus(time_line_A, time_line_B, Dt);
     double tBm = T_B_minus(time_line_B, total_time_samples, Dt);
-    double pBAp = P_B_A_plus(time_line_B, time_line_A, Dt);
+    double pBAp = P_B_A_plus(time_line_A, time_line_B, Dt);
     double tAp = T_A_plus(time_line_A, total_time_samples, Dt);
     
     //cout<<"P_A_B_minus: "<<pABm<<"\nT_B_minus: "<<tBm<<"\nP_B_A_plus: "<<pBAp<<"\nT_A_plus: "<<tAp<<endl;
-    return (1/2.0) * (((pABm - tBm) / (1.0 - (pABm * tBm))) + 
-                                                ((pBAp - tAp) / (pBAp * tAp)));
+    return 0.5 * (((pABm - tBm) / (1.0 - (pABm * tBm))) + 
+                                        ((pBAp - tAp) / (1.0 - (pBAp * tAp))));
 }
