@@ -70,15 +70,16 @@ int main(int argc, char const *argv[])
     vector<int> spike_trains[neurons];
 
 // Store each neuron's firing (1's) to the data structure
-    int total_time_samples = 1;
+    int total_time_samples = 0;
     while (getline(data, line)) {
         for (int n = 0; n < neurons; n++) {
             if (line[n] == '1') {
-                spike_trains[n].push_back(total_time_samples);
+                spike_trains[n].push_back(total_time_samples + 1);
             }
         }
         total_time_samples++;
     }
+    cout<<total_time_samples<<endl;
 // Start random sequence
     srand(time(NULL));
 
@@ -88,7 +89,7 @@ int main(int argc, char const *argv[])
             if (i == j) {continue;} // Skip same neurons
             tupl_sttc = STTC_A_B(spike_trains[i], spike_trains[j], 
                                                        total_time_samples, Dt);
-            //cout<<"TUPLE STTC: "<<tupl_sttc<<endl;
+            cout<<"TUPLE STTC: "<<tupl_sttc<<endl;
             for (int shift = 0; shift < circ_shifts_num; shift++) {
                 to_shift = spike_trains[i];
                 unsigned int random = 5;//random_gen(total_time_samples);
