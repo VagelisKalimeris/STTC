@@ -15,6 +15,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <cstdlib>
 
 #include "common.hpp"
 #include "p_p_null_dist.hpp"
