@@ -30,34 +30,34 @@ double T_A_plus(const vector<int> &time_line_A, int total_time_samples,
                                                                         int Dt)
 {
     double T = 0.0;
+    int s = 0, last = -1;
     
     if(time_line_A.size() == 0) {
         return T;
     }
-    if (Dt == 0) {
-        // if Dt is zero then return mean
+    if(Dt == 0) {
         T = time_line_A.size() / double(total_time_samples);
     }
     else {
-        int s = 0, last_spike = -1;
-        for (auto &spike : time_line_A) { // for each spike
-            //check if in spike is in [spike + D,spike)
-            if (last_spike < spike) {
-                s += Dt + 1; // sum the Dt include spike
+        for(unsigned int a = 0; a < time_line_A.size(); ++a) {
+            /* check if last calculated tile is before tile of spike of A */
+            if(last < time_line_A[a]) {
+                /* add Dt + 1 */
+                s += Dt + 1;
             }
             else {
-                // else sum the distance of the current +dt from last
-                s += spike + Dt - last_spike;
+                /* add Dt + 1 - (tA'_prev + Dt + 1 - tA'_curr) */
+                s += Dt + time_line_A[a] - last;
             }
-            last_spike = spike + Dt; //  keep the last spike
+            last = time_line_A[a] + Dt;
         }
-        // if there are some spikes Dt places after total_stamps
-        // calculate them and remove them
-        if (last_spike != -1 && last_spike >= total_time_samples) {
-            s -= last_spike + 1 - total_time_samples;
+        if((last != -1) && (last >= total_time_samples)) {
+            s -= last + 1 - total_time_samples;
         }
+
         T = s / double(total_time_samples);
     }
+    
     return T;
 }
 
