@@ -8,7 +8,8 @@
 
 
 
-COMPILE_FLAGS =  -Wall -Wextra -g -std=c++11 -O3
+
+COMPILE_FLAGS =  -Wall -Wextra -g -O3  
 
 
 sttc : main.o common.o tuplets_STTC.o triplets_STTC.o p_p_null_dist.o cond_null_dist.o
