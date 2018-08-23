@@ -82,20 +82,30 @@ int main(int argc, char const *argv[])
     }
 // Start random sequence
     srand(time(NULL));
+    
+// Find all T
+    double tAp[neurons];
+    double tBm[neurons];
+    for(int n = 0; n < neurons; ++n) {
+        tAp[n] = T_A_plus(spike_trains[n], total_time_samples, Dt);
+        tBm[n] = T_B_minus(spike_trains[n], total_time_samples, Dt);
+    }
 
 // Calculate per pair STTC
-    for (int i = 0; i < neurons; i++) { // Neuron A
-        for (int j = 0; j < neurons; j++) { // Neuron B
-            if (i == j) {continue;} // Skip same neurons
-            tupl_sttc = STTC_A_B(spike_trains[i], spike_trains[j], 
-                                                       total_time_samples, Dt);
+    double tAps;
+    for (int a = 0; a < neurons; a++) { // Neuron A
+        for (int b = 0; b < neurons; b++) { // Neuron B
+            if (a == b) {continue;} // Skip same neurons
+            tupl_sttc = STTC_A_B(spike_trains[a], spike_trains[b], 
+                                        total_time_samples, Dt, tBm[b], tAp[a]);
             //cout<<"TUPLE STTC: "<<tupl_sttc<<endl;
             for (int shift = 0; shift < circ_shifts_num; shift++) {
-                to_shift = spike_trains[i];
+                to_shift = spike_trains[a];
                 unsigned int random = random_gen(total_time_samples);
                 circular_shift(to_shift, random, total_time_samples);
-                shifted_res_arr[shift] = STTC_A_B(to_shift, 
-                                      spike_trains[j], total_time_samples, Dt);
+                tAps = T_A_plus(to_shift, total_time_samples, Dt);
+                shifted_res_arr[shift] = STTC_A_B(to_shift, spike_trains[b], 
+                                        total_time_samples, Dt, tBm[b], tAps);
             }
             mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
             st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
@@ -111,23 +121,30 @@ int main(int argc, char const *argv[])
 
 
 // Calculate conditional STTC
-    for (int i = 0; i < neurons; i++) { // Neuron A
-        for (int j = 0; j < neurons; j++) { // Neuron B
-            if (i == j) {continue;} // Skip same neurons
-            for (int k = 0; k < neurons; k++) { // Neuron C
-                if (j == k || i == k) {continue;} // Skip same neurons
-                if (!sign_trpl_limit(spike_trains[i], spike_trains[k] ,Dt)) {
-                    continue; // Reduced A spike train has < 5 spikes
-                }
-                trip_sttc = STTC_AB_C(spike_trains[i], spike_trains[j]
-                                    , spike_trains[k], total_time_samples, Dt);
+    double tApt;
+    for (int a = 0; a < neurons; a++) { // Neuron A
+        for (int c = 0; c < neurons; c++) { // Neuron C
+            if (a == c) {continue;} // Skip same neurons
+            if (!sign_trpl_limit(spike_trains[a], spike_trains[c] ,Dt)) {
+                continue; // Reduced A spike train has < 5 spikes
+            }
+            tApt = T_A_plus_tripl(spike_trains[a], spike_trains[c], 
+                                                        total_time_samples, Dt);
+            for (int b = 0; b < neurons; b++) { // Neuron B
+                if (b == a || b == c) {continue;} // Skip same neurons
+                trip_sttc = STTC_AB_C(spike_trains[a], spike_trains[b], 
+                                    spike_trains[c], total_time_samples, 
+                                    Dt, tBm[b], tApt);
                 //cout<<"TRIPLE STTC: "<<trip_sttc<<endl;
                 for (int shift = 0; shift < circ_shifts_num; shift++) {
-                    to_shift = spike_trains[k];
+                    to_shift = spike_trains[c];
                     unsigned int random = random_gen(total_time_samples);
                     circular_shift(to_shift, random, total_time_samples);
-                    shifted_res_arr[shift] = STTC_AB_C(spike_trains[i], 
-                            spike_trains[j], to_shift, total_time_samples, Dt);
+                    tApt = T_A_plus_tripl(spike_trains[a], to_shift, 
+                                                        total_time_samples, Dt);
+                    shifted_res_arr[shift] = STTC_AB_C(spike_trains[a], 
+                                spike_trains[b], to_shift, total_time_samples, 
+                                Dt, tBm[b], tApt);
                 }
                 mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
                 st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);

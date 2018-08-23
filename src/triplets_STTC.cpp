@@ -245,14 +245,12 @@ int N_AplusB_CA(const vector<int> &time_line_A,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double STTC_AB_C(const vector<int> &time_line_A, const vector<int> &time_line_B,
-                const vector<int> &time_line_C, int total_time_samples, int Dt) 
+double STTC_AB_C(const vector<int> &time_line_A, 
+                const vector<int> &time_line_B, const vector<int> &time_line_C, 
+                int total_time_samples, int Dt, double tBm, double tApt)
 {
     int nBmACA =  N_BminusA_CA(time_line_A, time_line_B, time_line_C, Dt);
     int nApBCA = N_AplusB_CA(time_line_A, time_line_B, time_line_C, Dt);
-    double tBm = T_B_minus(time_line_B, total_time_samples, Dt);
-    double tApt = T_A_plus_tripl(time_line_A, time_line_C, 
-                                                        total_time_samples, Dt);
     double nA = double(time_line_A.size()), nB = double(time_line_B.size());
     
     //cout<<"N_BminusA_CA: "<<nBmACA<<"\nT_B_minus: "<<tBm<<"\nN_AplusB_CA: "<<nApBCA<<"\nT_A_plus_tripl: "<<tApt<<endl;
