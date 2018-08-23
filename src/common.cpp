@@ -160,12 +160,7 @@ void circular_shift(vector<int> &time_line, unsigned int random,
 
 
 // Helper function. Generates random integers 
-// in the range 0 - (total_time_samples-1).
+// in the range [1, total_time_samples].
 unsigned int random_gen(unsigned int max_number) {
-    return rand() % max_number;
+    return 1 + rand() % max_number;
 }
-
-/*{
-    auto machine = uniform_int_distribution<unsigned int>(0, max_number);
-    return machine(mt19937(random_device()()));
-}*/

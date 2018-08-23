@@ -62,7 +62,6 @@ int main(int argc, char const *argv[])
 
 // Get total number of neurons from file
     getline(data, line);
-    // For debugging i choose only 10 neurons
     const int neurons = line.length() - 1;
     data.seekg(0, data.beg);
 
@@ -88,7 +87,6 @@ int main(int argc, char const *argv[])
             if (i == j) {continue;} // Skip same neurons
             tupl_sttc = STTC_A_B(spike_trains[i], spike_trains[j], 
                                                        total_time_samples, Dt);
-            //cout<<"TUPLE STTC: "<<tupl_sttc<<endl;
             for (int shift = 0; shift < circ_shifts_num; shift++) {
                 to_shift = spike_trains[i];
                 unsigned int random = random_gen(total_time_samples);
@@ -104,7 +102,7 @@ int main(int argc, char const *argv[])
             }
         }
     }
-    cout<<"Number of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<endl; 
+    cout<<"\nNumber of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<endl; 
     cout<<endl;
 
 
@@ -120,7 +118,6 @@ int main(int argc, char const *argv[])
                 }
                 trip_sttc = STTC_AB_C(spike_trains[i], spike_trains[j]
                                     , spike_trains[k], total_time_samples, Dt);
-                //cout<<"TRIPLE STTC: "<<trip_sttc<<endl;
                 for (int shift = 0; shift < circ_shifts_num; shift++) {
                     to_shift = spike_trains[k];
                     unsigned int random = random_gen(total_time_samples);
@@ -141,17 +138,17 @@ int main(int argc, char const *argv[])
 
 
 // Print the data structure and total number of firings in experiment
-    int total_firings = 0;
-    cout<<"\nThe data structure: "<<endl;
-    for (int neur = 0; neur < neurons; neur++) {
-        cout<<"No "<<neur + 1<<" neuron's spikes:\n";
-        for (size_t fire = 0; fire < spike_trains[neur].size(); fire++) {
-            cout<<spike_trains[neur][fire] + 1<<' ';
-        total_firings++;
-        }
-        cout<<endl<<endl;
-    }
-    cout<<"\nTotal number of spikes: "<<total_firings<<endl;
+    // int total_firings = 0;
+    // cout<<"\nThe data structure: "<<endl;
+    // for (int neur = 0; neur < neurons; neur++) {
+    //     cout<<"No "<<neur + 1<<" neuron's spikes:\n";
+    //     for (size_t fire = 0; fire < spike_trains[neur].size(); fire++) {
+    //         cout<<spike_trains[neur][fire] + 1<<' ';
+    //     total_firings++;
+    //     }
+    //     cout<<endl<<endl;
+    // }
+    // cout<<"\nTotal number of spikes: "<<total_firings<<endl;
     
     data.close();
     return 0;
