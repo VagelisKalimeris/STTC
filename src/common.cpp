@@ -139,23 +139,23 @@ double sign_thresh(double mean, double st_dev)
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-void circular_shift(vector<int> &time_line, unsigned int random,
-													int total_time_samples) {
-	int front_it = 0;
+void circular_shift(vector<int> &time_line, unsigned int random, 
+                                                      int total_time_samples) {
+    vector<int>::iterator front_it = time_line.begin();
 
-	for (int i = 0; i < static_cast<int> (time_line.size()); i++) {
-		int temp = time_line[i] + random;
+    for (int i = 0; i < static_cast<int> (time_line.size()); i++) {
+        int temp = time_line[i] + random;
 
-		if ((temp) < total_time_samples) {
-			time_line[i] = temp;
-		}
-		else {
-			time_line.erase(time_line.begin() + i);
-			temp = temp - total_time_samples;
-			time_line.insert(time_line.begin() + front_it, temp);
-			++front_it;
-		}
-	}
+        if ((temp) < total_time_samples) {
+            time_line[i] = temp;
+        }
+        else {
+            time_line.erase(time_line.begin() + i);
+            temp = temp - total_time_samples;
+            time_line.insert(front_it, temp);
+            ++front_it;
+        }
+    }
 }
 
 
