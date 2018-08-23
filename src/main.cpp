@@ -9,7 +9,6 @@
 ******************************************************************************/
 
 
-
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -46,7 +45,7 @@ int main(int argc, char const *argv[])
 // Prevent warning: unused parameter 'argc'
     (void) argc;
 // Command Line Arguments. First give random sample size, then tile size. 
-    const int circ_shifts_num = stoi(argv[1]), Dt = stoi(argv[2]);
+    const int circ_shifts_num = atoi(argv[1]), Dt = atoi(argv[2]);
 // Shifted spike trains will be copied here
     vector<int> to_shift;
 // STTC values of shifted spike trains
