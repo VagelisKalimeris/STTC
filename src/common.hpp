@@ -18,8 +18,8 @@ using namespace std;
 /******************************************************************************
 * FUNCTION NAME: T_A_plus                                                     *
 *                                                                             *
-* ARGUMENTS: A neuron's timeline(reference to a vector), and a time           *
-*             interval(int).                                                  *
+* ARGUMENTS: A neuron's timeline(reference to a vector), the total time       *
+*             samples recorded(int) and a time interval(int).                 *
 *                                                                             *
 * PURPOSE: Calculates the sum of time tiles after a neuron's firing, divided  *
 *           by the total time.                                                *
@@ -36,8 +36,8 @@ double T_A_plus(const vector<int> &time_line_A, int total_time_samples,
 /******************************************************************************
 * FUNCTION NAME: T_B_minus                                                    *
 *                                                                             *
-* ARGUMENTS: A neuron's timeline(reference to a vector), and a time           *
-*             interval(int).                                                  *
+* ARGUMENTS: A neuron's timeline(reference to a vector), the total time       *
+*             samples recorded(int) and a time interval(int).                 *
 *                                                                             *
 * PURPOSE: Calculates the sum of time tiles before a neuron's firing, divided *
 *           by the total time.                                                *

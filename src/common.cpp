@@ -15,8 +15,8 @@
 /******************************************************************************
 * FUNCTION NAME: T_A_plus                                                     *
 *                                                                             *
-* ARGUMENTS: A neuron's timeline(reference to a vector), and a time           *
-*             interval(int).                                                  *
+* ARGUMENTS: A neuron's timeline(reference to a vector), the total time       *
+*             samples recorded(int) and a time interval(int).                 *
 *                                                                             *
 * PURPOSE: Calculates the sum of time tiles after a neuron's firing, divided  *
 *           by the total time.                                                *
@@ -65,8 +65,8 @@ double T_A_plus(const vector<int> &time_line_A, int total_time_samples,
 /******************************************************************************
 * FUNCTION NAME: T_B_minus                                                    *
 *                                                                             *
-* ARGUMENTS: A neuron's timeline(reference to a vector), and a time           *
-*             interval(int).                                                  *
+* ARGUMENTS: A neuron's timeline(reference to a vector), the total time       *
+*             samples recorded(int) and a time interval(int).                 *
 *                                                                             *
 * PURPOSE: Calculates the sum of time tiles before a neuron's firing, divided *
 *           by the total time.                                                *
@@ -129,7 +129,7 @@ double sign_thresh(double mean, double st_dev)
 /******************************************************************************
 * FUNCTION NAME: circular_shift                                               *
 *                                                                             *
-* ARGUMENTS: A vector representing the firings of a neuron, and a random      *
+* ARGUMENTS: A vector representing the spikes of a neuron, and a random       *
 *             number between 0 and the maximum number of time events.         *
 *                                                                             *
 * PURPOSE: Shifts forward each firing of a neuron by a random number.         *
