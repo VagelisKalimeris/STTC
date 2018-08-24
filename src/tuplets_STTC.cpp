@@ -128,8 +128,8 @@ double P_B_A_plus(const vector<int> &time_line_A,
 /******************************************************************************
 * FUNCTION NAME: STTC_A_B                                                     *
 *                                                                             *
-* ARGUMENTS: Two neuron's timelines(references to vectors), and a time        *
-*             interval(int).                                                  *
+* ARGUMENTS: Two neuron's timelines(references to vectors), the total time    *
+*             samples recorded(int)and a time interval(int).                  *
 *                                                                             *
 * PURPOSE: Calculates the the correlation between spike trains for the spikes *
 *           of B that follows spikes of A and the spikes of A that proceeds   *
@@ -146,7 +146,6 @@ double STTC_A_B(const vector<int> &time_line_A, const vector<int> &time_line_B,
     double pABm = P_A_B_minus(time_line_A, time_line_B, Dt);
     double pBAp = P_B_A_plus(time_line_A, time_line_B, Dt);
     
-    //cout<<"P_A_B_minus: "<<pABm<<"\nT_B_minus: "<<tBm<<"\nP_B_A_plus: "<<pBAp<<"\nT_A_plus: "<<tAp<<endl;
     return 0.5 * (((pABm - tBm) / (1.0 - (pABm * tBm))) + 
                                         ((pBAp - tAp) / (1.0 - (pBAp * tAp))));
 }

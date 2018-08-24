@@ -9,9 +9,8 @@
 ******************************************************************************/
 
 
-
 #include <cmath>
-#include<vector>
+#include <vector>
 
 #include "common.hpp"
 #include "tuplets_STTC.hpp"

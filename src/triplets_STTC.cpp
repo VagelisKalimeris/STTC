@@ -12,10 +12,10 @@
 #include "triplets_STTC.hpp"
 
 /******************************************************************************
-* FUNCTION NAME: N_AplusB_CA                                                  *
+* FUNCTION NAME: T_A_plus_tripl                                               *
 *                                                                             *
-* ARGUMENTS: Two neuron's timelines(references to vectors), and a time        *
-*             interval(int).                                                  *
+* ARGUMENTS: Two neuron's timelines(references to vectors), the total number  *
+*             of time samples recorded(int), and a time interval(int).        *
 *                                                                             *
 * PURPOSE: Calculates the fraction of the total recording time which is       *
 *           covered by the tiles +Δt after each spike of A, that fall within  *
@@ -29,65 +29,65 @@
 double T_A_plus_tripl(const vector<int> &time_line_A,
                 const vector<int> &time_line_C, int total_time_samples, int Dt)
 {
-	double T = 0.0;
-	int s = 0, last = -1;
+    double T = 0.0;
+    int s = 0, last = -1;
     unsigned int a = 0, c = 0;
     
     if(time_line_A.size() == 0 || time_line_C.size() == 0) {
         return T;
     }
-	/* all spikes of A are before tiles of C */
-	if (time_line_A.back() < time_line_C.front()) {
-		return T;
-	}
-	/* all spikes of A are after tiles of C */
-	if ((time_line_C.back() + Dt) < time_line_A.front()) {
-		return T;
-	}
+    /* all spikes of A are before tiles of C */
+    if (time_line_A.back() < time_line_C.front()) {
+        return T;
+    }
+    /* all spikes of A are after tiles of C */
+    if ((time_line_C.back() + Dt) < time_line_A.front()) {
+        return T;
+    }
 
-	while ((a < time_line_A.size()) && (c < time_line_C.size())) {
-		/* spike of A is within tile of spike of C [tC, tC + Dt] */
-		if ((time_line_A[a] >= time_line_C[c]) && 
+    while ((a < time_line_A.size()) && (c < time_line_C.size())) {
+        /* spike of A is within tile of spike of C [tC, tC + Dt] */
+        if ((time_line_A[a] >= time_line_C[c]) && 
                                     (time_line_A[a] <= (time_line_C[c] + Dt))) {
-			/* check if last calculated tile is before spike of A */
-			if (last < time_line_A[a]) {
-				/* add Dt + 1 */
-				s += Dt + 1;
-			}
-			else {
-				/* add Dt + 1 - (tA'_prev + Dt + 1 - tA'_curr) */
-				s += time_line_A[a] + Dt - last;
-			}
-			last = time_line_A[a] + Dt;
-			a++;
-		}
-		/* spike of A is before tile of spike of C [tC, tC + Dt] */
-		else if (time_line_A[a] < time_line_C[c]) {
-			a++;
-		}
-		/* spike of A is after tile of spike of C [tC, tC + Dt] */
-		else if (time_line_A[a] > (time_line_C[c] + Dt)) {
-			c++;
-		}
-	}
+            /* check if last calculated tile is before spike of A */
+            if (last < time_line_A[a]) {
+                /* add Dt + 1 */
+                s += Dt + 1;
+            }
+            else {
+                /* add Dt + 1 - (tA'_prev + Dt + 1 - tA'_curr) */
+                s += time_line_A[a] + Dt - last;
+            }
+            last = time_line_A[a] + Dt;
+            a++;
+        }
+        /* spike of A is before tile of spike of C [tC, tC + Dt] */
+        else if (time_line_A[a] < time_line_C[c]) {
+            a++;
+        }
+        /* spike of A is after tile of spike of C [tC, tC + Dt] */
+        else if (time_line_A[a] > (time_line_C[c] + Dt)) {
+            c++;
+        }
+    }
     if((last != -1) && (last >= total_time_samples)){
         s -= last + 1 - total_time_samples;
     }
 
-	T = s / double(total_time_samples);
+    T = s / double(total_time_samples);
 
-	return T;
+    return T;
 }
 
 /******************************************************************************
 * FUNCTION NAME: N_BminusA_CA                                                 *
 *                                                                             *
-* ARGUMENTS: Three neuron's timelines(references to vectors), and a time      *
-*             interval(int).                                                  *
+* ARGUMENTS: Two neuron's timelines(references to vectors), the total time    *
+*             samples recorded(int)and a time interval(int).                  *
 *                                                                             *
 * PURPOSE: The number of firing events of the reduced spike train A that      *
-*             falls within the tiles Δt after the firing events of spike      *
-*              train B.                                                       *
+*           falls within the tiles Δt before the firing events of spike       *
+*            train B.                                                         *
 *                                                                             *
 * RETURNS: A number(int) of events.                                           *
 *                                                                             *
@@ -158,14 +158,14 @@ int N_BminusA_CA(const vector<int> &time_line_A,
 /******************************************************************************
 * FUNCTION NAME: N_AplusB_CA                                                  *
 *                                                                             *
-* ARGUMENTS: Three neuron's timelines(references to vectors), and a time      *
-*             interval(int).                                                  *
+* ARGUMENTS: Two neuron's timelines(references to vectors), the total time    *
+*             samples recorded(int)and a time interval(int).                  *
 *                                                                             *
-* PURPOSE: The number of firing events of B that falls within the tiles Δt    *
-*           after the firing events of the reduced spike train A.             *
+* PURPOSE: Calculates the fraction of the total recording time which is       *
+*           covered by the tiles +Δt after each spike of B, that fall within  *
+*            the tiles Δt after each spike of B.                              *
 *                                                                             *
-*                                                                             *
-* RETURNS: A number(int) of events.                                           *
+* RETURNS: The total time(double).                                            *
 *                                                                             *
 * I/O: None.                                                                  *
 *                                                                             *
@@ -234,8 +234,8 @@ int N_AplusB_CA(const vector<int> &time_line_A,
 /******************************************************************************
 * FUNCTION NAME: STTC_AB_C                                                    *
 *                                                                             *
-* ARGUMENTS: Three neuron's timelines(references to vectors), and a time      *
-*             interval(int).                                                  *
+* ARGUMENTS: Two neuron's timelines(references to vectors), the total time    *
+*             samples recorded(int)and a time interval(int).                  *
 *                                                                             *
 * PURPOSE: Estimates the temporal correlation of two neurons, given that a    *
 *           third neuron is firing.                                           *
@@ -253,7 +253,6 @@ double STTC_AB_C(const vector<int> &time_line_A,
     int nApBCA = N_AplusB_CA(time_line_A, time_line_B, time_line_C, Dt);
     double nA = double(time_line_A.size()), nB = double(time_line_B.size());
     
-    //cout<<"N_BminusA_CA: "<<nBmACA<<"\nT_B_minus: "<<tBm<<"\nN_AplusB_CA: "<<nApBCA<<"\nT_A_plus_tripl: "<<tApt<<endl;
     return 0.5 * ((((nBmACA / nA) - tBm) / (1.0 - ((nBmACA / nA) * tBm))) + 
                     (((nApBCA / nB) - tApt) / (1.0 - ((nApBCA / nB) * tApt))));
 }
