@@ -30,8 +30,7 @@ using namespace std;
 /******************************************************************************
 * FUNCTION NAME: main                                                         *
 *                                                                             *
-* ARGUMENTS: The total numbers of: neurons, Time Samples, Circular Shifts.    *
-*             And the size of the tile Δt.                                    *
+* ARGUMENTS: The total numbers Circular Shifts and the size of the tile Δt.   *                                    *
 *                                                                             *
 * PURPOSE: This main function is for testing purposes only.                   *
 *                                                                             *

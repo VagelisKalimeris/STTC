@@ -14,7 +14,8 @@
 /******************************************************************************
 * FUNCTION NAME: mean_STTC_dir                                                *
 *                                                                             *
-* ARGUMENTS: An array containing the shifted per pair STTC results.           *
+* ARGUMENTS: An array containing the shifted per pair STTC results as well as *
+*             the total number of circular shifts.                            *
 *                                                                             *
 * PURPOSE: Calculates the mean value.                                         *
 *                                                                             *
@@ -36,7 +37,8 @@ double mean_STTC_dir(double const arr[], int circ_shifts_num) {
 /******************************************************************************
 * FUNCTION NAME: std_STTC_dir                                                 *
 *                                                                             *
-* ARGUMENTS: An array containing the shifted per pair STTC results.           *
+* ARGUMENTS: An array containing the shifted per pair STTC results as well as *
+*             the total number of circular shifts.                            *
 *                                                                             *
 * PURPOSE: Calculates the standard deviation.                                 *
 *                                                                             *
