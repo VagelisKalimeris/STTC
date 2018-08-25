@@ -33,7 +33,9 @@ double T_A_plus_tripl(const vector<int> &time_line_A,
     int s = 0, last = -1;
     unsigned int a = 0, c = 0;
     
-    if(time_line_A.size() == 0 || time_line_C.size() == 0) {
+    unsigned int time_line_A_size = time_line_A.size();
+    unsigned int time_line_C_size = time_line_C.size();
+    if(time_line_A_size == 0 || time_line_C_size == 0) {
         return T;
     }
     /* all spikes of A are before tiles of C */
@@ -44,30 +46,31 @@ double T_A_plus_tripl(const vector<int> &time_line_A,
     if ((time_line_C.back() + Dt) < time_line_A.front()) {
         return T;
     }
-
-    while ((a < time_line_A.size()) && (c < time_line_C.size())) {
+    
+    int time_stamp_A = time_line_A[0], time_stamp_C = time_line_C[0];
+    while((a < time_line_A_size) && (c < time_line_C_size)) {
         /* spike of A is within tile of spike of C [tC, tC + Dt] */
-        if ((time_line_A[a] >= time_line_C[c]) && 
-                                    (time_line_A[a] <= (time_line_C[c] + Dt))) {
+        if((time_stamp_A >= time_stamp_C) && 
+                                    (time_stamp_A <= (time_stamp_C + Dt))) {
             /* check if last calculated tile is before spike of A */
-            if (last < time_line_A[a]) {
+            if (last < time_stamp_A) {
                 /* add Dt + 1 */
                 s += Dt + 1;
             }
             else {
                 /* add Dt + 1 - (tA'_prev + Dt + 1 - tA'_curr) */
-                s += time_line_A[a] + Dt - last;
+                s += time_stamp_A + Dt - last;
             }
-            last = time_line_A[a] + Dt;
-            a++;
+            last = time_stamp_A + Dt;
+            time_stamp_A = time_line_A[++a];
         }
         /* spike of A is before tile of spike of C [tC, tC + Dt] */
-        else if (time_line_A[a] < time_line_C[c]) {
-            a++;
+        else if(time_stamp_A < time_stamp_C) {
+            time_stamp_A = time_line_A[++a];
         }
         /* spike of A is after tile of spike of C [tC, tC + Dt] */
-        else if (time_line_A[a] > (time_line_C[c] + Dt)) {
-            c++;
+        else if(time_stamp_A > (time_stamp_C + Dt)) {
+            time_stamp_C = time_line_C[++c];
         }
     }
     if((last != -1) && (last >= total_time_samples)){
@@ -100,8 +103,11 @@ int N_BminusA_CA(const vector<int> &time_line_A,
     int N = 0;
     unsigned int a = 0, b = 0, c = 0;
     
-    if(time_line_A.size() == 0 || time_line_B.size() == 0 || 
-                                                    time_line_C.size() == 0) {
+    unsigned int time_line_A_size = time_line_A.size();
+    unsigned int time_line_B_size = time_line_B.size();
+    unsigned int time_line_C_size = time_line_C.size();
+    if(time_line_A_size == 0 || time_line_B_size == 0 || 
+                                                    time_line_C_size == 0) {
         return N;
     }
     /* all spikes of A are before tiles of C */
@@ -121,33 +127,35 @@ int N_BminusA_CA(const vector<int> &time_line_A,
         return N;
     }
     
-    while((a < time_line_A.size()) && (b < time_line_B.size()) && 
-                                                    (c < time_line_C.size())) {
+    int time_stamp_A = time_line_A[0], time_stamp_B = time_line_B[0], 
+                                                time_stamp_C = time_line_C[0];
+    while((a < time_line_A_size) && (b < time_line_B_size) && 
+                                                    (c < time_line_C_size)) {
         /* spike of A is within tile of spike of C [tC, tC + Dt] */
-        if((time_line_A[a] >= time_line_C[c]) && 
-                                    (time_line_A[a] <= (time_line_C[c] + Dt))) {
+        if((time_stamp_A >= time_stamp_C) && 
+                                    (time_stamp_A <= (time_stamp_C + Dt))) {
             /* spike of A is within tile of spike of B [tB, tB + Dt] */
-            if((time_line_A[a] >= (time_line_B[b] - Dt)) && 
-                                        (time_line_A[a] <= time_line_B[b])) {
-                N++;
-                a++;
+            if((time_stamp_A >= (time_stamp_B - Dt)) && 
+                                            (time_stamp_A <= time_stamp_B)) {
+                ++N;
+                time_stamp_A = time_line_A[++a];
             }
             /* spike of A is before tile of spike of B [tB, tB + Dt] */
-            else if(time_line_A[a] < (time_line_B[b] - Dt)) {
-                a++;
+            else if(time_stamp_A < (time_stamp_B - Dt)) {
+                time_stamp_A = time_line_A[++a];
             }
             /* spike of A is after tile of spike of B [tB, tB + Dt] */
-            else if(time_line_A[a] > time_line_B[b]) {
-                b++;
+            else if(time_stamp_A > time_stamp_B) {
+                time_stamp_B = time_line_B[++b];
             }
         }
         /* spike of A is before tile of spike of C [tC, tC + Dt] */
-        else if(time_line_A[a] < time_line_C[c]) {
-            a++;
+        else if(time_stamp_A < time_stamp_C) {
+            time_stamp_A = time_line_A[++a];
         }
         /* spike of A is after tile of spike of C [tC, tC + Dt] */
-        else if(time_line_A[a] > (time_line_C[c] + Dt)) {
-            c++;
+        else if(time_stamp_A > (time_stamp_C + Dt)) {
+            time_stamp_C = time_line_C[++c];
         }
     }
     
@@ -176,8 +184,11 @@ int N_AplusB_CA(const vector<int> &time_line_A,
     int N = 0;
     unsigned int a = 0, b = 0, c = 0;
     
-    if(time_line_A.size() == 0 || time_line_B.size() == 0 || 
-                                                    time_line_C.size() == 0) {
+    unsigned int time_line_A_size = time_line_A.size();
+    unsigned int time_line_B_size = time_line_B.size();
+    unsigned int time_line_C_size = time_line_C.size();
+    if(time_line_A_size == 0 || time_line_B_size == 0 || 
+                                                    time_line_C_size == 0) {
         return N;
     }
     /* all spikes of A are before tiles of C */
@@ -197,33 +208,35 @@ int N_AplusB_CA(const vector<int> &time_line_A,
         return N;
     }
     
-    while((a < time_line_A.size()) && (b < time_line_B.size()) && 
-                                                    (c < time_line_C.size())) {
+    int time_stamp_A = time_line_A[0], time_stamp_B = time_line_B[0], 
+                                                time_stamp_C = time_line_C[0];
+    while((a < time_line_A_size) && (b < time_line_B_size) && 
+                                                    (c < time_line_C_size)) {
         /* spike of A is within tile of spike of C [tC, tC + Dt] */
-        if((time_line_A[a] >= time_line_C[c]) && 
-                                    (time_line_A[a] <= (time_line_C[c] + Dt))) {
+        if((time_stamp_A >= time_stamp_C) && 
+                                    (time_stamp_A <= (time_stamp_C + Dt))) {
             /* spike of B is within tile of spike of A [tA, tA + Dt] */
-            if((time_line_B[b] >= time_line_A[a]) && 
-                                    (time_line_B[b] <= (time_line_A[a] + Dt))) {
-                N++;
-                b++;
+            if((time_stamp_B >= time_stamp_A) && 
+                                    (time_stamp_B <= (time_stamp_A + Dt))) {
+                ++N;
+                time_stamp_B = time_line_B[++b];
             }
             /* spike of B is before tile of spike of A [tA, tA + Dt] */
-            else if(time_line_B[b] < time_line_A[a]) {
-                b++;
+            else if(time_stamp_B < time_stamp_A) {
+                time_stamp_B = time_line_B[++b];
             }
             /* spike of B is after tile of spike of A [tA, tA + Dt] */
-            else if(time_line_B[b] > (time_line_A[a] + Dt)) {
-                a++;
+            else if(time_stamp_B > (time_stamp_A + Dt)) {
+                time_stamp_A = time_line_A[++a];
             }
         }
         /* spike of A is before tile of spike of C [tC, tC + Dt] */
-        else if(time_line_A[a] < time_line_C[c]) {
-            a++;
+        else if(time_stamp_A < time_stamp_C) {
+            time_stamp_A = time_line_A[++a];
         }
         /* spike of A is after tile of spike of C [tC, tC + Dt] */
-        else if(time_line_A[a] > (time_line_C[c] + Dt)) {
-            c++;
+        else if(time_stamp_A > (time_stamp_C + Dt)) {
+            time_stamp_C = time_line_C[++c];
         }
     }
     

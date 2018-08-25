@@ -31,24 +31,26 @@ double T_A_plus(const vector<int> &time_line_A, int total_time_samples,
     double T = 0.0;
     int s = 0, last = -1;
     
-    if(time_line_A.size() == 0) {
+    unsigned int time_line_A_size = time_line_A.size();
+    if(time_line_A_size == 0) {
         return T;
     }
     if(Dt == 0) {
-        T = time_line_A.size() / double(total_time_samples);
+        T = time_line_A_size / double(total_time_samples);
     }
     else {
-        for(unsigned int a = 0; a < time_line_A.size(); ++a) {
+        for(unsigned int a = 0; a < time_line_A_size; ++a) {
+            int time_stamp_A = time_line_A[a];
             /* check if last calculated tile is before tile of spike of A */
-            if(last < time_line_A[a]) {
+            if(last < time_stamp_A) {
                 /* add Dt + 1 */
                 s += Dt + 1;
             }
             else {
                 /* add Dt + 1 - (tA'_prev + Dt + 1 - tA'_curr) */
-                s += Dt + time_line_A[a] - last;
+                s += Dt + time_stamp_A - last;
             }
-            last = time_line_A[a] + Dt;
+            last = time_stamp_A + Dt;
         }
         if((last != -1) && (last >= total_time_samples)) {
             s -= last + 1 - total_time_samples;
@@ -81,24 +83,26 @@ double T_B_minus(const vector<int> &time_line_B, int total_time_samples,
     double T = 0.0;
     int s = 0, last = -1;
     
-    if(time_line_B.size() == 0) {
+    unsigned int time_line_B_size = time_line_B.size();
+    if(time_line_B_size == 0) {
         return T;
     }
     if(Dt == 0) {
-        T = time_line_B.size() / double(total_time_samples);
+        T = time_line_B_size / double(total_time_samples);
     }
     else {
-        for(unsigned int b = 0; b < time_line_B.size(); ++b) {
+        for(unsigned int b = 0; b < time_line_B_size; ++b) {
+            int time_stamp_B = time_line_B[b];
             /* check if last calculated tile is before tile of spike of B */
-            if(last < (time_line_B[b] - Dt)) {
+            if(last < (time_stamp_B - Dt)) {
                 /* add Dt + 1 */
                 s += Dt + 1;
             }
             else {
                 /* add tB'_curr - tB'_prev */
-                s += time_line_B[b] - last;
+                s += time_stamp_B - last;
             }
-            last = time_line_B[b];
+            last = time_stamp_B;
         }
 
         T = s / double(total_time_samples);
