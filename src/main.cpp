@@ -101,6 +101,8 @@ int main(int argc, char const *argv[])
             if (tupl_sttc > threshold) {
                 ttl_sgnfcnt_tuplets++;
             }
+            sort(shifted_res_arr.begin(), shifted_res_arr.end());
+            
         }
     }
     cout<<"\nNumber of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<endl; 
@@ -132,6 +134,8 @@ int main(int argc, char const *argv[])
                 if ( trip_sttc > threshold) {
                     ttl_sgnfcnt_triplets++;
                 }
+                sort(shifted_res_arr.begin(), shifted_res_arr.end());
+
             }
         }
     }

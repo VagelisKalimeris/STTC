@@ -196,3 +196,16 @@ void print_all_spikes(const vector<int> spike_trains[], int total_neurons)
     }
     cout<<"\nTotal number of spikes: "<<total_firings<<endl;
 }
+
+
+
+double rand_pos_percentile(const vector<double> shorted_synht_arr, 
+                                                             double real_sttc)
+{
+    double vec_start = 1, vec_end = shorted_synht_arr.size();
+
+    while (true) {
+        if (real_sttc > shorted_synht_arr[vec_end / 2.0])
+    }
+
+}

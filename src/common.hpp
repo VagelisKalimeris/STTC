@@ -104,3 +104,7 @@ unsigned int random_gen(unsigned int max_number);
 *                                                                             *
 ******************************************************************************/
 void print_all_spikes(const vector<int> spike_trains[], int total_neurons);
+
+
+double rand_pos_percentile(const vector<double> shifted_res_arr, 
+	                                                         double real_sttc);
