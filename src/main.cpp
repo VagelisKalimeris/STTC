@@ -148,7 +148,7 @@ int main(int argc, char const *argv[])
             }
         }
     }
-    cout<<"\nNumber of total significant triplets: "<<ttl_sgnfcnt_triplets<<endl; 
+    cout<<"Number of total significant triplets: "<<ttl_sgnfcnt_triplets<<endl<<endl; 
 
 
 // Print Motifs
@@ -158,17 +158,7 @@ int main(int argc, char const *argv[])
     }
     
 // Print the data structure and total number of firings in experiment
-    // int total_firings = 0;
-    // cout<<"\nThe data structure: "<<endl;
-    // for (int neur = 0; neur < neurons; neur++) {
-    //     cout<<"No "<<neur + 1<<" neuron's spikes:\n";
-    //     for (size_t fire = 0; fire < spike_trains[neur].size(); fire++) {
-    //         cout<<spike_trains[neur][fire] + 1<<' ';
-    //     total_firings++;
-    //     }
-    //     cout<<endl<<endl;
-    // }
-    // cout<<"\nTotal number of spikes: "<<total_firings<<endl;
+    print_all_spikes(spike_trains, neurons);
     
     data.close();
     return 0;

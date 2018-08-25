@@ -164,3 +164,34 @@ void circular_shift(vector<int> &time_line, unsigned int random,
 unsigned int random_gen(unsigned int max_number) {
     return 1 + rand() % max_number;
 }
+
+
+/******************************************************************************
+* FUNCTION NAME: print_all_spikes                                             *
+*                                                                             *
+* ARGUMENTS: A neuron's timeline(reference to a vector), the total number of  *
+*             neurons(int).                                                   *   
+*                                                                             *  
+* PURPOSE: Prints all the spikes of each neuron of the dataset, as well as    *
+*           the total number of spikes.                                       *
+*                                                                             *
+* RETURNS: None.                                                              *
+*                                                                             *
+* I/O: See PURPOSE.                                                           *
+*                                                                             *
+******************************************************************************/
+void print_all_spikes(const vector<int> spike_trains[], int total_neurons)
+{
+    int total_firings = 0;
+
+    cout<<"\nThe data structure: "<<endl;
+    for (int neur = 0; neur < total_neurons; neur++) {
+        cout<<"No "<<neur + 1<<" neuron's spikes:\n";
+        for (size_t fire = 0; fire < spike_trains[neur].size(); fire++) {
+            cout<<spike_trains[neur][fire] + 1<<' ';
+        total_firings++;
+        }
+        cout<<endl<<endl;
+    }
+    cout<<"\nTotal number of spikes: "<<total_firings<<endl;
+}
