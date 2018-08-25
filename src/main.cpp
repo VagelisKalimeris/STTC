@@ -17,7 +17,7 @@
 #include <sstream>
 #include <ctime>
 
-#ifndef _OPENMP
+#ifdef _OPENMP
 #include <omp.h>
 #else
 #error "Error: OpenMP not supported"
