@@ -9,6 +9,7 @@
 ******************************************************************************/
 
 
+#include <iostream>
 #include <cstdlib>
 #include <cmath>
 #include <vector>
@@ -85,3 +86,20 @@ double sign_thresh(double mean, double st_dev);
 // Helper function. Generates random integers 
 // in the range 0 - (total_time_samples-1).
 unsigned int random_gen(unsigned int max_number);
+
+
+/******************************************************************************
+* FUNCTION NAME: print_all_spikes                                             *
+*                                                                             *
+* ARGUMENTS: A neuron's timeline(reference to a vector), the total number of  *
+*             neurons(int).                                                   *   
+*                                                                             *  
+* PURPOSE: Prints all the spikes of each neuron of the dataset, as well as    *
+*           the total number of spikes.                                       *
+*                                                                             *
+* RETURNS: None.                                                              *
+*                                                                             *
+* I/O: See PURPOSE.                                                           *
+*                                                                             *
+******************************************************************************/
+void print_all_spikes(const vector<int> spike_trains[], int total_neurons);

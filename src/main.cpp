@@ -20,6 +20,7 @@
 #include "cond_null_dist.hpp"
 #include "tuplets_STTC.hpp"
 #include "triplets_STTC.hpp"
+#include "motif.hpp"
 
 // neurons 183
 // total_time_samples 11970
@@ -79,9 +80,6 @@ int main(int argc, char const *argv[])
     }
 // Start random sequence
     srand(time(NULL));
-
-// Significant tuplets
-    bool significant_tuplets[neurons][neurons] = {false};
     
 // Find all T
     double tAp[neurons];
@@ -90,6 +88,9 @@ int main(int argc, char const *argv[])
         tAp[n] = T_A_plus(spike_trains[n], total_time_samples, Dt);
         tBm[n] = T_B_minus(spike_trains[n], total_time_samples, Dt);
     }
+
+// Significant tuplets
+    bool sgnfcnt_tuplets[neurons][neurons] = {false};
 
 // Calculate per pair STTC
     double tAps;
@@ -111,7 +112,7 @@ int main(int argc, char const *argv[])
             threshold = sign_thresh(mean, st_dev);
             if (tupl_sttc > threshold) {
                 ttl_sgnfcnt_tuplets++;
-                significant_tuplets[a][b] = true;
+                sgnfcnt_tuplets[a][b] = true;
             }
         }
     }
@@ -121,59 +122,18 @@ int main(int argc, char const *argv[])
 
 // Motif arrays
     unsigned int motifs_triplets[8] = {0};
-    unsigned int motifs_significant[8] = {0};
-    
-// Find motif for triplets
-    for (int a = 0; a < neurons; a++) { // Neuron A
-        for (int c = 0; c < neurons; c++) { // Neuron C
-            if (a == c) {continue;} // Skip same neurons
-            for (int b = 0; b < neurons; b++) { // Neuron B
-                if (b == a || b == c) {continue;} // Skip same neurons
-                if (significant_tuplets[c][a]) {
-                    if (significant_tuplets[c][b]) {
-                        if (significant_tuplets[a][b]) {
-                            ++motifs_triplets[7];
-                        }
-                        else {
-                            ++motifs_triplets[6];
-                        }
-                    }
-                    else {
-                        if (significant_tuplets[a][b]) {
-                            ++motifs_triplets[5];
-                        }
-                        else {
-                            ++motifs_triplets[4];
-                        }
-                    }
-                }
-                else {
-                    if (significant_tuplets[c][b]) {
-                        if (significant_tuplets[a][b]) {
-                            ++motifs_triplets[3];
-                        }
-                        else {
-                            ++motifs_triplets[2];
-                        }
-                    }
-                    else {
-                        if (significant_tuplets[a][b]) {
-                            ++motifs_triplets[1];
-                        }
-                        else {
-                            ++motifs_triplets[0];
-                        }
-                    }
-                }
-            }
-        }
-    }
+    unsigned int motifs_sgnfcnt[8] = {0};
     
 // Calculate conditional STTC
     double tApt;
     for (int a = 0; a < neurons; a++) { // Neuron A
         for (int c = 0; c < neurons; c++) { // Neuron C
             if (a == c) {continue;} // Skip same neurons
+            for (int b = 0; b < neurons; b++) { // Neuron B
+                if (b == a || b == c) {continue;} // Skip same neurons
+                categorization(sgnfcnt_tuplets[c][a], sgnfcnt_tuplets[c][b], 
+                                        sgnfcnt_tuplets[a][b], motifs_triplets);
+            }
             if (!sign_trpl_limit(spike_trains[a], spike_trains[c] ,Dt)) {
                 continue; // Reduced A spike train has < 5 spikes
             }
@@ -198,68 +158,24 @@ int main(int argc, char const *argv[])
                 st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
                 threshold = sign_thresh(mean, st_dev);
                 if ( trip_sttc > threshold) {
-                    if (significant_tuplets[c][a]) {
-                        if (significant_tuplets[c][b]) {
-                            if (significant_tuplets[a][b]) {
-                                ++motifs_significant[7];
-                            }
-                            else {
-                                ++motifs_significant[6];
-                            }
-                        }
-                        else {
-                            if (significant_tuplets[a][b]) {
-                                ++motifs_significant[5];
-                            }
-                            else {
-                                ++motifs_significant[4];
-                            }
-                        }
-                    }
-                    else {
-                        if (significant_tuplets[c][b]) {
-                            if (significant_tuplets[a][b]) {
-                                ++motifs_significant[3];
-                            }
-                            else {
-                                ++motifs_significant[2];
-                            }
-                        }
-                        else {
-                            if (significant_tuplets[a][b]) {
-                                ++motifs_significant[1];
-                            }
-                            else {
-                                ++motifs_significant[0];
-                            }
-                        }
-                    }
                     ttl_sgnfcnt_triplets++;
+                    categorization(sgnfcnt_tuplets[c][a], sgnfcnt_tuplets[c][b], 
+                                         sgnfcnt_tuplets[a][b], motifs_sgnfcnt);
                 }
             }
         }
     }
-    cout<<"\nNumber of total significant triplets: "<<ttl_sgnfcnt_triplets<<endl; 
+    cout<<"Number of total significant triplets: "<<ttl_sgnfcnt_triplets<<endl<<endl; 
 
 
 // Print Motifs
     cout<<"\nMotifs - Triplets "<<183*182*181<<" - Significant "<<ttl_sgnfcnt_triplets<<endl;
     for (int m = 0; m < 8; m++) {
-        cout<<m<<" - "<<motifs_triplets[m]<<" - "<<motifs_significant[m]<<endl;
+        cout<<m<<" - "<<motifs_triplets[m]<<" - "<<motifs_sgnfcnt[m]<<endl;
     }
     
 // Print the data structure and total number of firings in experiment
-    // int total_firings = 0;
-    // cout<<"\nThe data structure: "<<endl;
-    // for (int neur = 0; neur < neurons; neur++) {
-    //     cout<<"No "<<neur + 1<<" neuron's spikes:\n";
-    //     for (size_t fire = 0; fire < spike_trains[neur].size(); fire++) {
-    //         cout<<spike_trains[neur][fire] + 1<<' ';
-    //     total_firings++;
-    //     }
-    //     cout<<endl<<endl;
-    // }
-    // cout<<"\nTotal number of spikes: "<<total_firings<<endl;
+    print_all_spikes(spike_trains, neurons);
     
     data.close();
     return 0;
