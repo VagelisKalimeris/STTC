@@ -152,13 +152,21 @@ int main(int argc, char const *argv[])
 
 
 // Print Motifs
-    cout<<"\nMotifs - Triplets "<<183*182*181<<" - Significant "<<ttl_sgnfcnt_triplets<<endl;
+    cout<<"\nMotif - Triplets - Significant"<<endl;
     for (int m = 0; m < 8; m++) {
-        cout<<m<<" - "<<motifs_triplets[m]<<" - "<<motifs_sgnfcnt[m]<<endl;
+        cout<<"  "<<m<<"   - "<<motifs_triplets[m]<<(
+                                int(motifs_triplets[m]/10000000)?"":
+                                int(motifs_triplets[m]/1000000)?" ":
+                                int(motifs_triplets[m]/100000)?"  ":
+                                int(motifs_triplets[m]/10000)?"   ":
+                                int(motifs_triplets[m]/1000)?"    ":
+                                int(motifs_triplets[m]/100)?"     ":
+                                int(motifs_triplets[m]/10)?"      ":
+                                "        ")<<" - "<<motifs_sgnfcnt[m]<<endl;
     }
     
 // Print the data structure and total number of firings in experiment
-    print_all_spikes(spike_trains, neurons);
+    // print_all_spikes(spike_trains, neurons);
     
     data.close();
     return 0;
