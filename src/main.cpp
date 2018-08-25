@@ -15,6 +15,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <ctime>
 
 #include "common.hpp"
 #include "p_p_null_dist.hpp"
@@ -31,7 +32,7 @@ using namespace std;
 /******************************************************************************
 * FUNCTION NAME: main                                                         *
 *                                                                             *
-* ARGUMENTS: The total numbers Circular Shifts and the size of the tile Δt.   *
+* ARGUMENTS: The total numbers Circular Shifts and the size of the tile Dt.   *
 *                                                                             *
 * PURPOSE: This main function is for testing purposes only.                   *
 *                                                                             *
@@ -49,11 +50,11 @@ int main(int argc, char const *argv[])
 // Shifted spike trains will be copied here
     vector<int> to_shift;
 // STTC values of shifted spike trains
-    double shifted_res_arr[circ_shifts_num];
+    //double shifted_res_arr[circ_shifts_num];
 
 // Caclulation variables
     int ttl_sgnfcnt_tuplets = 0, ttl_sgnfcnt_triplets = 0;
-    double tupl_sttc, trip_sttc, mean, st_dev, threshold;
+    //double tupl_sttc, trip_sttc, mean, st_dev, threshold;
 
 // Open File
     ifstream data;
@@ -80,25 +81,29 @@ int main(int argc, char const *argv[])
         total_time_samples++;
     }
 // Start random sequence
-    srand(time(NULL));
+    data.close();
+    srand((unsigned int)time(NULL));
 
 // Calculate per pair STTC
     for (int i = 0; i < neurons; i++) { // Neuron A
+        #pragma omp parallel for
         for (int j = 0; j < neurons; j++) { // Neuron B
             if (i == j) {continue;} // Skip same neurons
-            tupl_sttc = STTC_A_B(spike_trains[i], spike_trains[j], 
+            double tupl_sttc = STTC_A_B(spike_trains[i], spike_trains[j], 
                                                        total_time_samples, Dt);
+            double shifted_res_arr[circ_shifts_num];
             for (int shift = 0; shift < circ_shifts_num; shift++) {
-                to_shift = spike_trains[i];
+                vector<int> to_shift = spike_trains[i];
                 unsigned int random = random_gen(total_time_samples);
                 circular_shift(to_shift, random, total_time_samples);
                 shifted_res_arr[shift] = STTC_A_B(to_shift, 
                                       spike_trains[j], total_time_samples, Dt);
             }
-            mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
-            st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
-            threshold = sign_thresh(mean, st_dev);
+            double mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
+            double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
+            double threshold = sign_thresh(mean, st_dev);
             if (tupl_sttc > threshold) {
+                #pragma omp atomic
                 ttl_sgnfcnt_tuplets++;
             }
         }
@@ -110,6 +115,7 @@ int main(int argc, char const *argv[])
 
 // Calculate conditional STTC
     for (int i = 0; i < neurons; i++) { // Neuron A
+        #pragma omp parallel for
         for (int j = 0; j < neurons; j++) { // Neuron B
             if (i == j) {continue;} // Skip same neurons
             for (int k = 0; k < neurons; k++) { // Neuron C
@@ -117,19 +123,21 @@ int main(int argc, char const *argv[])
                 if (!sign_trpl_limit(spike_trains[i], spike_trains[k] ,Dt)) {
                     continue; // Reduced A spike train has < 5 spikes
                 }
-                trip_sttc = STTC_AB_C(spike_trains[i], spike_trains[j]
+                double trip_sttc = STTC_AB_C(spike_trains[i], spike_trains[j]
                                     , spike_trains[k], total_time_samples, Dt);
+                double shifted_res_arr[circ_shifts_num];
                 for (int shift = 0; shift < circ_shifts_num; shift++) {
-                    to_shift = spike_trains[k];
+                    vector<int> to_shift = spike_trains[k];
                     unsigned int random = random_gen(total_time_samples);
                     circular_shift(to_shift, random, total_time_samples);
                     shifted_res_arr[shift] = STTC_AB_C(spike_trains[i], 
                             spike_trains[j], to_shift, total_time_samples, Dt);
                 }
-                mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
-                st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
-                threshold = sign_thresh(mean, st_dev);
+                double mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
+                double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
+                double threshold = sign_thresh(mean, st_dev);
                 if ( trip_sttc > threshold) {
+                    #pragma omp atomic
                     ttl_sgnfcnt_triplets++;
                 }
             }
@@ -140,7 +148,5 @@ int main(int argc, char const *argv[])
 
 // Print the data structure and total number of firings in experiment
     print_all_spikes(spike_trains, neurons);
-    
-    data.close();
     return 0;
 }
