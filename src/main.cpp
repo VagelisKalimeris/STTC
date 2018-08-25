@@ -31,7 +31,7 @@ using namespace std;
 /******************************************************************************
 * FUNCTION NAME: main                                                         *
 *                                                                             *
-* ARGUMENTS: The total numbers Circular Shifts and the size of the tile Δt.   *                                    *
+* ARGUMENTS: The total numbers Circular Shifts and the size of the tile Δt.   *
 *                                                                             *
 * PURPOSE: This main function is for testing purposes only.                   *
 *                                                                             *
@@ -135,7 +135,7 @@ int main(int argc, char const *argv[])
             }
         }
     }
-    cout<<"Number of total significant triplets: "<<ttl_sgnfcnt_triplets<<endl<<endl; 
+    cout<<"Number of total significant triplets: "<<ttl_sgnfcnt_triplets<<endl<<endl;
 
 
 // Print the data structure and total number of firings in experiment
