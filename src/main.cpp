@@ -15,6 +15,7 @@
 #include <string>
 #include <sstream>
 #include <ctime>
+#include "benchmark.h"
 
 #include "common.hpp"
 #include "p_p_null_dist.hpp"
@@ -43,7 +44,7 @@ using namespace std;
 ******************************************************************************/
 int main(int argc, char const *argv[])
 {
-    auto main_func = [](){
+    auto main_func = [&](){
 // Prevent warning: unused parameter 'argc'
     (void) argc;
 // Command Line Arguments. First give random sample size, then tile size. 
@@ -158,6 +159,7 @@ int main(int argc, char const *argv[])
                 double trip_sttc = STTC_AB_C(time_line_A, time_line_B, 
                                     time_line_C, total_time_samples, 
                                     Dt, tBm_tmp, tApt);
+                double shifted_res_arr[circ_shifts_num];
                 for (int shift = 0; shift < circ_shifts_num; shift++) {
                     vector<int> to_shift = time_line_C;
                     unsigned int random = random_gen(total_time_samples);
@@ -199,9 +201,9 @@ int main(int argc, char const *argv[])
     
 // Print the data structure and total number of firings in experiment
     // print_all_spikes(spike_trains, neurons);
-    }
+    };
 
-    
+    benchmark::print(benchmark::benchmark(Function(main_func),Times(1)));
     
     return 0;
 }
