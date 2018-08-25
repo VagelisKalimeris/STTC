@@ -92,7 +92,9 @@ int main(int argc, char const *argv[])
 
 // Calculate per pair STTC
     for (int i = 0; i < neurons; i++) { // Neuron A
-        #pragma omp parallel for
+        #pragma omp parallel
+        {
+        #pragma omp for
         for (int j = 0; j < neurons; j++) { // Neuron B
             if (i == j) {continue;} // Skip same neurons
             double tupl_sttc = STTC_A_B(spike_trains[i], spike_trains[j], 
@@ -113,6 +115,7 @@ int main(int argc, char const *argv[])
                 ttl_sgnfcnt_tuplets++;
             }
         }
+        }
     }
     cout<<"\nNumber of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<endl; 
     cout<<endl;
@@ -121,7 +124,9 @@ int main(int argc, char const *argv[])
 
 // Calculate conditional STTC
     for (int i = 0; i < neurons; i++) { // Neuron A
-        #pragma omp parallel for
+        #pragma omp parallel
+        {
+        #pragma omp parallel
         for (int j = 0; j < neurons; j++) { // Neuron B
             if (i == j) {continue;} // Skip same neurons
             for (int k = 0; k < neurons; k++) { // Neuron C
@@ -147,6 +152,7 @@ int main(int argc, char const *argv[])
                     ttl_sgnfcnt_triplets++;
                 }
             }
+        }
         }
     }
     cout<<"Number of total significant triplets: "<<ttl_sgnfcnt_triplets<<endl<<endl;
