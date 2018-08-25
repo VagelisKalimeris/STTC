@@ -17,6 +17,12 @@
 #include <sstream>
 #include <ctime>
 
+#ifndef _OPENMP
+#include <omp.h>
+#else
+#error "Error: OpenMP not supported"
+#endif
+
 #include "common.hpp"
 #include "p_p_null_dist.hpp"
 #include "cond_null_dist.hpp"
