@@ -106,10 +106,10 @@ int main(int argc, char const *argv[])
                 // that are smaler than the real sttc
                 sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
                 int l = 0; 
-                while (shifted_res_arr[l] <= tupl_sttc) {
+                while ((shifted_res_arr[l] <= tupl_sttc) && (l < circ_shifts_num)) {
                     l++;
                 }
-                cout<<(l /(float) circ_shifts_num)<<' ';
+                // cout<<(l /(float) circ_shifts_num)<<' ';
             }            
         }
     }
@@ -147,10 +147,10 @@ int main(int argc, char const *argv[])
                        // that are smaler than the real sttc
                     sort(shifted_res_arr, shifted_res_arr + circ_shifts_num);
                     int l = 0; 
-                    while (shifted_res_arr[l] <= trip_sttc) {
+                    while ((shifted_res_arr[l] <= trip_sttc) && (l < circ_shifts_num)) {
                         l++;
                     }
-                    cout<<(l /(float) circ_shifts_num)<<' ';
+                    // cout<<(l /(float) circ_shifts_num)<<' ';
                 }
             }
         }
