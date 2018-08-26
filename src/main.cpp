@@ -91,13 +91,14 @@ int main(int argc, char const *argv[])
     }
 
 // Significant tuplets
-    bool sgnfcnt_tuplets[neurons][neurons] = {false};
+    bool sgnfcnt_tuplets[neurons][neurons];
 
 // Calculate per pair STTC
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
         double tAp_tmp = tAp[a];
         for (int b = 0; b < neurons; b++) { // Neuron B
+            sgnfcnt_tuplets[a][b] = false;
             if (a == b) {continue;} // Skip same neurons
             vector<int> time_line_B = spike_trains[b];
             double tBm_tmp = tBm[b];
