@@ -95,14 +95,22 @@ int main(int argc, char const *argv[])
                 shifted_res_arr[shift] = STTC_A_B(to_shift, 
                                       spike_trains[j], total_time_samples, Dt);
             }
+// Calculate the random threshold and increase total significant count 
+                                                        // if real sttc is larger
             mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
             st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
             threshold = sign_thresh(mean, st_dev);
             if (tupl_sttc > threshold) {
                 ttl_sgnfcnt_tuplets++;
-            }
-            sort(shifted_res_arr.begin(), shifted_res_arr.end());
-            
+// Calculate the percentage of randomly shifted sttc values
+                // that are smaler than the real sttc
+                sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
+                int l = 0; 
+                while (shifted_res_arr[l] <= tupl_sttc) {
+                    l++;
+                }
+                cout<<(l /(float) circ_shifts_num)<<' ';
+            }            
         }
     }
     cout<<"\nNumber of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<endl; 
@@ -128,14 +136,22 @@ int main(int argc, char const *argv[])
                     shifted_res_arr[shift] = STTC_AB_C(spike_trains[i], 
                             spike_trains[j], to_shift, total_time_samples, Dt);
                 }
+// Calculate the random threshold and increase total significant count 
+                                                        // if real sttc is larger
                 mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
                 st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
                 threshold = sign_thresh(mean, st_dev);
                 if ( trip_sttc > threshold) {
                     ttl_sgnfcnt_triplets++;
+// Calculate the percentage of randomly shifted sttc values
+                       // that are smaler than the real sttc
+                    sort(shifted_res_arr, shifted_res_arr + circ_shifts_num);
+                    int l = 0; 
+                    while (shifted_res_arr[l] <= trip_sttc) {
+                        l++;
+                    }
+                    cout<<(l /(float) circ_shifts_num)<<' ';
                 }
-                sort(shifted_res_arr.begin(), shifted_res_arr.end());
-
             }
         }
     }
