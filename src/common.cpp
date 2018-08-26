@@ -199,3 +199,51 @@ void print_all_spikes(const vector<int> spike_trains[], int total_neurons)
     }
     cout<<"\nTotal number of spikes: "<<total_firings<<endl;
 }
+
+/* comments for later */
+void print_sgnfcnt_tuplet_begin(void)
+{
+    cout<<"\n+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(15)<<'+'
+                                                        <<setw(13)<<'+'<<endl;
+    cout<<"| Neuron A | Neuron B |"<<setfill(' ')<<setw(15)<<"STTC |"
+                                            <<setw(13)<<"Percentile |"<<endl;
+    cout<<"+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(15)<<'+'
+                                                        <<setw(13)<<'+'<<endl;
+}
+
+void print_sgnfcnt_tuplet(const int neuron_A, const int neuron_B, 
+                                    const double STTC, const double percentile)
+{
+    cout<<"| "<<setfill(' ')<<setw(8)<<neuron_A<<" | "<<setw(8)<<neuron_B
+        <<" | "<<setw(12)<<STTC<<" | "<<setw(10)<<percentile<<" |"<<endl;
+}
+
+void print_sgnfcnt_tuplet_end(void)
+{
+    cout<<"+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(15)<<'+'
+                                                        <<setw(13)<<'+'<<endl;
+}
+
+void print_sgnfcnt_triplet_begin(void)
+{
+    cout<<"\n+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(11)<<'+'
+                                        <<setw(15)<<'+'<<setw(13)<<'+'<<endl;
+    cout<<"| Neuron A | Neuron B | Neuron C |"<<setfill(' ')
+                        <<setw(15)<<"STTC |"<<setw(13)<<"Percentile |"<<endl;
+    cout<<"+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(11)<<'+'
+                                        <<setw(15)<<'+'<<setw(13)<<'+'<<endl;
+}
+
+void print_sgnfcnt_triplet(const int neuron_A, const int neuron_B, 
+                const int neuron_C, const double STTC, const double percentile)
+{
+    cout<<"| "<<setfill(' ')<<setw(8)<<neuron_A<<" | "
+                    <<setw(8)<<neuron_B<<" | "<<setw(8)<<neuron_C<<" | "
+                    <<setw(12)<<STTC<<" | "<<setw(10)<<percentile<<" |"<<endl;
+}
+
+void print_sgnfcnt_triplet_end(void)
+{
+    cout<<"+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(11)<<'+'
+                                        <<setw(15)<<'+'<<setw(13)<<'+'<<endl;
+}

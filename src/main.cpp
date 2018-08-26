@@ -15,6 +15,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
 
 #include "common.hpp"
 #include "p_p_null_dist.hpp"
@@ -51,24 +52,24 @@ int main(int argc, char const *argv[])
     vector<int> to_shift;
 // STTC values of shifted spike trains
     double shifted_res_arr[circ_shifts_num];
-
+    
 // Caclulation variables
     int ttl_sgnfcnt_tuplets = 0, ttl_sgnfcnt_triplets = 0;
     double tupl_sttc, trip_sttc, mean, st_dev, threshold;
-
+    
 // Open File
     ifstream data;
     data.open("../psm_avalanche", ifstream::in);
     string line;
-
+    
 // Get total number of neurons from file
     getline(data, line);
     const int neurons = line.length() - 1;
     data.seekg(0, data.beg);
-
+    
 // Our main data structure
     vector<int> spike_trains[neurons];
-
+    
 // Store each neuron's firing (1's) to the data structure
     int total_time_samples = 0;
     while (getline(data, line)) {
@@ -89,11 +90,12 @@ int main(int argc, char const *argv[])
         tAp[n] = T_A_plus(spike_trains[n], total_time_samples, Dt);
         tBm[n] = T_B_minus(spike_trains[n], total_time_samples, Dt);
     }
-
+    
 // Significant tuplets
     bool sgnfcnt_tuplets[neurons][neurons];
-
+    
 // Calculate per pair STTC
+    print_sgnfcnt_tuplet_begin();
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
         double tAp_tmp = tAp[a];
@@ -118,19 +120,29 @@ int main(int argc, char const *argv[])
             if (tupl_sttc > threshold) {
                 ttl_sgnfcnt_tuplets++;
                 sgnfcnt_tuplets[a][b] = true;
+                sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
+                int pos = 0; 
+                while (pos < circ_shifts_num && 
+                                        shifted_res_arr[pos] <= tupl_sttc) {
+                    ++pos;
+                }
+                print_sgnfcnt_tuplet(a+1, b+1, tupl_sttc, 
+                                                pos/double(circ_shifts_num));
             }
         }
     }
+    print_sgnfcnt_tuplet_end();
     cout<<"\nNumber of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<" ( "
         <<(ttl_sgnfcnt_tuplets*100/double(neurons*(neurons-1)))<<"% )"<<endl;
-
-
-
+    
+    
+    
 // Motif arrays
     int motifs_triplets[8] = {0};
     int motifs_sgnfcnts[8] = {0};
     
 // Calculate conditional STTC
+    print_sgnfcnt_triplet_begin();
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
         for (int c = 0; c < neurons; c++) { // Neuron C
@@ -170,15 +182,24 @@ int main(int argc, char const *argv[])
                     ttl_sgnfcnt_triplets++;
                     categorization(sgnfcnt_tuplets[c][a], sgnfcnt_tuplets[c][b],
                                         sgnfcnt_tuplets[a][b], motifs_sgnfcnts);
+                    sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
+                    int pos = 0; 
+                    while (pos < circ_shifts_num && 
+                                            shifted_res_arr[pos] <= trip_sttc) {
+                        ++pos;
+                    }
+                    print_sgnfcnt_triplet(a+1, b+1, c+1, trip_sttc, 
+                                                pos/double(circ_shifts_num));
                 }
             }
         }
     }
-    cout<<"Number of total significant triplets: "<<ttl_sgnfcnt_triplets<<" ( "
+    print_sgnfcnt_triplet_end();
+    cout<<"\nNumber of total significant triplets: "<<ttl_sgnfcnt_triplets<<" ( "
             <<(ttl_sgnfcnt_triplets*100/double(neurons*(neurons-1)*(neurons-2)))
             <<"% )"<<endl;
-
-
+    
+    
 // Print Motifs
     print_motifs(motifs_triplets, motifs_sgnfcnts);
     
