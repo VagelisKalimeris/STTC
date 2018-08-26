@@ -14,6 +14,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <iomanip>
 
 #include "common.hpp"
 #include "p_p_null_dist.hpp"
@@ -31,7 +32,7 @@ using namespace std;
 /******************************************************************************
 * FUNCTION NAME: main                                                         *
 *                                                                             *
-* ARGUMENTS: The total numbers Circular Shifts and the size of the tile Δt.   *                                    *
+* ARGUMENTS: The total numbers Circular Shifts and the size of the tile Δt.   *
 *                                                                             *
 * PURPOSE: This main function is for testing purposes only.                   *
 *                                                                             *
@@ -101,14 +102,14 @@ int main(int argc, char const *argv[])
             vector<int> time_line_B = spike_trains[b];
             double tBm_tmp = tBm[b];
             tupl_sttc = STTC_A_B(time_line_A, time_line_B, 
-                                        total_time_samples, Dt, tBm_tmp, tAp_tmp);
+                                    total_time_samples, Dt, tBm_tmp, tAp_tmp);
             for (int shift = 0; shift < circ_shifts_num; shift++) {
                 to_shift = time_line_A;
                 unsigned int random = random_gen(total_time_samples);
                 circular_shift(to_shift, random, total_time_samples);
                 tAp_tmp = T_A_plus(to_shift, total_time_samples, Dt);
                 shifted_res_arr[shift] = STTC_A_B(to_shift, time_line_B, 
-                                        total_time_samples, Dt, tBm_tmp, tAp_tmp);
+                                    total_time_samples, Dt, tBm_tmp, tAp_tmp);
             }
             mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
             st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
@@ -119,13 +120,14 @@ int main(int argc, char const *argv[])
             }
         }
     }
-    cout<<"\nNumber of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<endl;
+    cout<<"\nNumber of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<" ( "
+        <<(ttl_sgnfcnt_tuplets*100/double(neurons*(neurons-1)))<<"% )"<<endl;
 
 
 
 // Motif arrays
-    unsigned int motifs_triplets[8] = {0};
-    unsigned int motifs_sgnfcnt[8] = {0};
+    int motifs_triplets[8] = {0};
+    int motifs_sgnfcnts[8] = {0};
     
 // Calculate conditional STTC
     for (int a = 0; a < neurons; a++) { // Neuron A
@@ -165,28 +167,19 @@ int main(int argc, char const *argv[])
                 threshold = sign_thresh(mean, st_dev);
                 if ( trip_sttc > threshold) {
                     ttl_sgnfcnt_triplets++;
-                    categorization(sgnfcnt_tuplets[c][a], sgnfcnt_tuplets[c][b], 
-                                         sgnfcnt_tuplets[a][b], motifs_sgnfcnt);
+                    categorization(sgnfcnt_tuplets[c][a], sgnfcnt_tuplets[c][b],
+                                        sgnfcnt_tuplets[a][b], motifs_sgnfcnts);
                 }
             }
         }
     }
-    cout<<"Number of total significant triplets: "<<ttl_sgnfcnt_triplets<<endl<<endl; 
+    cout<<"Number of total significant triplets: "<<ttl_sgnfcnt_triplets<<" ( "
+            <<(ttl_sgnfcnt_triplets*100/double(neurons*(neurons-1)*(neurons-2)))
+            <<"% )"<<endl;
 
 
 // Print Motifs
-    cout<<"\nMotif - Triplets - Significant"<<endl;
-    for (int m = 0; m < 8; m++) {
-        cout<<"  "<<m<<"   - "<<motifs_triplets[m]<<(
-                                int(motifs_triplets[m]/10000000)?"":
-                                int(motifs_triplets[m]/1000000)?" ":
-                                int(motifs_triplets[m]/100000)?"  ":
-                                int(motifs_triplets[m]/10000)?"   ":
-                                int(motifs_triplets[m]/1000)?"    ":
-                                int(motifs_triplets[m]/100)?"     ":
-                                int(motifs_triplets[m]/10)?"      ":
-                                "        ")<<" - "<<motifs_sgnfcnt[m]<<endl;
-    }
+    print_motifs(motifs_triplets, motifs_sgnfcnts);
     
 // Print the data structure and total number of firings in experiment
     // print_all_spikes(spike_trains, neurons);

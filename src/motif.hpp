@@ -9,6 +9,9 @@
 ******************************************************************************/
 
 
+#include <iostream>
+#include <iomanip>
+
 using namespace std;
 
 /******************************************************************************
@@ -24,4 +27,21 @@ using namespace std;
 *                                                                             *
 ******************************************************************************/
 void categorization(const bool CtoA, const bool CtoB, const bool AtoB, 
-                                                        unsigned int *motifs);
+                                                                int *motifs);
+
+
+/******************************************************************************
+* FUNCTION NAME: print_motifs                                                 *
+*                                                                             *
+* ARGUMENTS: The totals of each motif category of triplets (reference to      *
+*             an array), the totals of each motif category of significant     *
+*              triplets (reference to an array).                              *
+*                                                                             *
+* PURPOSE: Prints each motif category of triplets.                            *
+*                                                                             *
+* RETURNS: None.                                                              *
+*                                                                             *
+* I/O: None.                                                                  *
+*                                                                             *
+******************************************************************************/
+void print_motifs(const int *triplets, const int *significants);
