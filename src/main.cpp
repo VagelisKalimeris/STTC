@@ -97,7 +97,8 @@ int main(int argc, char const *argv[])
 // Calculate per pair STTC
     // print_sgnfcnt_tuplet_begin();
     ofstream tuplets;
-    tuplets.open("tuplets.txt");
+    tuplets.open("tuplets.csv");
+    tuplets<<"NeuronA,NeuronB,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
         double tAp_tmp = tAp[a];
@@ -130,8 +131,8 @@ int main(int argc, char const *argv[])
                 }
                 // print_sgnfcnt_tuplet(a+1, b+1, tupl_sttc, 
                 //                                 pos/double(circ_shifts_num));
-                tuplets<<a+1<<" "<<b+1<<" "<<tupl_sttc<<" "
-                                            <<pos/double(circ_shifts_num)<<endl;
+                tuplets<<a+1<<','<<b+1<<','<<tupl_sttc<<','
+                                        <<pos/double(circ_shifts_num)<<'\n';
             }
         }
     }
@@ -149,7 +150,8 @@ int main(int argc, char const *argv[])
 // Calculate conditional STTC
     // print_sgnfcnt_triplet_begin();
     ofstream triplets;
-    triplets.open("triplets.txt");
+    triplets.open("triplets.csv");
+    triplets<<"NeuronA,NeuronB,NeuronC,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
         for (int c = 0; c < neurons; c++) { // Neuron C
@@ -197,8 +199,8 @@ int main(int argc, char const *argv[])
                     }
                     // print_sgnfcnt_triplet(a+1, b+1, c+1, trip_sttc, 
                     //                             pos/double(circ_shifts_num));
-                    triplets<<a+1<<" "<<b+1<<" "<<c+1<<" "<<trip_sttc<<" "
-                                            <<pos/double(circ_shifts_num)<<endl;
+                    triplets<<a+1<<','<<b+1<<','<<c+1<<','<<trip_sttc<<','
+                                        <<pos/double(circ_shifts_num)<<'\n';
                 }
             }
         }

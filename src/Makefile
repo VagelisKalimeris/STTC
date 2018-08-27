@@ -40,4 +40,4 @@ motif.o : motif.cpp motif.hpp
 
 
 clean :
-	-rm *.o sttc output
+	-rm *.o sttc output *.csv *.txt
