@@ -17,11 +17,7 @@
 #include <sstream>
 #include <ctime>
 
-#ifdef _OPENMP
 #include <omp.h>
-#else
-#error "Error: OpenMP not supported"
-#endif
 
 #include "common.hpp"
 #include "p_p_null_dist.hpp"
@@ -91,10 +87,8 @@ int main(int argc, char const *argv[])
     srand((unsigned int)time(NULL));
 
 // Calculate per pair STTC
+    #pragma omp parallel for collapse(2)
     for (int i = 0; i < neurons; i++) { // Neuron A
-        #pragma omp parallel
-        {
-        #pragma omp for
         for (int j = 0; j < neurons; j++) { // Neuron B
             if (i == j) {continue;} // Skip same neurons
             double tupl_sttc = STTC_A_B(spike_trains[i], spike_trains[j], 
@@ -111,10 +105,8 @@ int main(int argc, char const *argv[])
             double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
             double threshold = sign_thresh(mean, st_dev);
             if (tupl_sttc > threshold) {
-                #pragma omp atomic
                 ttl_sgnfcnt_tuplets++;
             }
-        }
         }
     }
     cout<<"\nNumber of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<endl; 
@@ -123,10 +115,8 @@ int main(int argc, char const *argv[])
 
 
 // Calculate conditional STTC
+    #pragma omp parallel for collapse(3)
     for (int i = 0; i < neurons; i++) { // Neuron A
-        #pragma omp parallel
-        {
-        #pragma omp parallel
         for (int j = 0; j < neurons; j++) { // Neuron B
             if (i == j) {continue;} // Skip same neurons
             for (int k = 0; k < neurons; k++) { // Neuron C
@@ -148,11 +138,9 @@ int main(int argc, char const *argv[])
                 double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
                 double threshold = sign_thresh(mean, st_dev);
                 if ( trip_sttc > threshold) {
-                    #pragma omp atomic
                     ttl_sgnfcnt_triplets++;
                 }
             }
-        }
         }
     }
     cout<<"Number of total significant triplets: "<<ttl_sgnfcnt_triplets<<endl<<endl;

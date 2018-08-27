@@ -8,7 +8,7 @@
 
 
 
-COMPILE_FLAGS =  -Wall -Wextra -g -O3  
+COMPILE_FLAGS =  -Wall -Wextra -g -O3 -fopenmp
 
 
 sttc : main.o common.o tuplets_STTC.o triplets_STTC.o p_p_null_dist.o cond_null_dist.o
@@ -22,10 +22,10 @@ main.o : main.cpp common.hpp tuplets_STTC.hpp triplets_STTC.hpp p_p_null_dist.hp
 common.o : common.cpp common.hpp
 	g++ -c ${COMPILE_FLAGS} common.cpp
 
-tuplets.o : tuplets_STTC.cpp tuplets_STTC.hpp common.hpp
+tuplets_STTC.o : tuplets_STTC.cpp tuplets_STTC.hpp common.hpp
 	g++ -c ${COMPILE_FLAGS} tuplets_STTC.cpp
 
-triplets.o : triplets_STTC.cpp triplets_STTC.hpp common.hpp
+triplets_STTC.o : triplets_STTC.cpp triplets_STTC.hpp common.hpp
 	g++ -c ${COMPILE_FLAGS} triplets_STTC.cpp
 
 p_p_null_dist.o : p_p_null_dist.cpp p_p_null_dist.hpp tuplets_STTC.hpp common.hpp
