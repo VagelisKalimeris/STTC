@@ -16,6 +16,7 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include "benchmark.h"
 
 #include "common.hpp"
 #include "p_p_null_dist.hpp"
@@ -44,7 +45,8 @@ using namespace std;
 ******************************************************************************/
 int main(int argc, char const *argv[])
 {
-// Prevent warning: unused parameter 'argc'
+	auto main_func=[&](){
+	// Prevent warning: unused parameter 'argc'
     (void) argc;
 // Command Line Arguments. First give random sample size, then tile size. 
     const int circ_shifts_num = atoi(argv[1]), Dt = atoi(argv[2]);
@@ -100,15 +102,13 @@ int main(int argc, char const *argv[])
     ofstream tuplets;
     tuplets.open("tuplets.csv");
     tuplets<<"NeuronA,NeuronB,STTC,Percentile\n";
+    #pragma omp parallel for collapse(2)
     for (int a = 0; a < neurons; a++) { // Neuron A
-        vector<int> time_line_A = spike_trains[a];
-        #pragma omp parallel
-        {
-            double tAp_tmp = tAp[a];
-            #pragma omp for
             for (int b = 0; b < neurons; b++) { // Neuron B
                 sgnfcnt_tuplets[a][b] = false;
                 if (a == b) {continue;} // Skip same neurons
+	        	vector<int> time_line_A = spike_trains[a];
+	            double tAp_tmp = tAp[a];
                 vector<int> time_line_B = spike_trains[b];
                 double tBm_tmp = tBm[b];
                 double tupl_sttc = STTC_A_B(time_line_A, time_line_B, 
@@ -141,7 +141,6 @@ int main(int argc, char const *argv[])
                                             <<pos/double(circ_shifts_num)<<'\n';
                 }
             }
-        }
     }
     // print_sgnfcnt_tuplet_end();
     tuplets.close();
@@ -159,11 +158,11 @@ int main(int argc, char const *argv[])
     ofstream triplets;
     triplets.open("triplets.csv");
     triplets<<"NeuronA,NeuronB,NeuronC,STTC,Percentile\n";
+    #pragma omp parallel for collapse(2)
     for (int a = 0; a < neurons; a++) { // Neuron A
-        vector<int> time_line_A = spike_trains[a];
-        #pragma omp parallel for
         for (int c = 0; c < neurons; c++) { // Neuron C
             if (a == c) {continue;} // Skip same neurons
+	        vector<int> time_line_A = spike_trains[a];
             vector<int> time_line_C = spike_trains[c];
             for (int b = 0; b < neurons; b++) { // Neuron B
                 if (b == a || b == c) {continue;} // Skip same neurons
@@ -229,5 +228,8 @@ int main(int argc, char const *argv[])
     // print_all_spikes(spike_trains, neurons);
     
     data.close();
+	};
+
+	benchmark::print(benchmark::benchmark(Function(main_func),Times(1)));
     return 0;
 }

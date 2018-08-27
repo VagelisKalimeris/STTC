@@ -186,7 +186,7 @@ unsigned int random_gen(unsigned int max_number) {
 ******************************************************************************/
 void print_all_spikes(const vector<int> spike_trains[], int total_neurons)
 {
-    int total_firings = 0, max_neuron, min_neuron;
+    int total_firings = 0, max_neuron=0, min_neuron=0;
     unsigned int max = 0, min = 100000;
 
     cout<<"\nThe data structure: "<<endl;

@@ -35,3 +35,6 @@
 *.out
 *.app
 
+/src/Times.h
+*.csv
+/src/benchmark.h
