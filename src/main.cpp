@@ -95,7 +95,9 @@ int main(int argc, char const *argv[])
     bool sgnfcnt_tuplets[neurons][neurons];
     
 // Calculate per pair STTC
-    print_sgnfcnt_tuplet_begin();
+    // print_sgnfcnt_tuplet_begin();
+    ofstream tuplets;
+    tuplets.open("tuplets.txt");
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
         double tAp_tmp = tAp[a];
@@ -126,12 +128,15 @@ int main(int argc, char const *argv[])
                                         shifted_res_arr[pos] <= tupl_sttc) {
                     ++pos;
                 }
-                print_sgnfcnt_tuplet(a+1, b+1, tupl_sttc, 
-                                                pos/double(circ_shifts_num));
+                // print_sgnfcnt_tuplet(a+1, b+1, tupl_sttc, 
+                //                                 pos/double(circ_shifts_num));
+                tuplets<<a+1<<" "<<b+1<<" "<<tupl_sttc<<" "
+                                            <<pos/double(circ_shifts_num)<<endl;
             }
         }
     }
-    print_sgnfcnt_tuplet_end();
+    // print_sgnfcnt_tuplet_end();
+    tuplets.close();
     cout<<"\nNumber of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<" ( "
         <<(ttl_sgnfcnt_tuplets*100/double(neurons*(neurons-1)))<<"% )"<<endl;
     
@@ -142,7 +147,9 @@ int main(int argc, char const *argv[])
     int motifs_sgnfcnts[8] = {0};
     
 // Calculate conditional STTC
-    print_sgnfcnt_triplet_begin();
+    // print_sgnfcnt_triplet_begin();
+    ofstream triplets;
+    triplets.open("triplets.txt");
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
         for (int c = 0; c < neurons; c++) { // Neuron C
@@ -188,13 +195,16 @@ int main(int argc, char const *argv[])
                                             shifted_res_arr[pos] <= trip_sttc) {
                         ++pos;
                     }
-                    print_sgnfcnt_triplet(a+1, b+1, c+1, trip_sttc, 
-                                                pos/double(circ_shifts_num));
+                    // print_sgnfcnt_triplet(a+1, b+1, c+1, trip_sttc, 
+                    //                             pos/double(circ_shifts_num));
+                    triplets<<a+1<<" "<<b+1<<" "<<c+1<<" "<<trip_sttc<<" "
+                                            <<pos/double(circ_shifts_num)<<endl;
                 }
             }
         }
     }
-    print_sgnfcnt_triplet_end();
+    // print_sgnfcnt_triplet_end();
+    triplets.close();
     cout<<"\nNumber of total significant triplets: "<<ttl_sgnfcnt_triplets<<" ( "
             <<(ttl_sgnfcnt_triplets*100/double(neurons*(neurons-1)*(neurons-2)))
             <<"% )"<<endl;
