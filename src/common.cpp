@@ -12,58 +12,6 @@
 #include "common.hpp"
 
 /******************************************************************************
-* FUNCTION NAME: T_A_plus                                                     *
-*                                                                             *
-* ARGUMENTS: A neuron's timeline(reference to a vector), the total time       *
-*             samples recorded(int) and a time interval(int).                 *
-*                                                                             *
-* PURPOSE: Calculates the sum of time tiles after a neuron's firing, divided  *
-*           by the total time.                                                *
-*                                                                             *
-* RETURNS: The total time(double).                                            *
-*                                                                             *
-* I/O: None.                                                                  *
-*                                                                             *
-******************************************************************************/
-double T_A_plus(const vector<int> &time_line_A, int total_time_samples, 
-                                                                        int Dt)
-{
-    double T = 0.0;
-    int s = 0, last = -1;
-    
-    unsigned int time_line_A_size = time_line_A.size();
-    if(time_line_A_size == 0) {
-        return T;
-    }
-    if(Dt == 0) {
-        T = time_line_A_size / double(total_time_samples);
-    }
-    else {
-        for(unsigned int a = 0; a < time_line_A_size; ++a) {
-            int time_stamp_A = time_line_A[a];
-            /* check if last calculated tile is before tile of spike of A */
-            if(last < time_stamp_A) {
-                /* add Dt + 1 */
-                s += Dt + 1;
-            }
-            else {
-                /* add Dt + 1 - (tA'_prev + Dt + 1 - tA'_curr) */
-                s += Dt + time_stamp_A - last;
-            }
-            last = time_stamp_A + Dt;
-        }
-        if((last != -1) && (last >= total_time_samples)) {
-            s -= last + 1 - total_time_samples;
-        }
-
-        T = s / double(total_time_samples);
-    }
-    
-    return T;
-}
-
-
-/******************************************************************************
 * FUNCTION NAME: T_B_minus                                                    *
 *                                                                             *
 * ARGUMENTS: A neuron's timeline(reference to a vector), the total time       *
@@ -77,39 +25,7 @@ double T_A_plus(const vector<int> &time_line_A, int total_time_samples,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double T_B_minus(const vector<int> &time_line_B, int total_time_samples, 
-                                                                        int Dt)
-{
-    double T = 0.0;
-    int s = 0, last = -1;
-    
-    unsigned int time_line_B_size = time_line_B.size();
-    if(time_line_B_size == 0) {
-        return T;
-    }
-    if(Dt == 0) {
-        T = time_line_B_size / double(total_time_samples);
-    }
-    else {
-        for(unsigned int b = 0; b < time_line_B_size; ++b) {
-            int time_stamp_B = time_line_B[b];
-            /* check if last calculated tile is before tile of spike of B */
-            if(last < (time_stamp_B - Dt)) {
-                /* add Dt + 1 */
-                s += Dt + 1;
-            }
-            else {
-                /* add tB'_curr - tB'_prev */
-                s += time_stamp_B - last;
-            }
-            last = time_stamp_B;
-        }
 
-        T = s / double(total_time_samples);
-    }
-    
-    return T;
-}
 
 
 /******************************************************************************
@@ -123,10 +39,7 @@ double T_B_minus(const vector<int> &time_line_B, int total_time_samples,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double sign_thresh(double mean, double st_dev)
-{
-    return mean + (3.0 * st_dev);
-}
+
 
 
 /******************************************************************************
@@ -142,32 +55,13 @@ double sign_thresh(double mean, double st_dev)
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-void circular_shift(vector<int> &time_line, unsigned int random, 
-                                                      int total_time_samples) {
-    vector<int>::iterator front_it = time_line.begin();
 
-    for (unsigned int i = 0; i < time_line.size(); i++) {
-        int temp = time_line[i] + random;
-
-        if ((temp) < total_time_samples) {
-            time_line[i] = temp;
-        }
-        else {
-            time_line.erase(time_line.begin() + i);
-            temp = temp - total_time_samples;
-            time_line.insert(front_it, temp);
-            ++front_it;
-        }
-    }
-}
 
 
 
 // Helper function. Generates random integers 
 // in the range [1, total_time_samples].
-unsigned int random_gen(unsigned int max_number) {
-    return 1 + rand() % max_number;
-}
+
 
 
 /******************************************************************************
@@ -186,7 +80,7 @@ unsigned int random_gen(unsigned int max_number) {
 ******************************************************************************/
 void print_all_spikes(const vector<int> spike_trains[], int total_neurons)
 {
-    int total_firings = 0, max_neuron, min_neuron;
+    int total_firings = 0, max_neuron = -1, min_neuron = -1;
     unsigned int max = 0, min = 100000;
 
     cout<<"\nThe data structure: "<<endl;
