@@ -186,18 +186,31 @@ unsigned int random_gen(unsigned int max_number) {
 ******************************************************************************/
 void print_all_spikes(const vector<int> spike_trains[], int total_neurons)
 {
-    int total_firings = 0;
+    int total_firings = 0, max_neuron, min_neuron;
+    unsigned int max = 0, min = 100000;
 
     cout<<"\nThe data structure: "<<endl;
     for (int neur = 0; neur < total_neurons; neur++) {
-        cout<<"No "<<neur + 1<<" neuron's spikes:\n";
-        for (size_t fire = 0; fire < spike_trains[neur].size(); fire++) {
+        unsigned int time_line_size = spike_trains[neur].size();
+        cout<<"No "<<neur + 1<<" neuron's spikes ("<<time_line_size<<"):\n";
+        for (unsigned int fire = 0; fire < time_line_size; fire++) {
             cout<<spike_trains[neur][fire] + 1<<' ';
-        total_firings++;
+            total_firings++;
+        }
+        if (time_line_size > max) {
+            max = time_line_size;
+            max_neuron = neur + 1;
+        }
+        else if (time_line_size < min) {
+            min = time_line_size;
+            min_neuron = neur + 1;
         }
         cout<<endl<<endl;
     }
     cout<<"\nTotal number of spikes: "<<total_firings<<endl;
+    cout<<"Neuron "<<max_neuron<<" has max spikes: "<<max<<endl;
+    cout<<"Neuron "<<min_neuron<<" has min spikes: "<<min<<endl;
+    cout<<"Average spikes in each neuron are: "<<total_firings/double(total_neurons)<<endl; 
 }
 
 /* comments for later */
