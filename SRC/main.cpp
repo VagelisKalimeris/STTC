@@ -17,12 +17,12 @@
 #include <iomanip>
 #include <algorithm>
 
-#include "common.hpp"
-#include "p_p_null_dist.hpp"
-#include "cond_null_dist.hpp"
-#include "tuplets_STTC.hpp"
-#include "triplets_STTC.hpp"
-#include "motif.hpp"
+#include "../INCLUDE/common.hpp"
+#include "../INCLUDE/p_p_null_dist.hpp"
+#include "../INCLUDE/cond_null_dist.hpp"
+#include "../INCLUDE/tuplets_STTC.hpp"
+#include "../INCLUDE/triplets_STTC.hpp"
+#include "../INCLUDE/motif.hpp"
 
 // neurons 183
 // total_time_samples 11970
