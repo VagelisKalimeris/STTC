@@ -9,6 +9,7 @@
 
 
 COMPILE_FLAGS =  -Wall -Wextra -g -O3 -fopenmp
+COMPILE_FLAG0 =  -Wall -Wextra -g -O0 -fopenmp
 
 
 sttc : main.o common.o tuplets_STTC.o triplets_STTC.o p_p_null_dist.o  \
@@ -18,7 +19,7 @@ sttc : main.o common.o tuplets_STTC.o triplets_STTC.o p_p_null_dist.o  \
 
 main.o : main.cpp common.hpp tuplets_STTC.hpp triplets_STTC.hpp p_p_null_dist.hpp \
                                                     cond_null_dist.hpp motif.hpp
-	g++ -c ${COMPILE_FLAGS} main.cpp
+	g++ -c ${COMPILE_FLAG0} main.cpp
 
 common.o : common.cpp common.hpp
 	g++ -c ${COMPILE_FLAGS} common.cpp
