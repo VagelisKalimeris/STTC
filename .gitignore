@@ -1,6 +1,7 @@
 *
 !*/
 !*.*
+!Makefile
 
 # Prerequisites
 *.d
@@ -35,4 +36,5 @@
 *.out
 *.app
 
+*.DS_Store
 
