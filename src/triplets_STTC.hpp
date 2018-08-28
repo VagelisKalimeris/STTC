@@ -13,8 +13,6 @@
 #include <cmath>
 #include <vector>
 
-#include "common.hpp"
-
 using namespace std;
 
 /******************************************************************************
@@ -34,7 +32,6 @@ using namespace std;
 ******************************************************************************/
 double T_A_plus_tripl(const vector<int> &time_line_A,
                 const vector<int> &time_line_C, int total_time_samples, int Dt);
-
 
 
 /******************************************************************************
@@ -91,4 +88,4 @@ int N_AplusB_CA(const vector<int> &time_line_A,
 ******************************************************************************/
 double STTC_AB_C(const vector<int> &time_line_A, 
                 const vector<int> &time_line_B, const vector<int> &time_line_C, 
-                int total_time_samples, int Dt, double tBm, double tApt);
+                int Dt, double tBm, double tApt);
