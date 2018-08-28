@@ -82,6 +82,7 @@ double T_A_plus_tripl(const vector<int> &time_line_A,
     return T;
 }
 
+
 /******************************************************************************
 * FUNCTION NAME: N_BminusA_CA                                                 *
 *                                                                             *
@@ -260,7 +261,7 @@ int N_AplusB_CA(const vector<int> &time_line_A,
 ******************************************************************************/
 double STTC_AB_C(const vector<int> &time_line_A, 
                 const vector<int> &time_line_B, const vector<int> &time_line_C, 
-                int total_time_samples, int Dt, double tBm, double tApt)
+                int Dt, double tBm, double tApt)
 {
     int nBmACA =  N_BminusA_CA(time_line_A, time_line_B, time_line_C, Dt);
     int nApBCA = N_AplusB_CA(time_line_A, time_line_B, time_line_C, Dt);

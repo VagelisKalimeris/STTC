@@ -48,14 +48,9 @@ int main(int argc, char const *argv[])
     (void) argc;
 // Command Line Arguments. First give random sample size, then tile size. 
     const int circ_shifts_num = atoi(argv[1]), Dt = atoi(argv[2]);
-// Shifted spike trains will be copied here
-    vector<int> to_shift;
-// STTC values of shifted spike trains
-    double shifted_res_arr[circ_shifts_num];
     
 // Caclulation variables
     int ttl_sgnfcnt_tuplets = 0, ttl_sgnfcnt_triplets = 0;
-    double tupl_sttc, trip_sttc, mean, st_dev, threshold;
     
 // Open File
     ifstream data;
@@ -107,19 +102,22 @@ int main(int argc, char const *argv[])
             if (a == b) {continue;} // Skip same neurons
             vector<int> time_line_B = spike_trains[b];
             double tBm_tmp = tBm[b];
-            tupl_sttc = STTC_A_B(time_line_A, time_line_B, 
-                                    total_time_samples, Dt, tBm_tmp, tAp_tmp);
+            double tupl_sttc = STTC_A_B(time_line_A, time_line_B, 
+                                                        Dt, tBm_tmp, tAp_tmp);
+        // STTC values of shifted spike trains
+            double shifted_res_arr[circ_shifts_num];
             for (int shift = 0; shift < circ_shifts_num; shift++) {
-                to_shift = time_line_A;
+            // Shifted spike trains will be copied here
+                vector<int> to_shift = time_line_A;
                 unsigned int random = random_gen(total_time_samples);
                 circular_shift(to_shift, random, total_time_samples);
                 tAp_tmp = T_A_plus(to_shift, total_time_samples, Dt);
                 shifted_res_arr[shift] = STTC_A_B(to_shift, time_line_B, 
-                                    total_time_samples, Dt, tBm_tmp, tAp_tmp);
+                                                        Dt, tBm_tmp, tAp_tmp);
             }
-            mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
-            st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
-            threshold = sign_thresh(mean, st_dev);
+            double mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
+            double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
+            double threshold = sign_thresh(mean, st_dev);
             if (tupl_sttc > threshold) {
                 ttl_sgnfcnt_tuplets++;
                 sgnfcnt_tuplets[a][b] = true;
@@ -130,7 +128,7 @@ int main(int argc, char const *argv[])
                     ++pos;
                 }
                 // print_sgnfcnt_tuplet(a+1, b+1, tupl_sttc, 
-                //                                 pos/double(circ_shifts_num));
+                //                             pos/double(circ_shifts_num));
                 tuplets<<a+1<<','<<b+1<<','<<tupl_sttc<<','
                                         <<pos/double(circ_shifts_num)<<'\n';
             }
@@ -171,22 +169,23 @@ int main(int argc, char const *argv[])
                 if (b == a || b == c) {continue;} // Skip same neurons
                 vector<int> time_line_B = spike_trains[b];
                 double tBm_tmp = tBm[b];
-                trip_sttc = STTC_AB_C(time_line_A, time_line_B, 
-                                    time_line_C, total_time_samples, 
-                                    Dt, tBm_tmp, tApt);
+                double trip_sttc = STTC_AB_C(time_line_A, time_line_B, 
+                                                time_line_C, Dt, tBm_tmp, tApt);
+            // STTC values of shifted spike trains
+                double shifted_res_arr[circ_shifts_num];
                 for (int shift = 0; shift < circ_shifts_num; shift++) {
-                    to_shift = time_line_C;
+                // Shifted spike trains will be copied here
+                    vector<int> to_shift = time_line_C;
                     unsigned int random = random_gen(total_time_samples);
                     circular_shift(to_shift, random, total_time_samples);
                     tApt = T_A_plus_tripl(time_line_A, to_shift, 
                                                         total_time_samples, Dt);
                     shifted_res_arr[shift] = STTC_AB_C(time_line_A, 
-                                time_line_B, to_shift, total_time_samples, 
-                                Dt, tBm_tmp, tApt);
+                                    time_line_B, to_shift, Dt, tBm_tmp, tApt);
                 }
-                mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
-                st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
-                threshold = sign_thresh(mean, st_dev);
+                double mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
+                double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
+                double threshold = sign_thresh(mean, st_dev);
                 if ( trip_sttc > threshold) {
                     ttl_sgnfcnt_triplets++;
                     categorization(sgnfcnt_tuplets[c][a], sgnfcnt_tuplets[c][b],
