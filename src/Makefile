@@ -23,16 +23,16 @@ main.o : main.cpp common.hpp tuplets_STTC.hpp triplets_STTC.hpp p_p_null_dist.hp
 common.o : common.cpp common.hpp
 	g++ -c ${COMPILE_FLAGS} common.cpp
 
-tuplets.o : tuplets_STTC.cpp tuplets_STTC.hpp
+tuplets.o : tuplets_STTC.cpp tuplets_STTC.hpp common.hpp
 	g++ -c ${COMPILE_FLAGS} tuplets_STTC.cpp
 
-triplets.o : triplets_STTC.cpp triplets_STTC.hpp
+triplets.o : triplets_STTC.cpp triplets_STTC.hpp common.hpp
 	g++ -c ${COMPILE_FLAGS} triplets_STTC.cpp
 
-p_p_null_dist.o : p_p_null_dist.cpp p_p_null_dist.hpp
+p_p_null_dist.o : p_p_null_dist.cpp p_p_null_dist.hpp tuplets_STTC.hpp common.hpp
 	g++ -c ${COMPILE_FLAGS} p_p_null_dist.cpp
 
-cond_null_dist.o : cond_null_dist.cpp cond_null_dist.hpp
+cond_null_dist.o : cond_null_dist.cpp cond_null_dist.hpp triplets_STTC.hpp common.hpp
 	g++ -c ${COMPILE_FLAGS} cond_null_dist.cpp
 
 motif.o : motif.cpp motif.hpp

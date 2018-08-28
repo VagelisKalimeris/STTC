@@ -12,6 +12,10 @@
 #include <cmath>
 #include <vector>
 
+#include "common.hpp"
+#include "tuplets_STTC.hpp"
+#include "triplets_STTC.hpp"
+
 using namespace std;
 
 /******************************************************************************

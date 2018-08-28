@@ -12,6 +12,9 @@
 #include <cmath>
 #include <vector>
 
+#include "common.hpp"
+#include "tuplets_STTC.hpp"
+
 using namespace std;
 
 /******************************************************************************
@@ -44,3 +47,6 @@ double mean_STTC_dir(double const arr[], int circ_shifts_num);
 *                                                                             *
 ******************************************************************************/
 double std_STTC_dir(double const arr[], int circ_shifts_num);
+
+
+// We also use the functions STTC_A_B, sign_thresh_A_B from common.hpp

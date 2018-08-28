@@ -24,8 +24,7 @@
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double mean_STTC_dir(double const arr[], int circ_shifts_num)
-{
+double mean_STTC_dir(double const arr[], int circ_shifts_num) {
     double sum = 0.0;
 
     for (int i = 0; i < circ_shifts_num; i++) {
@@ -48,8 +47,7 @@ double mean_STTC_dir(double const arr[], int circ_shifts_num)
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double std_STTC_dir(double const arr[], int circ_shifts_num)
-{
+double std_STTC_dir(double const arr[], int circ_shifts_num) {
     double mean = mean_STTC_dir(arr, circ_shifts_num), st_dev = 0.0;
 
         for (int i = 0; i < circ_shifts_num; i++) {

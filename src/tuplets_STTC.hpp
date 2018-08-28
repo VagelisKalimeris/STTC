@@ -13,25 +13,9 @@
 #include <cmath>
 #include <vector>
 
+#include "common.hpp"
+
 using namespace std;
-
-/******************************************************************************
-* FUNCTION NAME: T_A_plus                                                     *
-*                                                                             *
-* ARGUMENTS: A neuron's timeline(reference to a vector), the total time       *
-*             samples recorded(int) and a time interval(int).                 *
-*                                                                             *
-* PURPOSE: Calculates the sum of time tiles after a neuron's firing, divided  *
-*           by the total time.                                                *
-*                                                                             *
-* RETURNS: The total time(double).                                            *
-*                                                                             *
-* I/O: None.                                                                  *
-*                                                                             *
-******************************************************************************/
-double T_A_plus(const vector<int> &time_line_A, int total_time_samples, 
-                                                                       int Dt);
-
 
 /******************************************************************************
 * FUNCTION NAME: P_A_B_minus                                                  *
@@ -87,4 +71,4 @@ double P_B_A_plus(const vector<int> &time_line_A,
 *                                                                             *
 ******************************************************************************/
 double STTC_A_B(const vector<int> &time_line_A, const vector<int> &time_line_B,
-                                                int Dt, double tBm, double tAp);
+                        int total_time_samples, int Dt, double tBm, double tAp);
