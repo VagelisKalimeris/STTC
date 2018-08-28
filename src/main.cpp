@@ -93,7 +93,7 @@ int main(int argc, char const *argv[])
     // print_sgnfcnt_tuplet_begin();
     ofstream tuplets;
     tuplets.open("tuplets.csv");
-    tuplets<<"NeuronA,NeuronB,STTC,Percentile\n";
+    tuplets<<"NeuronA,NeuronB,STTC,Percentile"<<endl;
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
         double tAp_tmp = tAp[a];
@@ -130,7 +130,7 @@ int main(int argc, char const *argv[])
                 // print_sgnfcnt_tuplet(a+1, b+1, tupl_sttc, 
                 //                             pos/double(circ_shifts_num));
                 tuplets<<a+1<<','<<b+1<<','<<tupl_sttc<<','
-                                        <<pos/double(circ_shifts_num)<<'\n';
+                                        <<pos/double(circ_shifts_num)<<endl;
             }
         }
     }
@@ -149,7 +149,7 @@ int main(int argc, char const *argv[])
     // print_sgnfcnt_triplet_begin();
     ofstream triplets;
     triplets.open("triplets.csv");
-    triplets<<"NeuronA,NeuronB,NeuronC,STTC,Percentile\n";
+    triplets<<"NeuronA,NeuronB,NeuronC,STTC,Percentile"<<endl;
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
         for (int c = 0; c < neurons; c++) { // Neuron C
@@ -157,20 +157,21 @@ int main(int argc, char const *argv[])
             vector<int> time_line_C = spike_trains[c];
             for (int b = 0; b < neurons; b++) { // Neuron B
                 if (b == a || b == c) {continue;} // Skip same neurons
-                categorization(sgnfcnt_tuplets[c][a], sgnfcnt_tuplets[c][b], 
-                                        sgnfcnt_tuplets[a][b], motifs_triplets);
+                int pos = sgnfcnt_tuplets[c][a] * 4 + 
+                        sgnfcnt_tuplets[c][b] * 2 + sgnfcnt_tuplets[a][b] * 1;
+                ++motifs_triplets[pos];
             }
             if (!sign_trpl_limit(time_line_A, time_line_C ,Dt)) {
                 continue; // Reduced A spike train has < 5 spikes
             }
             double tApt = T_A_plus_tripl(time_line_A, time_line_C, 
-                                                        total_time_samples, Dt);
+                                                    total_time_samples, Dt);
             for (int b = 0; b < neurons; b++) { // Neuron B
                 if (b == a || b == c) {continue;} // Skip same neurons
                 vector<int> time_line_B = spike_trains[b];
                 double tBm_tmp = tBm[b];
                 double trip_sttc = STTC_AB_C(time_line_A, time_line_B, 
-                                                time_line_C, Dt, tBm_tmp, tApt);
+                                            time_line_C, Dt, tBm_tmp, tApt);
             // STTC values of shifted spike trains
                 double shifted_res_arr[circ_shifts_num];
                 for (int shift = 0; shift < circ_shifts_num; shift++) {
@@ -179,7 +180,7 @@ int main(int argc, char const *argv[])
                     unsigned int random = random_gen(total_time_samples);
                     circular_shift(to_shift, random, total_time_samples);
                     tApt = T_A_plus_tripl(time_line_A, to_shift, 
-                                                        total_time_samples, Dt);
+                                                    total_time_samples, Dt);
                     shifted_res_arr[shift] = STTC_AB_C(time_line_A, 
                                     time_line_B, to_shift, Dt, tBm_tmp, tApt);
                 }
@@ -188,27 +189,29 @@ int main(int argc, char const *argv[])
                 double threshold = sign_thresh(mean, st_dev);
                 if ( trip_sttc > threshold) {
                     ttl_sgnfcnt_triplets++;
-                    categorization(sgnfcnt_tuplets[c][a], sgnfcnt_tuplets[c][b],
-                                        sgnfcnt_tuplets[a][b], motifs_sgnfcnts);
+                    int pos = sgnfcnt_tuplets[c][a] * 4 + 
+                            sgnfcnt_tuplets[c][b] * 2 + sgnfcnt_tuplets[a][b];
+                    ++motifs_sgnfcnts[pos];
                     sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
-                    int pos = 0; 
+                    pos = 0; 
                     while (pos < circ_shifts_num && 
-                                            shifted_res_arr[pos] <= trip_sttc) {
+                                        shifted_res_arr[pos] <= trip_sttc) {
                         ++pos;
                     }
                     // print_sgnfcnt_triplet(a+1, b+1, c+1, trip_sttc, 
-                    //                             pos/double(circ_shifts_num));
+                    //                         pos/double(circ_shifts_num));
                     triplets<<a+1<<','<<b+1<<','<<c+1<<','<<trip_sttc<<','
-                                        <<pos/double(circ_shifts_num)<<'\n';
+                                        <<pos/double(circ_shifts_num)<<endl;
                 }
             }
         }
     }
     // print_sgnfcnt_triplet_end();
     triplets.close();
-    cout<<"\nNumber of total significant triplets: "<<ttl_sgnfcnt_triplets<<" ( "
-            <<(ttl_sgnfcnt_triplets*100/double(neurons*(neurons-1)*(neurons-2)))
-            <<"% )"<<endl;
+    cout<<"\nNumber of total significant triplets: "<<ttl_sgnfcnt_triplets
+                                    <<" ( "<<(ttl_sgnfcnt_triplets * 100 / 
+                                    double(neurons*(neurons-1)*(neurons-2)))
+                                    <<"% )"<<endl;
     
     
 // Print Motifs
