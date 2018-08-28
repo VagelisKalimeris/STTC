@@ -16,7 +16,7 @@ SRCS = SRC/
 
 sttc : ${OBJS}main.o ${OBJS}common.o ${OBJS}cond_null_dist.o ${OBJS}motif.o \
 			${OBJS}p_p_null_dist.o ${OBJS}triplets_STTC.o ${OBJS}tuplets_STTC.o
-	g++ ${CXXFLAGS} -o sttc $< 
+	g++ ${CXXFLAGS} -o sttc $^
 
 ${OBJS}%.o : ${SRCS}%.cpp ${INCLUDES}%.hpp
 	g++ $(CXXFLAGS) -c $< -o $@

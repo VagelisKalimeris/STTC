@@ -50,7 +50,7 @@ int main(int argc, char const *argv[])
     
 // Open File
     ifstream data;
-    data.open("DATASETS/" + (string) argv[3], ifstream::in);
+    data.open((string("DATASETS/") + argv[3]).c_str(), ifstream::in);
     string line;
     
 // Get total number of neurons from file
@@ -89,7 +89,7 @@ int main(int argc, char const *argv[])
 // Calculate per pair STTC
     // print_sgnfcnt_tuplet_begin();
     ofstream tuplets;
-    tuplets.open((string) argv[3] + "_tuplets.csv");
+    tuplets.open((string(argv[3]) + "_tuplets.csv").c_str());
     tuplets<<"NeuronA,NeuronB,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
@@ -150,7 +150,7 @@ int main(int argc, char const *argv[])
 // Calculate conditional STTC
     // print_sgnfcnt_triplet_begin();
     ofstream triplets;
-    triplets.open((string) argv[3] + "_triplets.csv");
+    triplets.open((string(argv[3]) + "_triplets.csv").c_str());
     triplets<<"NeuronA,NeuronB,NeuronC,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
