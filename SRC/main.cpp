@@ -24,10 +24,6 @@
 #include "../INCLUDE/triplets_STTC.hpp"
 #include "../INCLUDE/motif.hpp"
 
-// neurons 183
-// total_time_samples 11970
-// circ_shifts_num 50
-
 using namespace std;
 
 /******************************************************************************
@@ -54,7 +50,7 @@ int main(int argc, char const *argv[])
     
 // Open File
     ifstream data;
-    data.open("DATASETS/" + argv[3], ifstream::in);
+    data.open(string("DATASETS/") + argv[3], ifstream::in);
     string line;
     
 // Get total number of neurons from file
@@ -93,7 +89,7 @@ int main(int argc, char const *argv[])
 // Calculate per pair STTC
     // print_sgnfcnt_tuplet_begin();
     ofstream tuplets;
-    tuplets.open(argv[3] + "_tuplets.csv");
+    tuplets.open(argv[3] + string("_tuplets.csv"));
     tuplets<<"NeuronA,NeuronB,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
@@ -154,7 +150,7 @@ int main(int argc, char const *argv[])
 // Calculate conditional STTC
     // print_sgnfcnt_triplet_begin();
     ofstream triplets;
-    triplets.open(argv[3] + "_triplets.csv");
+    triplets.open(argv[3] + string("_triplets.csv"));
     triplets<<"NeuronA,NeuronB,NeuronC,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
