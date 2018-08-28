@@ -13,27 +13,10 @@
 #include <cstdlib>
 #include <cmath>
 #include <vector>
-#include <cstdlib>
+
+#include <iomanip>
 
 using namespace std;
-
-/******************************************************************************
-* FUNCTION NAME: T_A_plus                                                     *
-*                                                                             *
-* ARGUMENTS: A neuron's timeline(reference to a vector), the total time       *
-*             samples recorded(int) and a time interval(int).                 *
-*                                                                             *
-* PURPOSE: Calculates the sum of time tiles after a neuron's firing, divided  *
-*           by the total time.                                                *
-*                                                                             *
-* RETURNS: The total time(double).                                            *
-*                                                                             *
-* I/O: None.                                                                  *
-*                                                                             *
-******************************************************************************/
-double T_A_plus(const vector<int> &time_line_A, int total_time_samples, 
-                                                                       int Dt);
-
 
 /******************************************************************************
 * FUNCTION NAME: T_B_minus                                                    *
@@ -104,3 +87,18 @@ unsigned int random_gen(unsigned int max_number);
 *                                                                             *
 ******************************************************************************/
 void print_all_spikes(const vector<int> spike_trains[], int total_neurons);
+
+/* comments for later */
+void print_sgnfcnt_tuplet_begin(void);
+
+void print_sgnfcnt_tuplet(const int neuron_A, const int neuron_B, 
+                                    const double STTC, const double percentile);
+
+void print_sgnfcnt_tuplet_end(void);
+
+void print_sgnfcnt_triplet_begin(void);
+
+void print_sgnfcnt_triplet(const int neuron_A, const int neuron_B, 
+                const int neuron_C, const double STTC, const double percentile);
+
+void print_sgnfcnt_triplet_end(void);

@@ -9,12 +9,9 @@
 ******************************************************************************/
 
 
-
-
+#include <iostream>
 #include <cmath>
-#include<vector>
-
-#include "common.hpp"
+#include <vector>
 
 using namespace std;
 
@@ -34,8 +31,7 @@ using namespace std;
 *                                                                             *
 ******************************************************************************/
 double T_A_plus_tripl(const vector<int> &time_line_A,
-                                       const vector<int> &time_line_C, int Dt);
-
+                const vector<int> &time_line_C, int total_time_samples, int Dt);
 
 
 /******************************************************************************
@@ -53,8 +49,8 @@ double T_A_plus_tripl(const vector<int> &time_line_A,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-int N_BminusA_CA(const vector<int> &time_line_A, const vector<int> &time_line_B,
-                                        const vector<int> &time_line_C, int Dt);
+int N_BminusA_CA(const vector<int> &time_line_A, 
+        const vector<int> &time_line_B, const vector<int> &time_line_C, int Dt);
 
 
 /******************************************************************************
@@ -72,8 +68,8 @@ int N_BminusA_CA(const vector<int> &time_line_A, const vector<int> &time_line_B,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-int N_AplusB_CA(const vector<int> &time_line_A, const vector<int> &time_line_B,
-                                       const vector<int> &time_line_C, int Dt);
+int N_AplusB_CA(const vector<int> &time_line_A, 
+        const vector<int> &time_line_B, const vector<int> &time_line_C, int Dt);
 
 
 /******************************************************************************
@@ -90,5 +86,6 @@ int N_AplusB_CA(const vector<int> &time_line_A, const vector<int> &time_line_B,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double STTC_AB_C(const vector<int> &time_line_A, const vector<int> &time_line_B,
-               const vector<int> &time_line_C, int total_time_samples, int Dt);
+double STTC_AB_C(const vector<int> &time_line_A, 
+                const vector<int> &time_line_B, const vector<int> &time_line_C, 
+                int Dt, double tBm, double tApt);

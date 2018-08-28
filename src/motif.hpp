@@ -3,44 +3,45 @@
 *                                                                             *
 * PROJECT NAME: STTC Analyses                                                 *
 *                                                                             *
-* FILE NAME: p_p_null_dist.hpp                                                *
+* FILE NAME: motif.hpp                                                        *
 *                                                                             *
 *******************************************************************************
 ******************************************************************************/
 
 
-#include <cmath>
-#include <vector>
+#include <iostream>
+#include <iomanip>
 
 using namespace std;
 
 /******************************************************************************
-* FUNCTION NAME: mean_STTC_dir                                                *
+* FUNCTION NAME: categorization                                               *
 *                                                                             *
-* ARGUMENTS: An array containing the shifted per pair STTC results as well as *
-*             the total number of circular shifts.                            *
+* ARGUMENTS: .                                                                *
 *                                                                             *
-* PURPOSE: Calculates the mean value.                                         *
+* PURPOSE: Categorizes the triplet of neurons to one motif category.          *
 *                                                                             *
-* RETURNS: The mean value.                                                    *
+* RETURNS: None.                                                              *
 *                                                                             *
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double mean_STTC_dir(double const arr[], int circ_shifts_num);
+void categorization(const bool CtoA, const bool CtoB, const bool AtoB, 
+                                                                int *motifs);
 
 
 /******************************************************************************
-* FUNCTION NAME: std_STTC_dir                                                 *
+* FUNCTION NAME: print_motifs                                                 *
 *                                                                             *
-* ARGUMENTS: An array containing the shifted per pair STTC results as well as *
-*             the total number of circular shifts.                            *
+* ARGUMENTS: The totals of each motif category of triplets (reference to      *
+*             an array), the totals of each motif category of significant     *
+*              triplets (reference to an array).                              *
 *                                                                             *
-* PURPOSE: Calculates the standard deviation.                                 *
+* PURPOSE: Prints each motif category of triplets.                            *
 *                                                                             *
-* RETURNS: The standard deviation.                                            *
+* RETURNS: None.                                                              *
 *                                                                             *
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double std_STTC_dir(double const arr[], int circ_shifts_num);
+void print_motifs(const int *triplets, const int *significants);

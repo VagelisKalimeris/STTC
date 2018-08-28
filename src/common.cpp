@@ -9,58 +9,7 @@
 ******************************************************************************/
 
 
-
 #include "common.hpp"
-
-/******************************************************************************
-* FUNCTION NAME: T_A_plus                                                     *
-*                                                                             *
-* ARGUMENTS: A neuron's timeline(reference to a vector), the total time       *
-*             samples recorded(int) and a time interval(int).                 *
-*                                                                             *
-* PURPOSE: Calculates the sum of time tiles after a neuron's firing, divided  *
-*           by the total time.                                                *
-*                                                                             *
-* RETURNS: The total time(double).                                            *
-*                                                                             *
-* I/O: None.                                                                  *
-*                                                                             *
-******************************************************************************/
-double T_A_plus(const vector<int> &time_line_A, int total_time_samples, 
-                                                                        int Dt)
-{
-    double T = 0.0;
-    int s = 0, last = -1;
-    
-    if(time_line_A.size() == 0) {
-        return T;
-    }
-    if(Dt == 0) {
-        T = time_line_A.size() / double(total_time_samples);
-    }
-    else {
-        for(unsigned int a = 0; a < time_line_A.size(); ++a) {
-            /* check if last calculated tile is before tile of spike of A */
-            if(last < time_line_A[a]) {
-                /* add Dt + 1 */
-                s += Dt + 1;
-            }
-            else {
-                /* add Dt + 1 - (tA'_prev + Dt + 1 - tA'_curr) */
-                s += Dt + time_line_A[a] - last;
-            }
-            last = time_line_A[a] + Dt;
-        }
-        if((last != -1) && (last >= total_time_samples)) {
-            s -= last + 1 - total_time_samples;
-        }
-
-        T = s / double(total_time_samples);
-    }
-    
-    return T;
-}
-
 
 /******************************************************************************
 * FUNCTION NAME: T_B_minus                                                    *
@@ -82,24 +31,26 @@ double T_B_minus(const vector<int> &time_line_B, int total_time_samples,
     double T = 0.0;
     int s = 0, last = -1;
     
-    if(time_line_B.size() == 0) {
+    unsigned int time_line_B_size = time_line_B.size();
+    if(time_line_B_size == 0) {
         return T;
     }
     if(Dt == 0) {
-        T = time_line_B.size() / double(total_time_samples);
+        T = time_line_B_size / double(total_time_samples);
     }
     else {
-        for(unsigned int b = 0; b < time_line_B.size(); ++b) {
+        for(unsigned int b = 0; b < time_line_B_size; ++b) {
+            int time_stamp_B = time_line_B[b];
             /* check if last calculated tile is before tile of spike of B */
-            if(last < (time_line_B[b] - Dt)) {
+            if(last < (time_stamp_B - Dt)) {
                 /* add Dt + 1 */
                 s += Dt + 1;
             }
             else {
                 /* add tB'_curr - tB'_prev */
-                s += time_line_B[b] - last;
+                s += time_stamp_B - last;
             }
-            last = time_line_B[b];
+            last = time_stamp_B;
         }
 
         T = s / double(total_time_samples);
@@ -140,10 +91,11 @@ double sign_thresh(double mean, double st_dev)
 *                                                                             *
 ******************************************************************************/
 void circular_shift(vector<int> &time_line, unsigned int random, 
-                                                      int total_time_samples) {
+                                                      int total_time_samples)
+{
     vector<int>::iterator front_it = time_line.begin();
 
-    for (int i = 0; i < static_cast<int> (time_line.size()); i++) {
+    for (unsigned int i = 0; i < time_line.size(); i++) {
         int temp = time_line[i] + random;
 
         if ((temp) < total_time_samples) {
@@ -161,8 +113,9 @@ void circular_shift(vector<int> &time_line, unsigned int random,
 
 
 // Helper function. Generates random integers 
-// in the range 0 - (total_time_samples-1).
-unsigned int random_gen(unsigned int max_number) {
+// in the range [1, total_time_samples].
+unsigned int random_gen(unsigned int max_number)
+{
     return 1 + rand() % max_number;
 }
 
@@ -183,16 +136,77 @@ unsigned int random_gen(unsigned int max_number) {
 ******************************************************************************/
 void print_all_spikes(const vector<int> spike_trains[], int total_neurons)
 {
-    int total_firings = 0;
+    int total_firings = 0, max_neuron = -1, min_neuron = -1;
+    unsigned int max = 0, min = 100000;
 
     cout<<"\nThe data structure: "<<endl;
     for (int neur = 0; neur < total_neurons; neur++) {
-        cout<<"No "<<neur + 1<<" neuron's spikes:\n";
-        for (size_t fire = 0; fire < spike_trains[neur].size(); fire++) {
+        unsigned int time_line_size = spike_trains[neur].size();
+        cout<<"No "<<neur + 1<<" neuron's spikes ("<<time_line_size<<"):\n";
+        for (unsigned int fire = 0; fire < time_line_size; fire++) {
             cout<<spike_trains[neur][fire] + 1<<' ';
-        total_firings++;
+            total_firings++;
+        }
+        if (time_line_size > max) {
+            max = time_line_size;
+            max_neuron = neur + 1;
+        }
+        else if (time_line_size < min) {
+            min = time_line_size;
+            min_neuron = neur + 1;
         }
         cout<<endl<<endl;
     }
     cout<<"\nTotal number of spikes: "<<total_firings<<endl;
+    cout<<"Neuron "<<max_neuron<<" has max spikes: "<<max<<endl;
+    cout<<"Neuron "<<min_neuron<<" has min spikes: "<<min<<endl;
+    cout<<"Average spikes in each neuron are: "<<total_firings/double(total_neurons)<<endl; 
+}
+
+/* comments for later */
+void print_sgnfcnt_tuplet_begin(void)
+{
+    cout<<"\n+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(15)<<'+'
+                                                        <<setw(13)<<'+'<<endl;
+    cout<<"| Neuron A | Neuron B |"<<setfill(' ')<<setw(15)<<"STTC |"
+                                            <<setw(13)<<"Percentile |"<<endl;
+    cout<<"+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(15)<<'+'
+                                                        <<setw(13)<<'+'<<endl;
+}
+
+void print_sgnfcnt_tuplet(const int neuron_A, const int neuron_B, 
+                                    const double STTC, const double percentile)
+{
+    cout<<"| "<<setfill(' ')<<setw(8)<<neuron_A<<" | "<<setw(8)<<neuron_B
+        <<" | "<<setw(12)<<STTC<<" | "<<setw(10)<<percentile<<" |"<<endl;
+}
+
+void print_sgnfcnt_tuplet_end(void)
+{
+    cout<<"+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(15)<<'+'
+                                                        <<setw(13)<<'+'<<endl;
+}
+
+void print_sgnfcnt_triplet_begin(void)
+{
+    cout<<"\n+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(11)<<'+'
+                                        <<setw(15)<<'+'<<setw(13)<<'+'<<endl;
+    cout<<"| Neuron A | Neuron B | Neuron C |"<<setfill(' ')
+                        <<setw(15)<<"STTC |"<<setw(13)<<"Percentile |"<<endl;
+    cout<<"+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(11)<<'+'
+                                        <<setw(15)<<'+'<<setw(13)<<'+'<<endl;
+}
+
+void print_sgnfcnt_triplet(const int neuron_A, const int neuron_B, 
+                const int neuron_C, const double STTC, const double percentile)
+{
+    cout<<"| "<<setfill(' ')<<setw(8)<<neuron_A<<" | "
+                    <<setw(8)<<neuron_B<<" | "<<setw(8)<<neuron_C<<" | "
+                    <<setw(12)<<STTC<<" | "<<setw(10)<<percentile<<" |"<<endl;
+}
+
+void print_sgnfcnt_triplet_end(void)
+{
+    cout<<"+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(11)<<'+'
+                                        <<setw(15)<<'+'<<setw(13)<<'+'<<endl;
 }

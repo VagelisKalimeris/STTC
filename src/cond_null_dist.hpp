@@ -9,13 +9,8 @@
 ******************************************************************************/
 
 
-
 #include <cmath>
-#include<vector>
-
-#include "common.hpp"
-#include "tuplets_STTC.hpp"
-#include "triplets_STTC.hpp"
+#include <vector>
 
 using namespace std;
 
@@ -34,4 +29,4 @@ using namespace std;
 *                                                                             *
 ******************************************************************************/
 bool sign_trpl_limit(const vector<int> &time_line_A, 
-                                       const vector<int> &time_line_C, int Dt);
+                                        const vector<int> &time_line_C, int Dt);
