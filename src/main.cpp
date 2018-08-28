@@ -209,7 +209,7 @@ int main(int argc, char const *argv[])
     // print_sgnfcnt_triplet_end();
     triplets.close();
     cout<<"\nNumber of total significant triplets: "<<ttl_sgnfcnt_triplets
-                                    <<" ( "<<(ttl_sgnfcnt_triplets * 100 / 
+                                    <<" ( "<<(ttl_sgnfcnt_triplets*100/
                                     double(neurons*(neurons-1)*(neurons-2)))
                                     <<"% )"<<endl;
     
