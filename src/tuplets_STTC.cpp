@@ -12,6 +12,58 @@
 #include "tuplets_STTC.hpp"
 
 /******************************************************************************
+* FUNCTION NAME: T_A_plus                                                     *
+*                                                                             *
+* ARGUMENTS: A neuron's timeline(reference to a vector), the total time       *
+*             samples recorded(int) and a time interval(int).                 *
+*                                                                             *
+* PURPOSE: Calculates the sum of time tiles after a neuron's firing, divided  *
+*           by the total time.                                                *
+*                                                                             *
+* RETURNS: The total time(double).                                            *
+*                                                                             *
+* I/O: None.                                                                  *
+*                                                                             *
+******************************************************************************/
+double T_A_plus(const vector<int> &time_line_A, int total_time_samples, 
+                                                                        int Dt)
+{
+    double T = 0.0;
+    int s = 0, last = -1;
+    
+    unsigned int time_line_A_size = time_line_A.size();
+    if(time_line_A_size == 0) {
+        return T;
+    }
+    if(Dt == 0) {
+        T = time_line_A_size / double(total_time_samples);
+    }
+    else {
+        for(unsigned int a = 0; a < time_line_A_size; ++a) {
+            int time_stamp_A = time_line_A[a];
+            /* check if last calculated tile is before tile of spike of A */
+            if(last < time_stamp_A) {
+                /* add Dt + 1 */
+                s += Dt + 1;
+            }
+            else {
+                /* add Dt + 1 - (tA'_prev + Dt + 1 - tA'_curr) */
+                s += Dt + time_stamp_A - last;
+            }
+            last = time_stamp_A + Dt;
+        }
+        if((last != -1) && (last >= total_time_samples)) {
+            s -= last + 1 - total_time_samples;
+        }
+
+        T = s / double(total_time_samples);
+    }
+    
+    return T;
+}
+
+
+/******************************************************************************
 * FUNCTION NAME: P_A_B_minus                                                  *
 *                                                                             *
 * ARGUMENTS: Two neuron's timelines(references to vectors), and a time        *
@@ -147,7 +199,7 @@ double P_B_A_plus(const vector<int> &time_line_A,
 *                                                                             *
 ******************************************************************************/
 double STTC_A_B(const vector<int> &time_line_A, const vector<int> &time_line_B,
-                        int total_time_samples, int Dt, double tBm, double tAp)
+                                                int Dt, double tBm, double tAp)
 {
     double pABm = P_A_B_minus(time_line_A, time_line_B, Dt);
     double pBAp = P_B_A_plus(time_line_A, time_line_B, Dt);
