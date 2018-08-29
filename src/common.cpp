@@ -134,15 +134,25 @@ unsigned int random_gen(unsigned int max_number)
 * I/O: See PURPOSE.                                                           *
 *                                                                             *
 ******************************************************************************/
-void print_all_spikes(const vector<int> spike_trains[], int total_neurons)
+void print_all_spikes(const vector<int> spike_trains[], int total_neurons, 
+                                                const vector<int> &astrocytes)
 {
     int total_firings = 0, max_neuron = -1, min_neuron = -1;
     unsigned int max = 0, min = 100000;
 
     cout<<"\nThe data structure: "<<endl;
+    int astro = 0;
+    int astrocyte = astrocytes[astro];
     for (int neur = 0; neur < total_neurons; neur++) {
         unsigned int time_line_size = spike_trains[neur].size();
-        cout<<"No "<<neur + 1<<" neuron's spikes ("<<time_line_size<<"):\n";
+        if (astrocyte == neur) {
+            astrocyte = astrocytes[(++astro) % astrocytes.size()];
+            cout<<"No "<<neur + 1<<" astrocyte neuron's spikes ("
+                                                    <<time_line_size<<"):\n";
+        }
+        else {
+            cout<<"No "<<neur + 1<<" neuron's spikes ("<<time_line_size<<"):\n";
+        }
         for (unsigned int fire = 0; fire < time_line_size; fire++) {
             cout<<spike_trains[neur][fire] + 1<<' ';
             total_firings++;
