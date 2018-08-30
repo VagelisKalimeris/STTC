@@ -69,7 +69,7 @@ int main(int argc, char const *argv[])
     
 // Get total number of neurons from file
     getline(data, line);
-    int neurons = line.length() - 1;
+    const int neurons = line.length() - 1;
     data.seekg(0, data.beg);
     const int neur_clean = neurons - astrocytes_size;
     

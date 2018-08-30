@@ -137,21 +137,18 @@ void print_all_spikes(const vector<int> spike_trains[],
     cout<<"\nThe data structure: "<<endl;
     for (int neur = 0; neur < total_neurons; neur++) {
         unsigned int time_line_size = spike_trains[neur].size();
+        int pos;
         if (neur == astrocyte) {
+            pos = neur_clean + astro;
             cout<<"No "<<neur + 1<<" astrocyte neuron's spikes ("
                                                     <<time_line_size<<"):\n";
-            for (unsigned int fire = 0; fire < time_line_size; fire++) {
-                cout<<spike_trains[neur][fire] + 1<<' ';
-            }
             astrocyte = astrocytes[(++astro) % astrocytes_size];
         }
         else {
+            pos = neur - astro;
             cout<<"No "<<neur + 1<<" neuron's spikes ("
                                                     <<time_line_size<<"):\n";
-            for (unsigned int fire = 0; fire < time_line_size; fire++) {
-                cout<<spike_trains[neur][fire] + 1<<' ';
-                total_firings++;
-            }
+            total_firings += time_line_size;
             if (time_line_size > max) {
                 max = time_line_size;
                 max_neuron = neur + 1;
@@ -160,6 +157,9 @@ void print_all_spikes(const vector<int> spike_trains[],
                 min = time_line_size;
                 min_neuron = neur + 1;
             }
+        }
+        for (unsigned int fire = 0; fire < time_line_size; fire++) {
+            cout<<spike_trains[pos][fire] + 1<<' ';
         }
         cout<<endl<<endl;
     }
