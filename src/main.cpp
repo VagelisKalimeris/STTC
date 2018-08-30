@@ -53,14 +53,25 @@ int main(int argc, char const *argv[])
     int ttl_sgnfcnt_tuplets = 0, ttl_sgnfcnt_triplets = 0;
     
 // Open File
-    ifstream data;
+    ifstream data, extra;
     data.open("../psm_avalanche", ifstream::in);
+    extra.open("../astrocytes", ifstream::in);
     string line;
+    
+// Our main astrocytes structure
+    vector<int> astrocytes;
+    
+// Get astrocytes
+    while (getline(extra, line)) {
+        astrocytes.push_back(stoi(line) - 1);
+    }
+    int astrocytes_size = astrocytes.size();
     
 // Get total number of neurons from file
     getline(data, line);
-    const int neurons = line.length() - 1;
+    int neurons = line.length() - 1;
     data.seekg(0, data.beg);
+    const int neur_clean = neurons - astrocytes_size;
     
 // Our main data structure
     vector<int> spike_trains[neurons];
@@ -68,9 +79,24 @@ int main(int argc, char const *argv[])
 // Store each neuron's firing (1's) to the data structure
     int total_time_samples = 0;
     while (getline(data, line)) {
-        for (int n = 0; n < neurons; n++) {
-            if (line[n] == '1') {
-                spike_trains[n].push_back(total_time_samples);
+        int astro = 0;
+        int astrocyte = astrocytes[astro];
+        for (int neur = 0; neur < neurons; ++neur) {
+            if (line[neur] == '1') {
+                int pos;
+                if (astrocyte == neur) {
+                    pos = neur_clean + astro;
+                    astrocyte = astrocytes[(++astro) % astrocytes_size];
+                }
+                else {
+                    pos = neur - astro;
+                }
+                spike_trains[pos].push_back(total_time_samples);
+            }
+            else {
+                if (astrocyte == neur) {
+                    astrocyte = astrocytes[(++astro) % astrocytes_size];
+                }
             }
         }
         total_time_samples++;
@@ -79,27 +105,34 @@ int main(int argc, char const *argv[])
     srand(time(NULL));
     
 // Find all T
-    double tAp[neurons];
-    double tBm[neurons];
-    for(int n = 0; n < neurons; ++n) {
-        tAp[n] = T_A_plus(spike_trains[n], total_time_samples, Dt);
-        tBm[n] = T_B_minus(spike_trains[n], total_time_samples, Dt);
+    double tAp[neur_clean];
+    double tBm[neur_clean];
+    for(int neur = 0; neur < neur_clean; ++neur) {
+        tAp[neur] = T_A_plus(spike_trains[neur], total_time_samples, Dt);
+        tBm[neur] = T_B_minus(spike_trains[neur], total_time_samples, Dt);
     }
     
 // Significant tuplets
-    bool sgnfcnt_tuplets[neurons][neurons];
+    bool sgnfcnt_tuplets[neur_clean][neur_clean];
     
 // Calculate per pair STTC
     // print_sgnfcnt_tuplet_begin();
     ofstream tuplets;
     tuplets.open("tuplets.csv");
     tuplets<<"NeuronA,NeuronB,STTC,Percentile"<<endl;
-    for (int a = 0; a < neurons; a++) { // Neuron A
+    int astro_a = 0, a_real = 0;
+    int astrocyte_a = astrocytes[astro_a];
+    for (int a = 0; a < neur_clean; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
         double tAp_tmp = tAp[a];
-        for (int b = 0; b < neurons; b++) { // Neuron B
+        int astro_b = 0, b_real = 0;
+        int astrocyte_b = astrocytes[astro_b];
+        for (int b = 0; b < neur_clean; b++) { // Neuron B
             sgnfcnt_tuplets[a][b] = false;
-            if (a == b) {continue;} // Skip same neurons
+            if (a == b) {
+                ++b_real;
+                continue;
+            } // Skip same neurons
             vector<int> time_line_B = spike_trains[b];
             double tBm_tmp = tBm[b];
             double tupl_sttc = STTC_A_B(time_line_A, time_line_B, 
@@ -129,15 +162,26 @@ int main(int argc, char const *argv[])
                 }
                 // print_sgnfcnt_tuplet(a+1, b+1, tupl_sttc, 
                 //                             pos/double(circ_shifts_num));
-                tuplets<<a+1<<','<<b+1<<','<<tupl_sttc<<','
-                                        <<pos/double(circ_shifts_num)<<endl;
+                while (a_real == astrocyte_a) {
+                    ++a_real;
+                    astrocyte_a = astrocytes[(++astro_a) % astrocytes_size];
+                }
+                while (b_real == astrocyte_b) {
+                    ++b_real;
+                    astrocyte_b = astrocytes[(++astro_b) % astrocytes_size];
+                }
+                tuplets<<a_real + 1<<','<<b_real + 1<<','<<tupl_sttc<<','
+                                        <<pos / double(circ_shifts_num)<<endl;
             }
+            ++b_real;
         }
+        ++a_real;
     }
     // print_sgnfcnt_tuplet_end();
     tuplets.close();
     cout<<"\nNumber of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<" ( "
-        <<(ttl_sgnfcnt_tuplets*100/double(neurons*(neurons-1)))<<"% )"<<endl;
+                            <<(ttl_sgnfcnt_tuplets * 100 / double(neurons * 
+                            (neurons - 1)))<<"% )"<<endl;
     
     
     
@@ -150,24 +194,37 @@ int main(int argc, char const *argv[])
     ofstream triplets;
     triplets.open("triplets.csv");
     triplets<<"NeuronA,NeuronB,NeuronC,STTC,Percentile"<<endl;
-    for (int a = 0; a < neurons; a++) { // Neuron A
+    astro_a = 0; a_real = 0;
+    astrocyte_a = astrocytes[astro_a];
+    for (int a = 0; a < neur_clean; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
-        for (int c = 0; c < neurons; c++) { // Neuron C
-            if (a == c) {continue;} // Skip same neurons
+        int astro_c = 0, c_real = 0;
+        int astrocyte_c = astrocytes[astro_c];
+        for (int c = 0; c < neur_clean; c++) { // Neuron C
+            if (a == c) {
+                ++c_real;
+                continue;
+            } // Skip same neurons
             vector<int> time_line_C = spike_trains[c];
-            for (int b = 0; b < neurons; b++) { // Neuron B
+            for (int b = 0; b < neur_clean; b++) { // Neuron B
                 if (b == a || b == c) {continue;} // Skip same neurons
                 int pos = sgnfcnt_tuplets[c][a] * 4 + 
                         sgnfcnt_tuplets[c][b] * 2 + sgnfcnt_tuplets[a][b] * 1;
                 ++motifs_triplets[pos];
             }
             if (!sign_trpl_limit(time_line_A, time_line_C ,Dt)) {
+                ++c_real;
                 continue; // Reduced A spike train has < 5 spikes
             }
             double tApt = T_A_plus_tripl(time_line_A, time_line_C, 
                                                     total_time_samples, Dt);
-            for (int b = 0; b < neurons; b++) { // Neuron B
-                if (b == a || b == c) {continue;} // Skip same neurons
+            int astro_b = 0, b_real = 0;
+            int astrocyte_b = astrocytes[astro_b];
+            for (int b = 0; b < neur_clean; b++) { // Neuron B
+                if (b == a || b == c) {
+                    ++b_real;
+                    continue;
+                } // Skip same neurons
                 vector<int> time_line_B = spike_trains[b];
                 double tBm_tmp = tBm[b];
                 double trip_sttc = STTC_AB_C(time_line_A, time_line_B, 
@@ -200,25 +257,39 @@ int main(int argc, char const *argv[])
                     }
                     // print_sgnfcnt_triplet(a+1, b+1, c+1, trip_sttc, 
                     //                         pos/double(circ_shifts_num));
-                    triplets<<a+1<<','<<b+1<<','<<c+1<<','<<trip_sttc<<','
-                                        <<pos/double(circ_shifts_num)<<endl;
+                    while (a_real == astrocyte_a) {
+                        ++a_real;
+                        astrocyte_a = astrocytes[(++astro_a) % astrocytes_size];
+                    }
+                    while (c_real == astrocyte_c) {
+                        ++c_real;
+                        astrocyte_c = astrocytes[(++astro_c) % astrocytes_size];
+                    }
+                    while (b_real == astrocyte_b) {
+                        ++b_real;
+                        astrocyte_b = astrocytes[(++astro_b) % astrocytes_size];
+                    }
+                    triplets<<a_real + 1<<','<<b_real + 1<<','<<c_real + 1<<','
+                        <<trip_sttc<<','<<pos / double(circ_shifts_num)<<endl;
                 }
+                ++b_real;
             }
+            ++c_real;
         }
+        ++a_real;
     }
     // print_sgnfcnt_triplet_end();
     triplets.close();
     cout<<"\nNumber of total significant triplets: "<<ttl_sgnfcnt_triplets
-                                    <<" ( "<<(ttl_sgnfcnt_triplets*100/
-                                    double(neurons*(neurons-1)*(neurons-2)))
-                                    <<"% )"<<endl;
+                    <<" ( "<<(ttl_sgnfcnt_triplets * 100 / double(neurons * 
+                    (neurons - 1) * (neurons - 2)))<<"% )"<<endl;
     
     
 // Print Motifs
     print_motifs(motifs_triplets, motifs_sgnfcnts);
     
 // Print the data structure and total number of firings in experiment
-    // print_all_spikes(spike_trains, neurons);
+    // print_all_spikes(spike_trains, neurons, astrocytes);
     
     data.close();
     return 0;

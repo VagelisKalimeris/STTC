@@ -63,5 +63,5 @@ bool sign_trpl_limit(const vector<int> &time_line_A,
         }
     }
     
-    return (s > 5);
+    return (s >= 5);
 }

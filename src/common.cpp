@@ -134,33 +134,50 @@ unsigned int random_gen(unsigned int max_number)
 * I/O: See PURPOSE.                                                           *
 *                                                                             *
 ******************************************************************************/
-void print_all_spikes(const vector<int> spike_trains[], int total_neurons)
+void print_all_spikes(const vector<int> spike_trains[], 
+                        const int total_neurons, const vector<int> &astrocytes)
 {
     int total_firings = 0, max_neuron = -1, min_neuron = -1;
     unsigned int max = 0, min = 100000;
+    const int astrocytes_size = astrocytes.size();
+    const int neur_clean = total_neurons - astrocytes_size;
+    int astro = 0, astrocyte = astrocytes[0];
 
     cout<<"\nThe data structure: "<<endl;
     for (int neur = 0; neur < total_neurons; neur++) {
         unsigned int time_line_size = spike_trains[neur].size();
-        cout<<"No "<<neur + 1<<" neuron's spikes ("<<time_line_size<<"):\n";
-        for (unsigned int fire = 0; fire < time_line_size; fire++) {
-            cout<<spike_trains[neur][fire] + 1<<' ';
-            total_firings++;
+        if (neur == astrocyte) {
+            cout<<"No "<<neur + 1<<" astrocyte neuron's spikes ("
+                                                    <<time_line_size<<"):\n";
+            for (unsigned int fire = 0; fire < time_line_size; fire++) {
+                cout<<spike_trains[neur][fire] + 1<<' ';
+            }
+            astrocyte = astrocytes[(++astro) % astrocytes_size];
         }
-        if (time_line_size > max) {
-            max = time_line_size;
-            max_neuron = neur + 1;
-        }
-        else if (time_line_size < min) {
-            min = time_line_size;
-            min_neuron = neur + 1;
+        else {
+            cout<<"No "<<neur + 1<<" neuron's spikes ("
+                                                    <<time_line_size<<"):\n";
+            for (unsigned int fire = 0; fire < time_line_size; fire++) {
+                cout<<spike_trains[neur][fire] + 1<<' ';
+                total_firings++;
+            }
+            if (time_line_size > max) {
+                max = time_line_size;
+                max_neuron = neur + 1;
+            }
+            else if (time_line_size < min) {
+                min = time_line_size;
+                min_neuron = neur + 1;
+            }
         }
         cout<<endl<<endl;
     }
-    cout<<"\nTotal number of spikes: "<<total_firings<<endl;
+    cout<<"\nNeurons' info without astrocytes:"<<endl;
+    cout<<"Total number of spikes: "<<total_firings<<endl;
     cout<<"Neuron "<<max_neuron<<" has max spikes: "<<max<<endl;
     cout<<"Neuron "<<min_neuron<<" has min spikes: "<<min<<endl;
-    cout<<"Average spikes in each neuron are: "<<total_firings/double(total_neurons)<<endl; 
+    cout<<"Average spikes in each neuron are: "
+                                <<total_firings / double(neur_clean)<<endl;
 }
 
 /* comments for later */
