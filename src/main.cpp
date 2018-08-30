@@ -200,6 +200,10 @@ int main(int argc, char const *argv[])
             int astro_b = 0;
             int astrocyte_b = astrocytes[astro_b];
             for (int b = 0; b < neurons; b++) { // Neuron B
+                if (astrocyte_b == b) {
+                    astrocyte_b = astrocytes[(++astro_b) % astrocytes_size];
+                    continue;
+                }
                 if (b == a || b == c) {continue;} // Skip same neurons
                 int pos = sgnfcnt_tuplets[c][a] * 4 + 
                         sgnfcnt_tuplets[c][b] * 2 + sgnfcnt_tuplets[a][b] * 1;
@@ -210,6 +214,8 @@ int main(int argc, char const *argv[])
             }
             double tApt = T_A_plus_tripl(time_line_A, time_line_C, 
                                                     total_time_samples, Dt);
+            astro_b = 0;
+            astrocyte_b = astrocytes[astro_b];
             for (int b = 0; b < neurons; b++) { // Neuron B
                 if (astrocyte_b == b) {
                     astrocyte_b = astrocytes[(++astro_b) % astrocytes_size];
