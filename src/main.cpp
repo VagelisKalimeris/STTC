@@ -180,8 +180,8 @@ int main(int argc, char const *argv[])
     // print_sgnfcnt_tuplet_end();
     tuplets.close();
     cout<<"\nNumber of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<" ( "
-                            <<(ttl_sgnfcnt_tuplets * 100 / double(neurons * 
-                            (neurons - 1)))<<"% )"<<endl;
+                            <<(ttl_sgnfcnt_tuplets * 100 / double(neur_clean * 
+                            (neur_clean - 1)))<<"% )"<<endl;
     
     
     
@@ -281,8 +281,8 @@ int main(int argc, char const *argv[])
     // print_sgnfcnt_triplet_end();
     triplets.close();
     cout<<"\nNumber of total significant triplets: "<<ttl_sgnfcnt_triplets
-                    <<" ( "<<(ttl_sgnfcnt_triplets * 100 / double(neurons * 
-                    (neurons - 1) * (neurons - 2)))<<"% )"<<endl;
+                    <<" ( "<<(ttl_sgnfcnt_triplets * 100 / double(neur_clean * 
+                    (neur_clean - 1) * (neur_clean - 2)))<<"% )"<<endl;
     
     
 // Print Motifs
@@ -291,6 +291,7 @@ int main(int argc, char const *argv[])
 // Print the data structure and total number of firings in experiment
     // print_all_spikes(spike_trains, neurons, astrocytes);
     
+    extra.close();
     data.close();
     return 0;
 }
