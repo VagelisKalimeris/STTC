@@ -107,6 +107,7 @@ int main(int argc, char const *argv[])
 // Find all T
     double tAp[neur_clean];
     double tBm[neur_clean];
+    #pragma omp parallel for
     for(int neur = 0; neur < neur_clean; ++neur) {
         tAp[neur] = T_A_plus(spike_trains[neur], total_time_samples, Dt);
         tBm[neur] = T_B_minus(spike_trains[neur], total_time_samples, Dt);
@@ -120,62 +121,63 @@ int main(int argc, char const *argv[])
     ofstream tuplets;
     tuplets.open("tuplets.csv");
     tuplets<<"NeuronA,NeuronB,STTC,Percentile"<<endl;
-    int astro_a = 0, a_real = 0;
-    int astrocyte_a = astrocytes[astro_a];
     for (int a = 0; a < neur_clean; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
-        double tAp_tmp = tAp[a];
-        int astro_b = 0, b_real = 0;
-        int astrocyte_b = astrocytes[astro_b];
-        for (int b = 0; b < neur_clean; b++) { // Neuron B
-            sgnfcnt_tuplets[a][b] = false;
-            if (a == b) {
-                ++b_real;
-                continue;
-            } // Skip same neurons
-            vector<int> time_line_B = spike_trains[b];
-            double tBm_tmp = tBm[b];
-            double tupl_sttc = STTC_A_B(time_line_A, time_line_B, 
-                                                        Dt, tBm_tmp, tAp_tmp);
-        // STTC values of shifted spike trains
-            double shifted_res_arr[circ_shifts_num];
-            for (int shift = 0; shift < circ_shifts_num; shift++) {
-            // Shifted spike trains will be copied here
-                vector<int> to_shift = time_line_A;
-                unsigned int random = random_gen(total_time_samples);
-                circular_shift(to_shift, random, total_time_samples);
-                tAp_tmp = T_A_plus(to_shift, total_time_samples, Dt);
-                shifted_res_arr[shift] = STTC_A_B(to_shift, time_line_B, 
-                                                        Dt, tBm_tmp, tAp_tmp);
+        #pragma omp parallel
+        {
+            double tAp_tmp = tAp[a];
+            #pragma omp for
+            for (int b = 0; b < neur_clean; b++) { // Neuron B
+                sgnfcnt_tuplets[a][b] = false;
+                if (a == b) {
+                    continue;
+                } // Skip same neurons
+                vector<int> time_line_B = spike_trains[b];
+                double tBm_tmp = tBm[b];
+                double tupl_sttc = STTC_A_B(time_line_A, time_line_B, 
+                                                            Dt, tBm_tmp, tAp_tmp);
+            // STTC values of shifted spike trains
+                double shifted_res_arr[circ_shifts_num];
+                for (int shift = 0; shift < circ_shifts_num; shift++) {
+                // Shifted spike trains will be copied here
+                    vector<int> to_shift = time_line_A;
+                    unsigned int random = random_gen(total_time_samples);
+                    circular_shift(to_shift, random, total_time_samples);
+                    tAp_tmp = T_A_plus(to_shift, total_time_samples, Dt);
+                    shifted_res_arr[shift] = STTC_A_B(to_shift, time_line_B, 
+                                                            Dt, tBm_tmp, tAp_tmp);
+                }
+                double mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
+                double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
+                double threshold = sign_thresh(mean, st_dev);
+                if (tupl_sttc > threshold) {
+                    #pragma omp atomic
+                    ttl_sgnfcnt_tuplets++;
+                    sgnfcnt_tuplets[a][b] = true;
+                    sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
+                    int pos = 0; 
+                    while (pos < circ_shifts_num && 
+                                            shifted_res_arr[pos] <= tupl_sttc) {
+                        ++pos;
+                    }
+                    // print_sgnfcnt_tuplet(a+1, b+1, tupl_sttc, 
+                    //                             pos/double(circ_shifts_num));
+                    int a_real = a, b_real = b;
+                    for (int astro = 0; astro < astrocytes_size; ++astro) {
+                        int astrocyte = astrocytes[astro];
+                        if (a_real >= astrocyte) {
+                            ++a_real;
+                        }
+                        if (b_real >= astrocyte) {
+                            ++b_real;
+                        }
+                    }
+                    #pragma omp critical
+                    tuplets<<a_real + 1<<','<<b_real + 1<<','<<tupl_sttc<<','
+                                            <<pos / double(circ_shifts_num)<<endl;
+                }
             }
-            double mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
-            double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
-            double threshold = sign_thresh(mean, st_dev);
-            if (tupl_sttc > threshold) {
-                ttl_sgnfcnt_tuplets++;
-                sgnfcnt_tuplets[a][b] = true;
-                sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
-                int pos = 0; 
-                while (pos < circ_shifts_num && 
-                                        shifted_res_arr[pos] <= tupl_sttc) {
-                    ++pos;
-                }
-                // print_sgnfcnt_tuplet(a+1, b+1, tupl_sttc, 
-                //                             pos/double(circ_shifts_num));
-                while (a_real == astrocyte_a) {
-                    ++a_real;
-                    astrocyte_a = astrocytes[(++astro_a) % astrocytes_size];
-                }
-                while (b_real == astrocyte_b) {
-                    ++b_real;
-                    astrocyte_b = astrocytes[(++astro_b) % astrocytes_size];
-                }
-                tuplets<<a_real + 1<<','<<b_real + 1<<','<<tupl_sttc<<','
-                                        <<pos / double(circ_shifts_num)<<endl;
-            }
-            ++b_real;
         }
-        ++a_real;
     }
     // print_sgnfcnt_tuplet_end();
     tuplets.close();
@@ -194,37 +196,26 @@ int main(int argc, char const *argv[])
     ofstream triplets;
     triplets.open("triplets.csv");
     triplets<<"NeuronA,NeuronB,NeuronC,STTC,Percentile"<<endl;
-    astro_a = 0; a_real = 0;
-    astrocyte_a = astrocytes[astro_a];
     for (int a = 0; a < neur_clean; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
-        int astro_c = 0, c_real = 0;
-        int astrocyte_c = astrocytes[astro_c];
+        #pragma omp parallel for
         for (int c = 0; c < neur_clean; c++) { // Neuron C
-            if (a == c) {
-                ++c_real;
-                continue;
-            } // Skip same neurons
+            if (a == c) {continue;} // Skip same neurons
             vector<int> time_line_C = spike_trains[c];
             for (int b = 0; b < neur_clean; b++) { // Neuron B
                 if (b == a || b == c) {continue;} // Skip same neurons
                 int pos = sgnfcnt_tuplets[c][a] * 4 + 
                         sgnfcnt_tuplets[c][b] * 2 + sgnfcnt_tuplets[a][b] * 1;
+                #pragma omp atomic
                 ++motifs_triplets[pos];
             }
             if (!sign_trpl_limit(time_line_A, time_line_C ,Dt)) {
-                ++c_real;
                 continue; // Reduced A spike train has < 5 spikes
             }
             double tApt = T_A_plus_tripl(time_line_A, time_line_C, 
                                                     total_time_samples, Dt);
-            int astro_b = 0, b_real = 0;
-            int astrocyte_b = astrocytes[astro_b];
             for (int b = 0; b < neur_clean; b++) { // Neuron B
-                if (b == a || b == c) {
-                    ++b_real;
-                    continue;
-                } // Skip same neurons
+                if (b == a || b == c) {continue;} // Skip same neurons
                 vector<int> time_line_B = spike_trains[b];
                 double tBm_tmp = tBm[b];
                 double trip_sttc = STTC_AB_C(time_line_A, time_line_B, 
@@ -245,9 +236,11 @@ int main(int argc, char const *argv[])
                 double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
                 double threshold = sign_thresh(mean, st_dev);
                 if ( trip_sttc > threshold) {
+                    #pragma omp atomic
                     ttl_sgnfcnt_triplets++;
                     int pos = sgnfcnt_tuplets[c][a] * 4 + 
                             sgnfcnt_tuplets[c][b] * 2 + sgnfcnt_tuplets[a][b];
+                    #pragma omp atomic
                     ++motifs_sgnfcnts[pos];
                     sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
                     pos = 0; 
@@ -257,26 +250,25 @@ int main(int argc, char const *argv[])
                     }
                     // print_sgnfcnt_triplet(a+1, b+1, c+1, trip_sttc, 
                     //                         pos/double(circ_shifts_num));
-                    while (a_real == astrocyte_a) {
-                        ++a_real;
-                        astrocyte_a = astrocytes[(++astro_a) % astrocytes_size];
+                    int a_real = a, b_real = b, c_real = c;
+                    for (int astro = 0; astro < astrocytes_size; ++astro) {
+                        int astrocyte = astrocytes[astro];
+                        if (a_real >= astrocyte) {
+                            ++a_real;
+                        }
+                        if (b_real >= astrocyte) {
+                            ++b_real;
+                        }
+                        if (c_real >= astrocyte) {
+                            ++c_real;
+                        }
                     }
-                    while (c_real == astrocyte_c) {
-                        ++c_real;
-                        astrocyte_c = astrocytes[(++astro_c) % astrocytes_size];
-                    }
-                    while (b_real == astrocyte_b) {
-                        ++b_real;
-                        astrocyte_b = astrocytes[(++astro_b) % astrocytes_size];
-                    }
+                    #pragma omp critical
                     triplets<<a_real + 1<<','<<b_real + 1<<','<<c_real + 1<<','
                         <<trip_sttc<<','<<pos / double(circ_shifts_num)<<endl;
                 }
-                ++b_real;
             }
-            ++c_real;
         }
-        ++a_real;
     }
     // print_sgnfcnt_triplet_end();
     triplets.close();

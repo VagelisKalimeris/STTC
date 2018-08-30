@@ -8,7 +8,7 @@
 
 
 
-COMPILE_FLAGS =  -Wall -Wextra -g -O3
+COMPILE_FLAGS =  -Wall -Wextra -g -O3 -fopenmp
 
 
 sttc : main.o common.o tuplets_STTC.o triplets_STTC.o p_p_null_dist.o  \
