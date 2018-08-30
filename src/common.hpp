@@ -86,8 +86,8 @@ unsigned int random_gen(unsigned int max_number);
 * I/O: See PURPOSE.                                                           *
 *                                                                             *
 ******************************************************************************/
-void print_all_spikes(const vector<int> spike_trains[], int total_neurons, 
-                                                const vector<int> &astrocytes);
+void print_all_spikes(const vector<int> spike_trains[], 
+                        const int total_neurons, const vector<int> &astrocytes);
 
 /* comments for later */
 void print_sgnfcnt_tuplet_begin(void);
