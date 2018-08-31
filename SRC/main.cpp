@@ -49,28 +49,40 @@ int main(int argc, char const *argv[])
     int ttl_sgnfcnt_tuplets = 0, ttl_sgnfcnt_triplets = 0;
     
 // Open File
-    ifstream data;
+    ifstream data, astros;
     data.open((string("DATASETS/") + argv[3]).c_str(), ifstream::in);
+    astros.open((string("DATASETS/") + argv[4]).c_str(), ifstream::in);
     string line;
     
+// Get astrocytes
+    vector<int> astrocytes;
+    while (getline(astros, line)) {
+        astrocytes.push_back(atoi(line.c_str()) - 1);
+    }
+    int astro_size = astrocytes.size();
+
 // Get total number of neurons from file
     getline(data, line);
-    const int neurons = line.length() - 1;
+    const int neurons = line.length() - astro_size - 1;
     data.seekg(0, data.beg);
     
-// Our main data structure
+// Our main data structure and astrocyte list
     vector<int> spike_trains[neurons];
     
 // Store each neuron's firing (1's) to the data structure
     int total_time_samples = 0;
     while (getline(data, line)) {
-        for (int n = 0; n < neurons; n++) {
+        for (int n = 0; n < neurons + astro_size; n++) {
+            for (int a = 0; a < astro_size; a++) {
+                if (n == astrocytes[a]) {continue;}
+            } 
             if (line[n] == '1') {
                 spike_trains[n].push_back(total_time_samples);
             }
         }
         total_time_samples++;
     }
+
 // Start random sequence
     srand(time(NULL));
     
@@ -87,7 +99,6 @@ int main(int argc, char const *argv[])
     bool sgnfcnt_tuplets[neurons][neurons];
     
 // Calculate per pair STTC
-    // print_sgnfcnt_tuplet_begin();
     ofstream tuplets;
     tuplets.open((string(argv[3]) + "_tuplets.csv").c_str());
     tuplets<<"NeuronA,NeuronB,STTC,Percentile\n";
@@ -128,8 +139,6 @@ int main(int argc, char const *argv[])
                                             shifted_res_arr[pos] <= tupl_sttc) {
                         ++pos;
                     }
-                    // print_sgnfcnt_tuplet(a+1, b+1, tupl_sttc, 
-                    //                             pos/double(circ_shifts_num));
                     tuplets<<a+1<<','<<b+1<<','<<tupl_sttc<<','
                                             <<pos/double(circ_shifts_num)<<'\n';
                 }
@@ -148,7 +157,6 @@ int main(int argc, char const *argv[])
     int motifs_sgnfcnts[8] = {0};
     
 // Calculate conditional STTC
-    // print_sgnfcnt_triplet_begin();
     ofstream triplets;
     triplets.open((string(argv[3]) + "_triplets.csv").c_str());
     triplets<<"NeuronA,NeuronB,NeuronC,STTC,Percentile\n";
@@ -200,15 +208,12 @@ int main(int argc, char const *argv[])
                                             shifted_res_arr[pos] <= trip_sttc) {
                         ++pos;
                     }
-                    // print_sgnfcnt_triplet(a+1, b+1, c+1, trip_sttc, 
-                    //                             pos/double(circ_shifts_num));
                     triplets<<a+1<<','<<b+1<<','<<c+1<<','<<trip_sttc<<','
                                         <<pos/double(circ_shifts_num)<<'\n';
                 }
             }
         }
     }
-    // print_sgnfcnt_triplet_end();
     triplets.close();
     cout<<"\nNumber of total significant triplets: "<<ttl_sgnfcnt_triplets<<" ( "
             <<(ttl_sgnfcnt_triplets*100/double(neurons*(neurons-1)*(neurons-2)))

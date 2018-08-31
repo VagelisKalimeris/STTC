@@ -91,23 +91,13 @@ double sign_thresh(double mean, double st_dev)
 *                                                                             *
 ******************************************************************************/
 void circular_shift(vector<int> &time_line, unsigned int random, 
-                                                      int total_time_samples)
-{
-    vector<int>::iterator front_it = time_line.begin();
+                                                      int total_time_samples) {
+    int tl_size = static_cast<int> (time_line.size());
 
-    for (unsigned int i = 0; i < time_line.size(); i++) {
-        int temp = time_line[i] + random;
-
-        if ((temp) < total_time_samples) {
-            time_line[i] = temp;
-        }
-        else {
-            time_line.erase(time_line.begin() + i);
-            temp = temp - total_time_samples;
-            time_line.insert(front_it, temp);
-            ++front_it;
-        }
+    for (int i = 0; i < tl_size; i++) {
+        time_line[i] = (time_line[i] + random) % total_time_samples;
     }
+    sort(time_line.begin(), (time_line.begin() + tl_size));
 }
 
 
@@ -116,7 +106,7 @@ void circular_shift(vector<int> &time_line, unsigned int random,
 // in the range [1, total_time_samples].
 unsigned int random_gen(unsigned int max_number)
 {
-    return 1 + rand() % max_number;
+    return 1 + rand_r() % max_number;
 }
 
 
