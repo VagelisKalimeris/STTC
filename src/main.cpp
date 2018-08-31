@@ -71,7 +71,7 @@ int main(int argc, char const *argv[])
     
 // Get astrocytes
     while (getline(extra, line)) {
-        astrocytes.push_back(stoi(line) - 1);
+        astrocytes.push_back(atoi(line.c_str()) - 1);
     }
     const int astrocytes_size = astrocytes.size();
     const int neur_clean = neurons - astrocytes_size;
@@ -81,7 +81,7 @@ int main(int argc, char const *argv[])
     
 // Make the mapping
     int astro = 0;
-    int astrocyte = astrocytes[astro];
+    int astrocyte = astrocytes[0];
     for (int neur = 0; neur < neurons; ++neur) {
         if (astrocyte == neur) {
             astrocyte = astrocytes[(++astro) % astrocytes_size];
@@ -94,8 +94,8 @@ int main(int argc, char const *argv[])
 // Store each neuron's firing (1's) to the data structure
     int total_time_samples = 0;
     while (getline(data, line)) {
-        int astro = 0;
-        int astrocyte = astrocytes[astro];
+        astro = 0;
+        astrocyte = astrocytes[0];
         for (int neur = 0; neur < neurons; ++neur) {
             if (line[neur] == '1') {
                 int pos;
