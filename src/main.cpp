@@ -63,9 +63,6 @@ int main(int argc, char const *argv[])
     const int neurons = line.length() - 1;
     data.seekg(0, data.beg);
     
-// Our main data structure
-    vector<int> spike_trains[neurons];
-    
 // Our main astrocytes structure
     vector<int> astrocytes;
     
@@ -76,26 +73,14 @@ int main(int argc, char const *argv[])
     const int astrocytes_size = astrocytes.size();
     const int neur_clean = neurons - astrocytes_size;
     
-// Our neur_clean to neurons mapping structure
-    int map[neur_clean];
-    
-// Make the mapping
-    int astro = 0;
-    int astrocyte = astrocytes[0];
-    for (int neur = 0; neur < neurons; ++neur) {
-        if (astrocyte == neur) {
-            astrocyte = astrocytes[(++astro) % astrocytes_size];
-        }
-        else {
-            map[neur - astro] = neur;
-        }
-    }
+// Our main data structure
+    vector<int> spike_trains[neurons];
     
 // Store each neuron's firing (1's) to the data structure
     int total_time_samples = 0;
     while (getline(data, line)) {
-        astro = 0;
-        astrocyte = astrocytes[0];
+        int astro = 0;
+        int astrocyte = astrocytes[0];
         for (int neur = 0; neur < neurons; ++neur) {
             if (line[neur] == '1') {
                 int pos;
@@ -116,6 +101,22 @@ int main(int argc, char const *argv[])
         }
         total_time_samples++;
     }
+    
+// Our neur_clean to neurons mapping structure
+    int map[neur_clean];
+    
+// Make the mapping
+    int astro = 0;
+    int astrocyte = astrocytes[0];
+    for (int neur = 0; neur < neurons; ++neur) {
+        if (astrocyte == neur) {
+            astrocyte = astrocytes[(++astro) % astrocytes_size];
+        }
+        else {
+            map[neur - astro] = neur;
+        }
+    }
+    
 // Start random sequence
     srand(time(NULL));
     
@@ -191,7 +192,6 @@ int main(int argc, char const *argv[])
     cout<<"\nNumber of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<" ( "
                             <<(ttl_sgnfcnt_tuplets * 100 / double(neur_clean * 
                             (neur_clean - 1)))<<"% )"<<endl;
-    
     
     
 // Motif arrays
