@@ -124,8 +124,9 @@ int main(int argc, char const *argv[])
     double tBm[neur_clean];
     #pragma omp parallel for
     for(int neur = 0; neur < neur_clean; ++neur) {
-        tAp[neur] = T_A_plus(spike_trains[neur], total_time_samples, Dt);
-        tBm[neur] = T_B_minus(spike_trains[neur], total_time_samples, Dt);
+        vector<int> time_line = spike_trains[neur];
+        tAp[neur] = T_A_plus(time_line, total_time_samples, Dt);
+        tBm[neur] = T_B_minus(time_line, total_time_samples, Dt);
     }
     
 // Significant tuplets
@@ -138,47 +139,50 @@ int main(int argc, char const *argv[])
     tuplets<<"NeuronA,NeuronB,STTC,Percentile"<<endl;
     for (int a = 0; a < neur_clean; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
-        double tAp_tmp = tAp[a];
         int a_real = map[a];
-        #pragma omp parallel for
-        for (int b = 0; b < neur_clean; b++) { // Neuron B
-            sgnfcnt_tuplets[a][b] = false;
-            if (a == b) {continue;} // Skip same neurons
-            vector<int> time_line_B = spike_trains[b];
-            double tBm_tmp = tBm[b];
-            double tupl_sttc = STTC_A_B(time_line_A, time_line_B, 
+        #pragma omp parallel
+        {
+            double tAp_tmp = tAp[a];
+            #pragma omp for
+            for (int b = 0; b < neur_clean; b++) { // Neuron B
+                sgnfcnt_tuplets[a][b] = false;
+                if (a == b) {continue;} // Skip same neurons
+                vector<int> time_line_B = spike_trains[b];
+                double tBm_tmp = tBm[b];
+                double tupl_sttc = STTC_A_B(time_line_A, time_line_B, 
                                                         Dt, tBm_tmp, tAp_tmp);
-        // STTC values of shifted spike trains
-            double shifted_res_arr[circ_shifts_num];
-            for (int shift = 0; shift < circ_shifts_num; shift++) {
-            // Shifted spike trains will be copied here
-                vector<int> to_shift = time_line_A;
-                unsigned int random = random_gen(total_time_samples);
-                circular_shift(to_shift, random, total_time_samples);
-                tAp_tmp = T_A_plus(to_shift, total_time_samples, Dt);
-                shifted_res_arr[shift] = STTC_A_B(to_shift, time_line_B, 
+            // STTC values of shifted spike trains
+                double shifted_res_arr[circ_shifts_num];
+                for (int shift = 0; shift < circ_shifts_num; shift++) {
+                // Shifted spike trains will be copied here
+                    vector<int> to_shift = time_line_A;
+                    unsigned int random = random_gen(total_time_samples);
+                    circular_shift(to_shift, random, total_time_samples);
+                    tAp_tmp = T_A_plus(to_shift, total_time_samples, Dt);
+                    shifted_res_arr[shift] = STTC_A_B(to_shift, time_line_B, 
                                                         Dt, tBm_tmp, tAp_tmp);
-            }
-            double mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
-            double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
-            double threshold = sign_thresh(mean, st_dev);
-            if (tupl_sttc > threshold) {
-                #pragma omp atomic
-                ttl_sgnfcnt_tuplets++;
-                sgnfcnt_tuplets[a][b] = true;
-                sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
-                int pos = 0; 
-                while (pos < circ_shifts_num && 
-                                        shifted_res_arr[pos] <= tupl_sttc) {
-                    ++pos;
                 }
-                // print_sgnfcnt_tuplet(a+1, b+1, tupl_sttc, 
-                //                             pos/double(circ_shifts_num));
-                int b_real = map[b];
-                double percentile = pos / double(circ_shifts_num);
-                #pragma omp critical
-                tuplets<<a_real + 1<<','<<b_real + 1<<','<<tupl_sttc<<','
+                double mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
+                double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
+                double threshold = sign_thresh(mean, st_dev);
+                if (tupl_sttc > threshold) {
+                    #pragma omp atomic
+                    ttl_sgnfcnt_tuplets++;
+                    sgnfcnt_tuplets[a][b] = true;
+                    sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
+                    int pos = 0; 
+                    while (pos < circ_shifts_num && 
+                                        shifted_res_arr[pos] <= tupl_sttc) {
+                        ++pos;
+                    }
+                    // print_sgnfcnt_tuplet(a+1, b+1, tupl_sttc, 
+                    //                         pos/double(circ_shifts_num));
+                    int b_real = map[b];
+                    double percentile = pos / double(circ_shifts_num);
+                    #pragma omp critical
+                    tuplets<<a_real + 1<<','<<b_real + 1<<','<<tupl_sttc<<','
                                                             <<percentile<<endl;
+                }
             }
         }
     }
@@ -259,7 +263,7 @@ int main(int argc, char const *argv[])
                     double percentile = pos / double(circ_shifts_num);
                     #pragma omp critical
                     triplets<<a_real + 1<<','<<b_real + 1<<','<<c_real + 1<<','
-                        <<trip_sttc<<','<<percentile<<endl;
+                                            <<trip_sttc<<','<<percentile<<endl;
                 }
             }
         }
