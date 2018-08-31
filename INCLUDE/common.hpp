@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <vector>
+#include <algorithm>
 
 #include <iomanip>
 

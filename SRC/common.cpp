@@ -106,7 +106,7 @@ void circular_shift(vector<int> &time_line, unsigned int random,
 // in the range [1, total_time_samples].
 unsigned int random_gen(unsigned int max_number)
 {
-    return 1 + rand_r() % max_number;
+    return 1 + rand() % max_number;
 }
 
 
