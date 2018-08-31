@@ -48,10 +48,14 @@ int main(int argc, char const *argv[])
 // Caclulation variables
     int ttl_sgnfcnt_tuplets = 0, ttl_sgnfcnt_triplets = 0;
     
-// Open File
+// Open Files
     ifstream data, astros;
     data.open((string("DATASETS/") + argv[3]).c_str(), ifstream::in);
     astros.open((string("ASTROCYTES/") + argv[3]).c_str(), ifstream::in);
+    if (!data.is_open() || !astros.is_open()) {
+        cout<<"Error opening input file!"<<endl;
+        return 0;
+    }
     string line;
     
 // Get astrocytes
@@ -82,7 +86,10 @@ int main(int argc, char const *argv[])
         }
         total_time_samples++;
     }
-
+// Close files
+    data.close();
+    astros.close();
+    
 // Start random sequence
     srand(time(NULL));
     
@@ -101,6 +108,10 @@ int main(int argc, char const *argv[])
 // Calculate per pair STTC
     ofstream tuplets;
     tuplets.open(("RESULTS" + string(argv[3]) + "_tuplets.csv").c_str());
+    if (!tuplets.is_open()) {
+        cout<<"Error opening results file!"<<endl;
+        return 0;
+    }
     tuplets<<"NeuronA,NeuronB,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
@@ -159,6 +170,10 @@ int main(int argc, char const *argv[])
 // Calculate conditional STTC
     ofstream triplets;
     triplets.open(("RESULTS/" + string(argv[3]) + "_triplets.csv").c_str());
+    if (!triplets.is_open()) {
+        cout<<"Error opening results file!"<<endl;
+        return 0;
+    }
     triplets<<"NeuronA,NeuronB,NeuronC,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
@@ -226,6 +241,5 @@ int main(int argc, char const *argv[])
 // Print the data structure and total number of firings in experiment
     // print_all_spikes(spike_trains, neurons);
     
-    data.close();
     return 0;
 }
