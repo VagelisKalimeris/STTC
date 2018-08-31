@@ -51,7 +51,7 @@ int main(int argc, char const *argv[])
 // Open File
     ifstream data, astros;
     data.open((string("DATASETS/") + argv[3]).c_str(), ifstream::in);
-    astros.open((string("DATASETS/") + argv[4]).c_str(), ifstream::in);
+    astros.open((string("ASTROCYTES/") + argv[3]).c_str(), ifstream::in);
     string line;
     
 // Get astrocytes
@@ -100,7 +100,7 @@ int main(int argc, char const *argv[])
     
 // Calculate per pair STTC
     ofstream tuplets;
-    tuplets.open((string(argv[3]) + "_tuplets.csv").c_str());
+    tuplets.open(("RESULTS" + string(argv[3]) + "_tuplets.csv").c_str());
     tuplets<<"NeuronA,NeuronB,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
@@ -158,7 +158,7 @@ int main(int argc, char const *argv[])
     
 // Calculate conditional STTC
     ofstream triplets;
-    triplets.open((string(argv[3]) + "_triplets.csv").c_str());
+    triplets.open(("RESULTS/" + string(argv[3]) + "_triplets.csv").c_str());
     triplets<<"NeuronA,NeuronB,NeuronC,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
