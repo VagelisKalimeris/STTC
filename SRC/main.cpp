@@ -40,8 +40,11 @@ using namespace std;
 ******************************************************************************/
 int main(int argc, char const *argv[])
 {
-// Prevent warning: unused parameter 'argc'
-    (void) argc;
+// Command line arguments check
+    if (argc != 4) {
+        cout<<"Error! Wrong parameter count!"<<endl;
+        return 0;
+    }
 // Command Line Arguments. First give random sample size, then tile size. 
     const int circ_shifts_num = atoi(argv[1]), Dt = atoi(argv[2]);
     
@@ -51,9 +54,13 @@ int main(int argc, char const *argv[])
 // Open Files
     ifstream data, astros;
     data.open((string("DATASETS/") + argv[3]).c_str(), ifstream::in);
+    if (!data.is_open()) {
+        cout<<"Error opening dataset file "<<string(argv[3])<<endl;
+        return 0;
+    }
     astros.open((string("ASTROCYTES/") + argv[3]).c_str(), ifstream::in);
-    if (!data.is_open() || !astros.is_open()) {
-        cout<<"Error opening input file!"<<endl;
+    if (!astros.is_open()) {
+        cout<<"Error opening astrocytes file "<<string(argv[3])<<endl;
         return 0;
     }
     string line;
@@ -78,8 +85,8 @@ int main(int argc, char const *argv[])
     int astros_gone = 0;
     while (getline(data, line)) {
         for (int n = 0; n < neurons; n++) {
-            if ((n+astros_gone) == astrocytes[astros_gone]) {astros_gone++; continue;}
-            if (line[n+astros_gone] == '1') {
+            while ((n + astros_gone) == astrocytes[astros_gone]) {++astros_gone;}
+            if (line[n + astros_gone] == '1') {
                 spike_trains[n].push_back(total_time_samples);
             }
         }
