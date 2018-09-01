@@ -40,8 +40,10 @@ using namespace std;
 ******************************************************************************/
 int main(int argc, char const *argv[])
 {
-// Prevent warning: unused parameter 'argc'
-    (void) argc;
+// Command line arguments check
+    if (agrc != 4) {
+        cout<<"Error! Wrong parameter count!"
+    }
 // Command Line Arguments. First give random sample size, then tile size. 
     const int circ_shifts_num = atoi(argv[1]), Dt = atoi(argv[2]);
     
@@ -78,8 +80,8 @@ int main(int argc, char const *argv[])
     int astros_gone = 0;
     while (getline(data, line)) {
         for (int n = 0; n < neurons; n++) {
-            if (n == astrocytes[astros_gone]) {n--; astros_gone++; continue;}
-            if (line[n] == '1') {
+            if ((n + astros_gone) == astrocytes[astros_gone]) {astros_gone++; continue;}
+            if (line[n + astros_gone] == '1') {
                 spike_trains[n].push_back(total_time_samples);
             }
         }
