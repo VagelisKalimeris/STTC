@@ -78,8 +78,8 @@ int main(int argc, char const *argv[])
     int astros_gone = 0;
     while (getline(data, line)) {
         for (int n = 0; n < neurons; n++) {
-            if (n == astrocytes[astros_gone]) {n--; astros_gone++; continue;}
-            if (line[n] == '1') {
+            if ((n+astros_gone) == astrocytes[astros_gone]) {astros_gone++; continue;}
+            if (line[n+astros_gone] == '1') {
                 spike_trains[n].push_back(total_time_samples);
             }
         }
@@ -107,7 +107,7 @@ int main(int argc, char const *argv[])
     
 // Calculate per pair STTC
     ofstream tuplets;
-    tuplets.open(("RESULTS" + string(argv[3]) + "_tuplets.csv").c_str());
+    tuplets.open(("RESULTS/" + string(argv[3]) + "_tuplets.csv").c_str());
     if (!tuplets.is_open()) {
         cout<<"Error opening results file!"<<endl;
         return 0;
@@ -142,7 +142,7 @@ int main(int argc, char const *argv[])
                 double threshold = sign_thresh(mean, st_dev);
                 if (tupl_sttc > threshold) {
                     #pragma omp atomic
-                    ttl_sgnfcnt_tuplets++;
+                    ++ttl_sgnfcnt_tuplets;
                     sgnfcnt_tuplets[a][b] = true;
                     sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
                     int pos = 0; 
@@ -150,6 +150,7 @@ int main(int argc, char const *argv[])
                                             shifted_res_arr[pos] <= tupl_sttc) {
                         ++pos;
                     }
+                    #pragma omp critical
                     tuplets<<a+1<<','<<b+1<<','<<tupl_sttc<<','
                                             <<pos/double(circ_shifts_num)<<'\n';
                 }
@@ -183,8 +184,10 @@ int main(int argc, char const *argv[])
             vector<int> time_line_C = spike_trains[c];
             for (int b = 0; b < neurons; b++) { // Neuron B
                 if (b == a || b == c) {continue;} // Skip same neurons
-                categorization(sgnfcnt_tuplets[c][a], sgnfcnt_tuplets[c][b], 
-                                        sgnfcnt_tuplets[a][b], motifs_triplets);
+                int pos = sgnfcnt_tuplets[c][a] * 4 + 
+                        sgnfcnt_tuplets[c][b] * 2 + sgnfcnt_tuplets[a][b] * 1;
+                #pragma omp atomic
+                ++motifs_triplets[pos];
             }
             if (!sign_trpl_limit(time_line_A, time_line_C ,Dt)) {
                 continue; // Reduced A spike train has < 5 spikes
@@ -214,15 +217,18 @@ int main(int argc, char const *argv[])
                 double threshold = sign_thresh(mean, st_dev);
                 if ( trip_sttc > threshold) {
                     #pragma omp atomic
-                    ttl_sgnfcnt_triplets++;
-                    categorization(sgnfcnt_tuplets[c][a], sgnfcnt_tuplets[c][b],
-                                        sgnfcnt_tuplets[a][b], motifs_sgnfcnts);
+                    ++ttl_sgnfcnt_triplets;
+                    int pos = sgnfcnt_tuplets[c][a] * 4 + 
+                            sgnfcnt_tuplets[c][b] * 2 + sgnfcnt_tuplets[a][b] * 1;
+                    #pragma omp atomic
+                    ++motifs_sgnfcnts[pos];
                     sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
-                    int pos = 0; 
+                    pos = 0; 
                     while (pos < circ_shifts_num && 
                                             shifted_res_arr[pos] <= trip_sttc) {
                         ++pos;
                     }
+                    #pragma omp critical
                     triplets<<a+1<<','<<b+1<<','<<c+1<<','<<trip_sttc<<','
                                         <<pos/double(circ_shifts_num)<<'\n';
                 }

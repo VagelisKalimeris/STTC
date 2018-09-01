@@ -3,7 +3,7 @@
 !*.*
 !Makefile
 !ASTROCYTES/*
-!RESULTS/*
+!DATASETS/*
 
 # Prerequisites
 *.d
