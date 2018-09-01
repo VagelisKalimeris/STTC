@@ -124,7 +124,7 @@ int main(int argc, char const *argv[])
     double tAp[neur_clean];
     double tBm[neur_clean];
     #pragma omp parallel for default(none) shared(spike_trains, \
-                                                            total_time_samples)
+                                                total_time_samples, tAp, tBm)
     for(int neur = 0; neur < neur_clean; ++neur) {
         vector<int> time_line = spike_trains[neur];
         tAp[neur] = T_A_plus(time_line, total_time_samples, Dt);
