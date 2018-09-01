@@ -63,7 +63,7 @@ int main(int argc, char const *argv[])
     while (getline(astros, line)) {
         astrocytes.push_back(atoi(line.c_str()) - 1);
     }
-    int astro_size = astrocytes.size();
+    const int astro_size = astrocytes.size();
 
 // Get total number of neurons from file
     getline(data, line);
@@ -75,12 +75,11 @@ int main(int argc, char const *argv[])
     
 // Store each neuron's firing (1's) to the data structure
     int total_time_samples = 0;
+    int astros_gone = 0;
     while (getline(data, line)) {
-        for (int n = 0; n < neurons + astro_size; n++) {
-            for (int a = 0; a < astro_size; a++) {
-                if (n == astrocytes[a]) {continue;}
-            } 
-            if (line[n] == '1') {
+        for (int n = 0; n <= neurons; n++) {
+            if (n == astrocytes[astros_gone]) {n--; astros_gone++;}
+            else if (line[n] == '1') {
                 spike_trains[n].push_back(total_time_samples);
             }
         }
