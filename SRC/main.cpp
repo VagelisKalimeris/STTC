@@ -41,7 +41,7 @@ using namespace std;
 int main(int argc, char const *argv[])
 {
 // Command line arguments check
-    if (agrc != 4) {
+    if (argc != 4) {
         cout<<"Error! Wrong parameter count!"<<endl;
     }
 // Command Line Arguments. First give random sample size, then tile size. 
