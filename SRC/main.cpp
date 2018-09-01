@@ -77,8 +77,8 @@ int main(int argc, char const *argv[])
     
 // Store each neuron's firing (1's) to the data structure
     int total_time_samples = 0;
-    int astros_count = 0;
     while (getline(data, line)) {
+        int astros_count = 0;
         int push_count = 0;
         for (int n = 0; n < neurons + astro_size; n++) {
             if (n == astrocytes[astros_count]) {
