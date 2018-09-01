@@ -88,12 +88,11 @@ int main(int argc, char const *argv[])
                 }
                 astrocyte = astrocytes[(++astro) % astrocytes_size];
             }
-            if (line[neur] == '1') {
+            if (line[neur + astro] == '1') {
                 spike_trains[neur].push_back(total_time_samples);
             }
         }
-        /*
-        for (int neur = 0; neur < neurons; ++neur) {
+        /*for (int neur = 0; neur < neurons; ++neur) {
             if (line[neur] == '1') {
                 int pos;
                 if (astrocyte == neur) {
@@ -110,8 +109,7 @@ int main(int argc, char const *argv[])
                     astrocyte = astrocytes[(++astro) % astrocytes_size];
                 }
             }
-        }
-        */
+        }*/
         total_time_samples++;
     }
     
