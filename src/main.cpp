@@ -99,10 +99,8 @@ int main(int argc, char const *argv[])
         total_time_samples++;
     }
     
-// Our neurons to neurons mapping structure
+// Make the mapping from virtual to real neuron's number
     int map[neurons];
-    
-// Make the mapping
     int astro = 0;
     int astrocyte = astrocytes[0];
     for (int neur = 0; neur < neurons; ++neur) {
