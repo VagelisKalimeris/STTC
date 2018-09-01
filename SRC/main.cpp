@@ -42,7 +42,7 @@ int main(int argc, char const *argv[])
 {
 // Command line arguments check
     if (agrc != 4) {
-        cout<<"Error! Wrong parameter count!"
+        cout<<"Error! Wrong parameter count!"<<endl;
     }
 // Command Line Arguments. First give random sample size, then tile size. 
     const int circ_shifts_num = atoi(argv[1]), Dt = atoi(argv[2]);
@@ -227,7 +227,7 @@ int main(int argc, char const *argv[])
                     #pragma omp atomic
                     ++motifs_sgnfcnts[pos];
                     sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
-                    int pos = 0; 
+                    pos = 0; 
                     while (pos < circ_shifts_num && 
                                             shifted_res_arr[pos] <= trip_sttc) {
                         ++pos;
