@@ -77,14 +77,15 @@ int main(int argc, char const *argv[])
     int total_time_samples = 0;
     int astros_gone = 0;
     while (getline(data, line)) {
-        for (int n = 0; n <= neurons; n++) {
-            if (n == astrocytes[astros_gone]) {n--; astros_gone++;}
-            else if (line[n] == '1') {
+        for (int n = 0; n < neurons; n++) {
+            if (n == astrocytes[astros_gone]) {n--; astros_gone++; continue;}
+            if (line[n] == '1') {
                 spike_trains[n].push_back(total_time_samples);
             }
         }
         total_time_samples++;
     }
+
 // Close files
     data.close();
     astros.close();
