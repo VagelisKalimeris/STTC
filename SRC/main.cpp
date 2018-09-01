@@ -77,15 +77,18 @@ int main(int argc, char const *argv[])
     
 // Store each neuron's firing (1's) to the data structure
     int total_time_samples = 0;
-    int astros_gone = 0;
+    int astros_count = 0;
     while (getline(data, line)) {
-        for (int n = 0; n < neurons; n++) {
-            while ((n + astros_gone) == astrocytes[astros_gone]) {
-                astros_gone++;
+        int push_count = 0;
+        for (int n = 0; n < neurons + astro_size; n++) {
+            if (n == astrocytes[astros_count]) {
+                astros_count++;
+                continue;
             }
-            if (line[n + astros_gone] == '1') {
-                spike_trains[n].push_back(total_time_samples);
+            if (line[n] == '1') {
+                spike_trains[push_count].push_back(total_time_samples);
             }
+            push_count++;
         }
         total_time_samples++;
     }
