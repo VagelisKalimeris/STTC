@@ -201,7 +201,7 @@ double STTC_A_B(const vector<int> &time_line_A, const vector<int> &time_line_B,
     
     if (nA == 0 || nB == 0 || (nABm == nA && tBm == 1) || 
                                                     (nBAp == nB && tAp == 1)) {
-        return -2;
+        return 2.0;
     }
     return 0.5 * ((((nABm / nA) - tBm) / (1.0 - ((nABm / nA) * tBm))) + 
                         (((nBAp / nB) - tAp) / (1.0 - ((nBAp / nB) * tAp))));

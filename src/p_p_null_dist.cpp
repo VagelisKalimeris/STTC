@@ -31,7 +31,7 @@ double mean_STTC_dir(double const arr[], int circ_shifts_num)
 
     for (int i = 0; i < circ_shifts_num; i++) {
         double val = arr[i];
-        if (val == -2) {
+        if (val == 2.0) {
             --denominator;
             continue;
         }
@@ -61,7 +61,7 @@ double std_STTC_dir(double const arr[], int circ_shifts_num, const double mean)
 
     for (int i = 0; i < circ_shifts_num; i++) {
         double val = arr[i];
-        if (val == -2) {
+        if (val == 2.0) {
             --denominator;
             continue;
         }

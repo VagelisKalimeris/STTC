@@ -269,7 +269,7 @@ double STTC_AB_C(const vector<int> &time_line_A,
     
     if (nA == 0 || nB == 0 || (nBmACA == nA && tBm == 1) || 
                                                 (nApBCA == nB && tApt == 1)) {
-        return -2;
+        return 2.0;
     }
     return 0.5 * ((((nBmACA / nA) - tBm) / (1.0 - ((nBmACA / nA) * tBm))) + 
                     (((nApBCA / nB) - tApt) / (1.0 - ((nApBCA / nB) * tApt))));

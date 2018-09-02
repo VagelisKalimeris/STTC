@@ -152,9 +152,10 @@ int main(int argc, char const *argv[])
             double tBm_b = tBm[b];
             double tupl_sttc = STTC_A_B(time_line_A, time_line_B, 
                                                     Dt, tBm_b, tAp_a);
-            if (tupl_sttc == -2) {continue;}
+            if (tupl_sttc == 2.0) {continue;}
         // STTC values of shifted spike trains
             double shifted_res_arr[circ_shifts_num];
+            int denominator = circ_shifts_num;
             for (int shift = 0; shift < circ_shifts_num; shift++) {
             // Shifted spike trains will be copied here
                 vector<int> to_shift = time_line_A;
@@ -163,6 +164,9 @@ int main(int argc, char const *argv[])
                 double tAp_s = T_A_plus(to_shift, total_time_samples, Dt);
                 shifted_res_arr[shift] = STTC_A_B(to_shift, time_line_B, 
                                                     Dt, tBm_b, tAp_s);
+                if (shifted_res_arr[shift] == 2.0) {
+                    --denominator;
+                }
             }
             double mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
             double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num, 
@@ -174,12 +178,12 @@ int main(int argc, char const *argv[])
                 sgnfcnt_tuplets[a][b] = true;
                 sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
                 int pos = 0; 
-                while (pos < circ_shifts_num && 
+                while (pos < denominator && 
                                     shifted_res_arr[pos] <= tupl_sttc) {
                     ++pos;
                 }
                 int b_real = map[b];
-                double percentile = pos / double(circ_shifts_num);
+                double percentile = pos / double(denominator);
                 #pragma omp critical
                 tuplets<<a_real + 1<<','<<b_real + 1<<','<<tupl_sttc<<','
                                                         <<percentile<<endl;
@@ -232,7 +236,7 @@ int main(int argc, char const *argv[])
                 double tBm_b = tBm[b];
                 double trip_sttc = STTC_AB_C(time_line_A, time_line_B, 
                                             time_line_C, Dt, tBm_b, tApt);
-                if (trip_sttc == -2) {
+                if (trip_sttc == 2.0) {
                     int pos = sgnfcnt_tuplets[c][a] * 4 + 
                         sgnfcnt_tuplets[c][b] * 2 + sgnfcnt_tuplets[a][b] * 1;
                     #pragma omp atomic
@@ -241,6 +245,7 @@ int main(int argc, char const *argv[])
                 }
             // STTC values of shifted spike trains
                 double shifted_res_arr[circ_shifts_num];
+                int denominator = circ_shifts_num;
                 for (int shift = 0; shift < circ_shifts_num; shift++) {
                 // Shifted spike trains will be copied here
                     vector<int> to_shift = time_line_C;
@@ -250,6 +255,9 @@ int main(int argc, char const *argv[])
                                                     total_time_samples, Dt);
                     shifted_res_arr[shift] = STTC_AB_C(time_line_A, 
                                     time_line_B, to_shift, Dt, tBm_b, tApt);
+                    if (shifted_res_arr[shift] == 2.0) {
+                        --denominator;
+                    }
                 }
                 double mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
                 double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num, 
@@ -264,12 +272,12 @@ int main(int argc, char const *argv[])
                     ++motifs_sgnfcnts[pos];
                     sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
                     pos = 0; 
-                    while (pos < circ_shifts_num && 
+                    while (pos < denominator && 
                                         shifted_res_arr[pos] <= trip_sttc) {
                         ++pos;
                     }
                     int b_real = map[b];
-                    double percentile = pos / double(circ_shifts_num);
+                    double percentile = pos / double(denominator);
                     #pragma omp critical
                     triplets<<a_real + 1<<','<<b_real + 1<<','<<c_real + 1<<','
                                             <<trip_sttc<<','<<percentile<<endl;
