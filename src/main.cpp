@@ -295,7 +295,7 @@ int main(int argc, char const *argv[])
     print_motifs(motifs_triplets, motifs_sgnfcnts);
     
 // Print the data structure and total number of firings in experiment
-    print_all_spikes(spike_trains, neurons, astrocytes);
+    print_all_spikes(spike_trains, neurons + astro_size, astrocytes);
     
     return 0;
 }
