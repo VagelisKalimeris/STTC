@@ -25,24 +25,34 @@
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-void print_motifs(const int *triplets, const int *significants)
+void print_motifs(const int *triplets, const int *significants, 
+                                        ofstream &info, const string output)
 {
     int ttl_triplets = 0, ttl_sgnfcnt_triplets = 0;
     
-    cout<<"\n+"<<setfill('-')<<setw(8)<<'+'<<setw(16)<<'+'<<setw(16)<<'+'<<endl;
-    cout<<"| Motif |"<<setfill(' ')<<setw(16)<<"Triplets |"
+    ofstream motifs;
+    motifs.open(("RESULTS/" + output + "_motifs.csv").c_str());
+    if (!motifs.is_open()) {
+        cout<<"Error opening results motifs file!"<<endl;
+        return;
+    }
+    motifs<<"Motif,Triplets,Significants\n";
+    info<<"\n+"<<setfill('-')<<setw(8)<<'+'<<setw(16)<<'+'<<setw(16)<<'+'<<endl;
+    info<<"| Motif |"<<setfill(' ')<<setw(16)<<"Triplets |"
                                             <<setw(16)<<"Significant |"<<endl;
-    cout<<"+"<<setfill('-')<<setw(8)<<'+'<<setw(16)<<'+'<<setw(16)<<'+'<<endl;
+    info<<"+"<<setfill('-')<<setw(8)<<'+'<<setw(16)<<'+'<<setw(16)<<'+'<<endl;
     for (int m = 0; m < 8; m++) {
         int triplet = triplets[m];
         int sgnfcnt = significants[m];
+        motifs<<m<<','<<triplet<<','<<sgnfcnt<<endl;
         ttl_triplets += triplet;
         ttl_sgnfcnt_triplets += sgnfcnt;
-        cout<<"|   "<<m<<"   | "<<setfill(' ')<<setw(13)<<triplet<<" | "
+        info<<"|   "<<m<<"   | "<<setfill(' ')<<setw(13)<<triplet<<" | "
                                                 <<setw(13)<<sgnfcnt<<" |"<<endl;
     }
-    cout<<"+"<<setfill('-')<<setw(8)<<'+'<<setw(16)<<'+'<<setw(16)<<'+'<<endl;
-    cout<<"| Total | "<<setfill(' ')<<setw(13)<<ttl_triplets<<" | "
+    motifs.close();
+    info<<"+"<<setfill('-')<<setw(8)<<'+'<<setw(16)<<'+'<<setw(16)<<'+'<<endl;
+    info<<"| Total | "<<setfill(' ')<<setw(13)<<ttl_triplets<<" | "
                                 <<setw(13)<<ttl_sgnfcnt_triplets<<" |"<<endl;
-    cout<<"+"<<setfill('-')<<setw(8)<<'+'<<setw(16)<<'+'<<setw(16)<<'+'<<endl;
+    info<<"+"<<setfill('-')<<setw(8)<<'+'<<setw(16)<<'+'<<setw(16)<<'+'<<endl;
 }

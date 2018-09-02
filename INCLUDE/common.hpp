@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -88,19 +89,5 @@ unsigned int random_gen(unsigned int max_number);
 *                                                                             *
 ******************************************************************************/
 void print_all_spikes(const vector<int> spike_trains[], 
-                        const int total_neurons, const vector<int> &astrocytes);
-
-/* comments for later */
-void print_sgnfcnt_tuplet_begin(void);
-
-void print_sgnfcnt_tuplet(const int neuron_A, const int neuron_B, 
-                                    const double STTC, const double percentile);
-
-void print_sgnfcnt_tuplet_end(void);
-
-void print_sgnfcnt_triplet_begin(void);
-
-void print_sgnfcnt_triplet(const int neuron_A, const int neuron_B, 
-                const int neuron_C, const double STTC, const double percentile);
-
-void print_sgnfcnt_triplet_end(void);
+                        const int total_neurons, const vector<int> &astrocytes, 
+                        ofstream &info, const string output);

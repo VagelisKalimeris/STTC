@@ -126,7 +126,8 @@ unsigned int random_gen(unsigned int max_number)
 *                                                                             *
 ******************************************************************************/
 void print_all_spikes(const vector<int> spike_trains[], 
-                        const int total_neurons, const vector<int> &astrocytes)
+                        const int total_neurons, const vector<int> &astrocytes, 
+                        ofstream &info, const string output)
 {
     int total_firings = 0, max = 0, min = 100000;
     const int astro_size = astrocytes.size();
@@ -135,7 +136,7 @@ void print_all_spikes(const vector<int> spike_trains[],
     vector<int> time_lines;
     
     ofstream spikes;
-    spikes.open("RESULTS/neurons_spikes.txt");
+    spikes.open(("RESULTS/" + output + "_neurons_spikes.txt").c_str());
     if (!spikes.is_open()) {
         cout<<"Error opening results neurons spikes file!"<<endl;
         return;
@@ -180,59 +181,11 @@ void print_all_spikes(const vector<int> spike_trains[],
         median = (time_lines[neur_clean/2 - 1] + time_lines[neur_clean/2])/2.0;
     }
     
-    cout<<"\nNeurons' info without astrocytes:"<<endl;
-    cout<<"Total number of spikes: "<<total_firings<<endl;
-    cout<<"Max spikes for neurons: "<<max<<endl;
-    cout<<"Min spikes for neurons: "<<min<<endl;
-    cout<<"Average spikes in each neuron: "
+    info<<"\nNeurons' info without astrocytes:"<<endl;
+    info<<"Total number of spikes: "<<total_firings<<endl;
+    info<<"Max spikes for neurons: "<<max<<endl;
+    info<<"Min spikes for neurons: "<<min<<endl;
+    info<<"Average spikes in each neuron: "
                                     <<total_firings / double(neur_clean)<<endl;
-    cout<<"Median spikes for neurons: "<<median<<endl;
-}
-
-/* comments for later */
-void print_sgnfcnt_tuplet_begin(void)
-{
-    cout<<"\n+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(15)<<'+'
-                                                        <<setw(13)<<'+'<<endl;
-    cout<<"| Neuron A | Neuron B |"<<setfill(' ')<<setw(15)<<"STTC |"
-                                            <<setw(13)<<"Percentile |"<<endl;
-    cout<<"+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(15)<<'+'
-                                                        <<setw(13)<<'+'<<endl;
-}
-
-void print_sgnfcnt_tuplet(const int neuron_A, const int neuron_B, 
-                                    const double STTC, const double percentile)
-{
-    cout<<"| "<<setfill(' ')<<setw(8)<<neuron_A<<" | "<<setw(8)<<neuron_B
-        <<" | "<<setw(12)<<STTC<<" | "<<setw(10)<<percentile<<" |"<<endl;
-}
-
-void print_sgnfcnt_tuplet_end(void)
-{
-    cout<<"+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(15)<<'+'
-                                                        <<setw(13)<<'+'<<endl;
-}
-
-void print_sgnfcnt_triplet_begin(void)
-{
-    cout<<"\n+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(11)<<'+'
-                                        <<setw(15)<<'+'<<setw(13)<<'+'<<endl;
-    cout<<"| Neuron A | Neuron B | Neuron C |"<<setfill(' ')
-                        <<setw(15)<<"STTC |"<<setw(13)<<"Percentile |"<<endl;
-    cout<<"+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(11)<<'+'
-                                        <<setw(15)<<'+'<<setw(13)<<'+'<<endl;
-}
-
-void print_sgnfcnt_triplet(const int neuron_A, const int neuron_B, 
-                const int neuron_C, const double STTC, const double percentile)
-{
-    cout<<"| "<<setfill(' ')<<setw(8)<<neuron_A<<" | "
-                    <<setw(8)<<neuron_B<<" | "<<setw(8)<<neuron_C<<" | "
-                    <<setw(12)<<STTC<<" | "<<setw(10)<<percentile<<" |"<<endl;
-}
-
-void print_sgnfcnt_triplet_end(void)
-{
-    cout<<"+"<<setfill('-')<<setw(11)<<'+'<<setw(11)<<'+'<<setw(11)<<'+'
-                                        <<setw(15)<<'+'<<setw(13)<<'+'<<endl;
+    info<<"Median spikes for neurons: "<<median<<endl;
 }

@@ -2,6 +2,9 @@
 !*/
 !*.*
 !Makefile
+!ASTROCYTES/*
+!DATASETS/*
+!INCLUDE/*
 OBJ/*
 RESULTS/*
 

@@ -110,9 +110,19 @@ int main(int argc, char const *argv[])
         map[neur] = neur + astro;
     }
 
-// Close files
+// Close input files
     data.close();
     astros.close();
+    
+// Print the data structure and total number of firings in experiment
+    ofstream info;
+    info.open(("RESULTS/" + string(argv[3]) + "_neurons_info.txt").c_str());
+    if (!info.is_open()) {
+        cout<<"Error opening results neurons info file!"<<endl;
+        return 0;
+    }
+    print_all_spikes(spike_trains, neurons + astro_size, astrocytes, info, 
+                                                            string(argv[3]));
     
 // Start random sequence
     srand(time(NULL));
@@ -191,7 +201,7 @@ int main(int argc, char const *argv[])
         }
     }
     tuplets.close();
-    cout<<"\nNumber of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<" ( "
+    info<<"\nNumber of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<" ( "
                             <<(ttl_sgnfcnt_tuplets * 100 / double(neurons * 
                             (neurons - 1)))<<"% )"<<endl;
     
@@ -286,16 +296,16 @@ int main(int argc, char const *argv[])
         }
     }
     triplets.close();
-    cout<<"\nNumber of total significant triplets: "<<ttl_sgnfcnt_triplets
+    info<<"\nNumber of total significant triplets: "<<ttl_sgnfcnt_triplets
                     <<" ( "<<(ttl_sgnfcnt_triplets * 100 / double(neurons * 
                     (neurons - 1) * (neurons - 2)))<<"% )"<<endl;
     
     
 // Print Motifs
-    print_motifs(motifs_triplets, motifs_sgnfcnts);
+    print_motifs(motifs_triplets, motifs_sgnfcnts, info, string(argv[3]));
     
-// Print the data structure and total number of firings in experiment
-    print_all_spikes(spike_trains, neurons + astro_size, astrocytes);
+// Close output files
+    info.close();
     
     return 0;
 }

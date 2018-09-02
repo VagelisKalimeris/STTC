@@ -11,6 +11,8 @@
 
 #include <iostream>
 #include <iomanip>
+#include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -28,4 +30,5 @@ using namespace std;
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-void print_motifs(const int *triplets, const int *significants);
+void print_motifs(const int *triplets, const int *significants, 
+                                        ofstream &info, const string output);
