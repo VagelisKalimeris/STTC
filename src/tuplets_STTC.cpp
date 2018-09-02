@@ -78,25 +78,24 @@ double T_A_plus(const vector<int> &time_line_A, int total_time_samples,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double P_A_B_minus(const vector<int> &time_line_A, 
+double N_A_B_minus(const vector<int> &time_line_A, 
                                         const vector<int> &time_line_B, int Dt)
 {
-    double P = 0.0;
     int N = 0;
     unsigned int a = 0, b = 0;
     
     unsigned int time_line_A_size = time_line_A.size();
     unsigned int time_line_B_size = time_line_B.size();
     if(time_line_A_size == 0 || time_line_B_size == 0) {
-        return P;
+        return N;
     }
     /* all spikes of A are before tiles of B */
     if(time_line_A.back() < (time_line_B.front() - Dt)) {
-        return P;
+        return N;
     }
     /* all spikes of A are after tiles of B */
     if(time_line_B.back() < time_line_A.front()) {
-        return P;
+        return N;
     }
     
     int time_stamp_A = time_line_A[0], time_stamp_B = time_line_B[0];
@@ -117,9 +116,7 @@ double P_A_B_minus(const vector<int> &time_line_A,
         }
     }
     
-    P = N / double(time_line_A_size);
-    
-    return P;
+    return N;
 }
 
 
@@ -138,25 +135,24 @@ double P_A_B_minus(const vector<int> &time_line_A,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double P_B_A_plus(const vector<int> &time_line_A,
+double N_B_A_plus(const vector<int> &time_line_A,
                                         const vector<int> &time_line_B, int Dt)
 {
-    double P = 0.0;
     int N = 0;
     unsigned int a = 0, b = 0;
     
     unsigned int time_line_A_size = time_line_A.size();
     unsigned int time_line_B_size = time_line_B.size();
     if(time_line_A_size == 0 || time_line_B_size == 0) {
-        return P;
+        return N;
     }
     /* all spikes of B are before tiles of A */
     if(time_line_B.back() < time_line_A.front()) {
-        return P;
+        return N;
     }
     /* all spikes of B are after tiles of A */
     if((time_line_A.back() + Dt) < time_line_B.front()) {
-        return P;
+        return N;
     }
     
     int time_stamp_A = time_line_A[0], time_stamp_B = time_line_B[0];
@@ -177,9 +173,7 @@ double P_B_A_plus(const vector<int> &time_line_A,
         }
     }
     
-    P = N / double(time_line_B_size);
-    
-    return P;
+    return N;
 }
 
 
@@ -201,9 +195,14 @@ double P_B_A_plus(const vector<int> &time_line_A,
 double STTC_A_B(const vector<int> &time_line_A, const vector<int> &time_line_B,
                                                 int Dt, double tBm, double tAp)
 {
-    double pABm = P_A_B_minus(time_line_A, time_line_B, Dt);
-    double pBAp = P_B_A_plus(time_line_A, time_line_B, Dt);
+    double nABm = N_A_B_minus(time_line_A, time_line_B, Dt);
+    double nBAp = N_B_A_plus(time_line_A, time_line_B, Dt);
+    double nA = double(time_line_A.size()), nB = double(time_line_B.size());
     
-    return 0.5 * (((pABm - tBm) / (1.0 - (pABm * tBm))) + 
-                                        ((pBAp - tAp) / (1.0 - (pBAp * tAp))));
+    if (nA == 0 || nB == 0 || (nABm == nA && tBm == 1) || 
+                                                    (nBAp == nB && tAp == 1)) {
+        return -2;
+    }
+    return 0.5 * ((((nABm / nA) - tBm) / (1.0 - ((nABm / nA) * tBm))) + 
+                        (((nBAp / nB) - tAp) / (1.0 - ((nBAp / nB) * tAp))));
 }

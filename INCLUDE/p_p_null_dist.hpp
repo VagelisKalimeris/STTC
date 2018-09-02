@@ -43,4 +43,4 @@ double mean_STTC_dir(double const arr[], int circ_shifts_num);
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double std_STTC_dir(double const arr[], int circ_shifts_num);
+double std_STTC_dir(double const arr[], int circ_shifts_num, const double mean);

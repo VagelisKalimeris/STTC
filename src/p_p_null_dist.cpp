@@ -27,11 +27,17 @@
 double mean_STTC_dir(double const arr[], int circ_shifts_num)
 {
     double sum = 0.0;
+    double denominator = circ_shifts_num;
 
     for (int i = 0; i < circ_shifts_num; i++) {
-        sum += arr[i];
+        double val = arr[i];
+        if (val == -2) {
+            --denominator;
+            continue;
+        }
+        sum += val;
     }
-    return sum / (double) circ_shifts_num;
+    return sum / denominator;
 }
 
 
@@ -48,13 +54,18 @@ double mean_STTC_dir(double const arr[], int circ_shifts_num)
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double std_STTC_dir(double const arr[], int circ_shifts_num)
+double std_STTC_dir(double const arr[], int circ_shifts_num, const double mean)
 {
-    double mean = mean_STTC_dir(arr, circ_shifts_num), st_dev = 0.0;
+    double st_dev = 0.0;
+    double denominator = circ_shifts_num;
 
-        for (int i = 0; i < circ_shifts_num; i++) {
-            double val = arr[i];
-            st_dev += (val - mean) * (val - mean) / circ_shifts_num;
+    for (int i = 0; i < circ_shifts_num; i++) {
+        double val = arr[i];
+        if (val == -2) {
+            --denominator;
+            continue;
         }
-    return sqrt(st_dev);
+        st_dev += (val - mean) * (val - mean);
+    }
+    return sqrt(st_dev / denominator);
 }

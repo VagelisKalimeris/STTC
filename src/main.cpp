@@ -152,6 +152,7 @@ int main(int argc, char const *argv[])
             double tBm_b = tBm[b];
             double tupl_sttc = STTC_A_B(time_line_A, time_line_B, 
                                                     Dt, tBm_b, tAp_a);
+            if (tupl_sttc == -2) {continue;}
         // STTC values of shifted spike trains
             double shifted_res_arr[circ_shifts_num];
             for (int shift = 0; shift < circ_shifts_num; shift++) {
@@ -164,7 +165,8 @@ int main(int argc, char const *argv[])
                                                     Dt, tBm_b, tAp_s);
             }
             double mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
-            double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
+            double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num, 
+                                                                        mean);
             double threshold = sign_thresh(mean, st_dev);
             if (tupl_sttc > threshold) {
                 #pragma omp atomic
@@ -230,6 +232,13 @@ int main(int argc, char const *argv[])
                 double tBm_b = tBm[b];
                 double trip_sttc = STTC_AB_C(time_line_A, time_line_B, 
                                             time_line_C, Dt, tBm_b, tApt);
+                if (trip_sttc == -2) {
+                    int pos = sgnfcnt_tuplets[c][a] * 4 + 
+                        sgnfcnt_tuplets[c][b] * 2 + sgnfcnt_tuplets[a][b] * 1;
+                    #pragma omp atomic
+                    --motifs_triplets[pos];
+                    continue;
+                }
             // STTC values of shifted spike trains
                 double shifted_res_arr[circ_shifts_num];
                 for (int shift = 0; shift < circ_shifts_num; shift++) {
@@ -243,7 +252,8 @@ int main(int argc, char const *argv[])
                                     time_line_B, to_shift, Dt, tBm_b, tApt);
                 }
                 double mean = mean_STTC_dir(shifted_res_arr, circ_shifts_num);
-                double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num);
+                double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num, 
+                                                                        mean);
                 double threshold = sign_thresh(mean, st_dev);
                 if ( trip_sttc > threshold) {
                     #pragma omp atomic

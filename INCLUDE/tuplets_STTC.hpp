@@ -48,7 +48,7 @@ double T_A_plus(const vector<int> &time_line_A, int total_time_samples,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double P_A_B_minus(const vector<int> &time_line_A,
+double N_A_B_minus(const vector<int> &time_line_A,
                                         const vector<int> &time_line_B, int Dt);
 
 
@@ -67,7 +67,7 @@ double P_A_B_minus(const vector<int> &time_line_A,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double P_B_A_plus(const vector<int> &time_line_A,
+double N_B_A_plus(const vector<int> &time_line_A,
                                         const vector<int> &time_line_B, int Dt);
 
 

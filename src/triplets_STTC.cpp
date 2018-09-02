@@ -267,6 +267,10 @@ double STTC_AB_C(const vector<int> &time_line_A,
     int nApBCA = N_AplusB_CA(time_line_A, time_line_B, time_line_C, Dt);
     double nA = double(time_line_A.size()), nB = double(time_line_B.size());
     
+    if (nA == 0 || nB == 0 || (nBmACA == nA && tBm == 1) || 
+                                                (nApBCA == nB && tApt == 1)) {
+        return -2;
+    }
     return 0.5 * ((((nBmACA / nA) - tBm) / (1.0 - ((nBmACA / nA) * tBm))) + 
                     (((nApBCA / nB) - tApt) / (1.0 - ((nApBCA / nB) * tApt))));
 }
