@@ -199,8 +199,8 @@ double STTC_A_B(const vector<int> &time_line_A, const vector<int> &time_line_B,
     double nBAp = N_B_A_plus(time_line_A, time_line_B, Dt);
     double nA = double(time_line_A.size()), nB = double(time_line_B.size());
     
-    if (nA == 0 || nB == 0 || (nABm == nA && tBm == 1) || 
-                                                    (nBAp == nB && tAp == 1)) {
+    if (nA == 0.0 || nB == 0.0 || (nABm == nA && tBm == 1.0) || 
+                                                (nBAp == nB && tAp == 1.0)) {
         return 2.0;
     }
     return 0.5 * ((((nABm / nA) - tBm) / (1.0 - ((nABm / nA) * tBm))) + 
