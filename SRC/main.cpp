@@ -43,6 +43,7 @@ int main(int argc, char const *argv[])
 // Command line arguments check
     if (argc != 4) {
         cout<<"Error! Wrong parameter count!"<<endl;
+        return 0;
     }
 // Command Line Arguments. First give random sample size, then tile size. 
     const int circ_shifts_num = atoi(argv[1]), Dt = atoi(argv[2]);
