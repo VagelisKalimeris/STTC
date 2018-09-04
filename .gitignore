@@ -5,8 +5,7 @@
 !ASTROCYTES/*
 !DATASETS/*
 !INCLUDE/*
-OBJ/*
-RESULTS/*
+!SRC/*
 
 # Prerequisites
 *.d
