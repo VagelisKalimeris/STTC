@@ -6,6 +6,8 @@
 !DATASETS/*
 !INCLUDE/*
 !SRC/*
+OBJ/*
+RESULTS/*
 
 # Prerequisites
 *.d
