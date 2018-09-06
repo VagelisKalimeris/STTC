@@ -8,13 +8,13 @@
 
 
 
-CXXFLAGS =  -Wall -Wextra -g -O3 -fopenmp
+CXXFLAGS =  -Wall -Wextra -g -O3
 
 INCLUDES = INCLUDE/
 OBJS = OBJ/
 SRCS = SRC/
 
-sttc : ${OBJS}main.o ${OBJS}common.o ${OBJS}cond_null_dist.o ${OBJS}motif.o \
+sttc : ${OBJS}main.o ${OBJS}common.o ${OBJS}cond_null_dist.o ${OBJS}print.o \
 			${OBJS}p_p_null_dist.o ${OBJS}triplets_STTC.o ${OBJS}tuplets_STTC.o
 	g++ ${CXXFLAGS} -o sttc $^
 

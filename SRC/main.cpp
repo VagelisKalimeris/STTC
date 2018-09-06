@@ -22,7 +22,7 @@
 #include "../INCLUDE/cond_null_dist.hpp"
 #include "../INCLUDE/tuplets_STTC.hpp"
 #include "../INCLUDE/triplets_STTC.hpp"
-#include "../INCLUDE/motif.hpp"
+#include "../INCLUDE/print.hpp"
 
 using namespace std;
 
