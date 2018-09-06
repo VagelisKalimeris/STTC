@@ -89,13 +89,13 @@ double sign_thresh(double mean, double st_dev)
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-void circular_shift(int time_line[], int tl_size, unsigned int random, 
-                                                        int total_time_samples)
+void circular_shift(int to_shift[], const int time_line[], int tl_size, 
+                                    unsigned int random, int total_time_samples)
 {
     for (int i = 0; i < tl_size; i++) {
-        time_line[i] = (time_line[i] + random) % total_time_samples;
+        to_shift[i] = (time_line[i] + random) % total_time_samples;
     }
-    sort(time_line, (time_line + tl_size));
+    sort(to_shift, (to_shift + tl_size));
 }
 
 

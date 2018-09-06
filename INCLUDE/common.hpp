@@ -44,8 +44,8 @@ double T_B_minus(const int time_line_B[], int time_line_B_size,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-void circular_shift(int time_line[], int tl_size, unsigned int random, 
-                                                        int total_time_samples);
+void circular_shift(int to_shift[], const int time_line[], int tl_size, 
+                                    unsigned int random, int total_time_samples);
 
 
 /******************************************************************************

@@ -127,14 +127,28 @@ int main(int argc, char const *argv[])
 // Start random sequence
     srand(time(NULL));
     
+// Time lines' arrays
+    int tl_sizes[neurons];
+    int* tl_array[neurons];
+    vector<int> spike_train;
+    for (int neur = 0; neur < neurons; ++neur) {
+        spike_train = spike_trains[neur];
+        int tl_size = spike_train.size();
+        tl_sizes[neur] = tl_size;
+        tl_array[neur] = (int *)malloc(tl_size * sizeof(int));
+        for (int ts = 0; ts < tl_size; ++ts) {
+            tl_array[neur][ts] = spike_train[ts];
+        }
+    }
+    
 // All T for tuplets
     double T_Aplus[neurons];
     double T_Bminus[neurons];
     for(int neur = 0; neur < neurons; ++neur) {
-        vector<int> time_line = spike_trains[neur];
-        int time_line_size = time_line.size();
-        T_Aplus[neur] = T_A_plus(&time_line[0], time_line_size, total_time_samples, Dt);
-        T_Bminus[neur] = T_B_minus(&time_line[0], time_line_size, total_time_samples, Dt);
+        int* tl = tl_array[neur];
+        int tl_size = tl_sizes[neur];
+        T_Aplus[neur] = T_A_plus(tl, tl_size, total_time_samples, Dt);
+        T_Bminus[neur] = T_B_minus(tl, tl_size, total_time_samples, Dt);
     }
     
 // Significant tuplets
@@ -155,42 +169,39 @@ int main(int argc, char const *argv[])
     }
     tuplets<<"NeuronA,NeuronB,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
-        vector<int> time_line_A = spike_trains[a];
+        int* tl_A = tl_array[a];
+        int tl_A_size = tl_sizes[a];
         double tAp = T_Aplus[a];
         int a_real = map[a];
-        int time_line_A_size = time_line_A.size();
         for (int b = 0; b < neurons; b++) { // Neuron B
         // It will be used to help in categorization of motifs
             sgnfcnt_tuplets[a][b] = false;
             if (a == b) {continue;} // Skip same neurons
-            vector<int> time_line_B = spike_trains[b];
-            int time_line_B_size = time_line_B.size();
-            sgnfcnt_limit[a][b] = sign_trpl_limit(&time_line_A[0], 
-                    time_line_A_size, &time_line_B[0], time_line_B_size, Dt);
+            int* tl_B = tl_array[b];
+            int tl_B_size = tl_sizes[b];
+            sgnfcnt_limit[a][b] = sign_trpl_limit(tl_A, tl_A_size, tl_B, 
+                                                                tl_B_size, Dt);
             if (sgnfcnt_limit[a][b]) {
-                T_Aplus_tripl[a][b] = T_A_plus_tripl(&time_line_A[0], 
-                                    time_line_A_size, &time_line_B[0], 
-                                    time_line_B_size, total_time_samples, Dt);
+                T_Aplus_tripl[a][b] = T_A_plus_tripl(tl_A, tl_A_size, 
+                                    tl_B, tl_B_size, total_time_samples, Dt);
             }
             double tBm = T_Bminus[b];
-            double tupl_sttc = STTC_A_B(&time_line_A[0], time_line_A_size, 
-                            &time_line_B[0], time_line_B_size, Dt, tBm, tAp);
+            double tupl_sttc = STTC_A_B(tl_A, tl_A_size, tl_B, tl_B_size, Dt, 
+                                                                    tBm, tAp);
             if (tupl_sttc == 2.0) {continue;}
             int denominator = circ_shifts_num;
             double mean = 0;
         // STTC values of shifted spike trains
             double shifted_res_arr[circ_shifts_num];
+        // Shifted spike trains will be copied here
+            int to_shift[neurons];
             for (int shift = 0; shift < circ_shifts_num; shift++) {
-            // Shifted spike trains will be copied here
-                vector<int> to_shift = time_line_A;
                 unsigned int random = random_gen(total_time_samples);
-                circular_shift(&to_shift[0], time_line_A_size, random, 
+                circular_shift(to_shift, tl_A, tl_A_size, random, 
                                                         total_time_samples);
-                tAp = T_A_plus(&to_shift[0], time_line_A_size, 
-                                                    total_time_samples, Dt);
-                shifted_res_arr[shift] = STTC_A_B(&to_shift[0], 
-                                            time_line_A_size, &time_line_B[0], 
-                                            time_line_B_size, Dt, tBm, tAp);
+                tAp = T_A_plus(to_shift, tl_A_size, total_time_samples, Dt);
+                shifted_res_arr[shift] = STTC_A_B(to_shift, tl_A_size, 
+                                            tl_B, tl_B_size, Dt, tBm, tAp);
                 if (shifted_res_arr[shift] == 2.0) {
                     --denominator;
                 }
@@ -237,13 +248,13 @@ int main(int argc, char const *argv[])
     }
     triplets<<"NeuronA,NeuronB,NeuronC,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
-        vector<int> time_line_A = spike_trains[a];
+        int* tl_A = tl_array[a];
+        int tl_A_size = tl_sizes[a];
         int a_real = map[a];
-        int time_line_A_size = time_line_A.size();
         for (int c = 0; c < neurons; c++) { // Neuron C
             if (a == c) {continue;} // Skip same neurons
-            vector<int> time_line_C = spike_trains[c];
-            int time_line_C_size = time_line_C.size();
+            int* tl_C = tl_array[c];
+            int tl_C_size = tl_sizes[c];
             bool sign_trplt_limit = sgnfcnt_limit[a][c];
             double tApt = T_Aplus_tripl[a][c];
             int c_real = map[c];
@@ -255,12 +266,11 @@ int main(int argc, char const *argv[])
                 if (!sign_trplt_limit) {
                     continue; // Reduced A spike train has < 5 spikes
                 }
-                vector<int> time_line_B = spike_trains[b];
-                int time_line_B_size = time_line_B.size();
+                int* tl_B = tl_array[b];
+                int tl_B_size = tl_sizes[b];
                 double tBm = T_Bminus[b];
-                double trip_sttc = STTC_AB_C(&time_line_A[0], 
-                        time_line_A_size, &time_line_B[0], time_line_B_size, 
-                        &time_line_C[0], time_line_C_size, Dt, tBm, tApt);
+                double trip_sttc = STTC_AB_C(tl_A, tl_A_size, tl_B, tl_B_size, 
+                                            tl_C, tl_C_size, Dt, tBm, tApt);
                 if (trip_sttc == 2.0) {
                     --motifs_triplets[pos];
                     continue;
@@ -269,18 +279,17 @@ int main(int argc, char const *argv[])
                 double mean = 0;
             // STTC values of shifted spike trains
                 double shifted_res_arr[circ_shifts_num];
+            // Shifted spike trains will be copied here
+                int to_shift[neurons];
                 for (int shift = 0; shift < circ_shifts_num; shift++) {
-                // Shifted spike trains will be copied here
-                    vector<int> to_shift = time_line_C;
                     unsigned int random = random_gen(total_time_samples);
-                    circular_shift(&to_shift[0], time_line_C_size, random, 
+                    circular_shift(to_shift, tl_C, tl_C_size, random, 
                                                         total_time_samples);
-                    tApt = T_A_plus_tripl(&time_line_A[0], time_line_A_size, 
-                                            &to_shift[0], time_line_C_size, 
-                                            total_time_samples, Dt);
-                    shifted_res_arr[shift] = STTC_AB_C(&time_line_A[0], 
-                        time_line_A_size, &time_line_B[0], time_line_B_size, 
-                        &to_shift[0], time_line_C_size, Dt, tBm, tApt);
+                    tApt = T_A_plus_tripl(tl_A, tl_A_size, to_shift, 
+                                            tl_C_size, total_time_samples, Dt);
+                    shifted_res_arr[shift] = STTC_AB_C(tl_A, tl_A_size, tl_B, 
+                                            tl_B_size, to_shift, tl_C_size, 
+                                            Dt, tBm, tApt);
                     if (shifted_res_arr[shift] == 2.0) {
                         --denominator;
                     }
