@@ -191,14 +191,13 @@ double STTC_A_B(const int time_line_A[], int time_line_A_size,
                                 const int time_line_B[], int time_line_B_size, 
                                 int Dt, double tBm, double tAp)
 {
-    double nABm = N_A_B_minus(&time_line_A[0], time_line_A_size, 
-                                &time_line_B[0], time_line_B_size, Dt);
-    double nBAp = N_B_A_plus(&time_line_A[0], time_line_A_size, 
-                                &time_line_B[0], time_line_B_size, Dt);
+    double nABm = N_A_B_minus(time_line_A, time_line_A_size, time_line_B, 
+                                                        time_line_B_size, Dt);
+    double nBAp = N_B_A_plus(time_line_A, time_line_A_size, time_line_B, 
+                                                        time_line_B_size, Dt);
     double nA = double(time_line_A_size), nB = double(time_line_B_size);
     
-    if (time_line_A_size == 0 || time_line_B_size == 0 || 
-                    (nABm == nA && tBm == 1.0) || (nBAp == nB && tAp == 1.0)) {
+    if ((nABm == nA && tBm == 1.0) || (nBAp == nB && tAp == 1.0)) {
         return 2.0;
     }
     
