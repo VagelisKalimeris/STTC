@@ -13,8 +13,29 @@
 #include <iomanip>
 #include <fstream>
 #include <string>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
+
+/******************************************************************************
+* FUNCTION NAME: print_all_spikes                                             *
+*                                                                             *
+* ARGUMENTS: A neuron's timeline(reference to a vector), the total number of  *
+*             neurons(int).                                                   *   
+*                                                                             *  
+* PURPOSE: Prints all the spikes of each neuron of the dataset, as well as    *
+*           the total number of spikes.                                       *
+*                                                                             *
+* RETURNS: None.                                                              *
+*                                                                             *
+* I/O: See PURPOSE.                                                           *
+*                                                                             *
+******************************************************************************/
+void print_all_spikes(const vector<int> spike_trains[], 
+                        const int total_neurons, const vector<int> &astrocytes, 
+                        ofstream &info, const string output);
+
 
 /******************************************************************************
 * FUNCTION NAME: print_motifs                                                 *

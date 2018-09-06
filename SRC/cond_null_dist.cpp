@@ -25,27 +25,26 @@
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-bool sign_trpl_limit(const vector<int> &time_line_A, 
-                                        const vector<int> &time_line_C, int Dt)
+bool sign_trpl_limit(const int time_line_A[], int time_line_A_size, 
+                        const int time_line_C[], int time_line_C_size, int Dt)
 {
     int s = 0;
-    unsigned int a = 0, c = 0;
+    int a = 0, c = 0;
     
-    unsigned int time_line_A_size = time_line_A.size();
-    unsigned int time_line_C_size = time_line_C.size();
     if(time_line_A_size == 0 || time_line_C_size == 0) {
-        return false;
-    }
-    /* all spikes of A are before tiles of C */
-    if(time_line_A.back() < time_line_C.front()) {
-        return false;
-    }
-    /* all spikes of A are after tiles of C */
-    if((time_line_C.back() + Dt) < time_line_A.front()) {
         return false;
     }
     
     int time_stamp_A = time_line_A[0], time_stamp_C = time_line_C[0];
+    /* all spikes of A are before tiles of C */
+    if(time_line_A[time_line_A_size - 1] < time_stamp_C) {
+        return false;
+    }
+    /* all spikes of A are after tiles of C */
+    if((time_line_C[time_line_C_size - 1] + Dt) < time_stamp_A) {
+        return false;
+    }
+    
     while((a < time_line_A_size) && (c < time_line_C_size)) {
         /* spike of A is within tile of spike of C [tC, tC + Dt] */
         if((time_stamp_A >= time_stamp_C) && 

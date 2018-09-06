@@ -25,13 +25,12 @@
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double T_A_plus(const vector<int> &time_line_A, int total_time_samples, 
-                                                                        int Dt)
+double T_A_plus(const int time_line_A[], int time_line_A_size, 
+                                                int total_time_samples, int Dt)
 {
     double T = 0.0;
     int s = 0, last = -1;
     
-    unsigned int time_line_A_size = time_line_A.size();
     if(time_line_A_size == 0) {
         return T;
     }
@@ -39,7 +38,7 @@ double T_A_plus(const vector<int> &time_line_A, int total_time_samples,
         T = time_line_A_size / double(total_time_samples);
     }
     else {
-        for(unsigned int a = 0; a < time_line_A_size; ++a) {
+        for(int a = 0; a < time_line_A_size; ++a) {
             int time_stamp_A = time_line_A[a];
             /* check if last calculated tile is before tile of spike of A */
             if(last < time_stamp_A) {
@@ -64,41 +63,39 @@ double T_A_plus(const vector<int> &time_line_A, int total_time_samples,
 
 
 /******************************************************************************
-* FUNCTION NAME: P_A_B_minus                                                  *
+* FUNCTION NAME: N_A_B_minus                                                  *
 *                                                                             *
 * ARGUMENTS: Two neuron's timelines(references to vectors), and a time        *
 *             interval(int).                                                  *
 *                                                                             *
-* PURPOSE: Calculates the fraction of the number of the firing events of A    *
-*           which fall within Δt before each firing event of B by the number  *
-*            of firing events of A.                                           *
+* PURPOSE: Finds the number of firing events of the spike train A that fall   *
+*           within the tiles Δt before the firing events of spike train B.    *
 *                                                                             *
-* RETURNS: A double >= 0 and <= 1.                                            *
+* RETURNS: A number(int) of events.                                           *
 *                                                                             *
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double N_A_B_minus(const vector<int> &time_line_A, 
-                                        const vector<int> &time_line_B, int Dt)
+double N_A_B_minus(const int time_line_A[], int time_line_A_size, 
+                        const int time_line_B[], int time_line_B_size, int Dt)
 {
     int N = 0;
-    unsigned int a = 0, b = 0;
+    int a = 0, b = 0;
     
-    unsigned int time_line_A_size = time_line_A.size();
-    unsigned int time_line_B_size = time_line_B.size();
     if(time_line_A_size == 0 || time_line_B_size == 0) {
-        return N;
-    }
-    /* all spikes of A are before tiles of B */
-    if(time_line_A.back() < (time_line_B.front() - Dt)) {
-        return N;
-    }
-    /* all spikes of A are after tiles of B */
-    if(time_line_B.back() < time_line_A.front()) {
         return N;
     }
     
     int time_stamp_A = time_line_A[0], time_stamp_B = time_line_B[0];
+    /* all spikes of A are before tiles of B */
+    if(time_line_A[time_line_A_size - 1] < (time_stamp_B - Dt)) {
+        return N;
+    }
+    /* all spikes of A are after tiles of B */
+    if(time_line_B[time_line_B_size - 1] < time_stamp_A) {
+        return N;
+    }
+    
     while((a < time_line_A_size) && (b < time_line_B_size)) {
         /* spike of A is within tile of spike of B [tB, tB + Dt] */
         if((time_stamp_A >= (time_stamp_B - Dt)) && 
@@ -126,36 +123,34 @@ double N_A_B_minus(const vector<int> &time_line_A,
 * ARGUMENTS: Two neuron's timelines(references to vectors), and a time        *
 *             interval(int).                                                  *
 *                                                                             *
-* PURPOSE: Calculates the fraction of the number of the firing events of B    *
-*           which fall within Δt after each firing event of A by the number   *
-*            of firing events of B.                                           *
+* PURPOSE: Finds the number of firing events of the spike train B that fall   *
+*           within the tiles Δt after the firing events of spike train A.     *
 *                                                                             *
-* RETURNS: A double >= 0 and <= 1.                                            *
+* RETURNS: A number(int) of events.                                           *
 *                                                                             *
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double N_B_A_plus(const vector<int> &time_line_A,
-                                        const vector<int> &time_line_B, int Dt)
+double N_B_A_plus(const int time_line_A[], int time_line_A_size, 
+                        const int time_line_B[], int time_line_B_size, int Dt)
 {
     int N = 0;
-    unsigned int a = 0, b = 0;
+    int a = 0, b = 0;
     
-    unsigned int time_line_A_size = time_line_A.size();
-    unsigned int time_line_B_size = time_line_B.size();
     if(time_line_A_size == 0 || time_line_B_size == 0) {
-        return N;
-    }
-    /* all spikes of B are before tiles of A */
-    if(time_line_B.back() < time_line_A.front()) {
-        return N;
-    }
-    /* all spikes of B are after tiles of A */
-    if((time_line_A.back() + Dt) < time_line_B.front()) {
         return N;
     }
     
     int time_stamp_A = time_line_A[0], time_stamp_B = time_line_B[0];
+    /* all spikes of B are before tiles of A */
+    if(time_line_B[time_line_B_size - 1] < time_stamp_A) {
+        return N;
+    }
+    /* all spikes of B are after tiles of A */
+    if((time_line_A[time_line_A_size - 1] + Dt) < time_stamp_B) {
+        return N;
+    }
+    
     while((a < time_line_A_size) && (b < time_line_B_size)) {
         /* spike of B is within tile of spike of A [tA, tA + Dt] */
         if((time_stamp_B >= time_stamp_A) && 
@@ -192,17 +187,21 @@ double N_B_A_plus(const vector<int> &time_line_A,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double STTC_A_B(const vector<int> &time_line_A, const vector<int> &time_line_B,
-                                                int Dt, double tBm, double tAp)
+double STTC_A_B(const int time_line_A[], int time_line_A_size, 
+                                const int time_line_B[], int time_line_B_size, 
+                                int Dt, double tBm, double tAp)
 {
-    double nABm = N_A_B_minus(time_line_A, time_line_B, Dt);
-    double nBAp = N_B_A_plus(time_line_A, time_line_B, Dt);
-    double nA = double(time_line_A.size()), nB = double(time_line_B.size());
+    double nABm = N_A_B_minus(&time_line_A[0], time_line_A_size, 
+                                &time_line_B[0], time_line_B_size, Dt);
+    double nBAp = N_B_A_plus(&time_line_A[0], time_line_A_size, 
+                                &time_line_B[0], time_line_B_size, Dt);
+    double nA = double(time_line_A_size), nB = double(time_line_B_size);
     
-    if (nA == 0.0 || nB == 0.0 || (nABm == nA && tBm == 1.0) || 
-                                                (nBAp == nB && tAp == 1.0)) {
+    if (time_line_A_size == 0 || time_line_B_size == 0 || 
+                    (nABm == nA && tBm == 1.0) || (nBAp == nB && tAp == 1.0)) {
         return 2.0;
     }
+    
     return 0.5 * ((((nABm / nA) - tBm) / (1.0 - ((nABm / nA) * tBm))) + 
                         (((nBAp / nB) - tAp) / (1.0 - ((nBAp / nB) * tAp))));
 }

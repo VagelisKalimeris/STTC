@@ -9,9 +9,6 @@
 ******************************************************************************/
 
 
-#include <cmath>
-#include <vector>
-
 using namespace std;
 
 /******************************************************************************
@@ -28,5 +25,5 @@ using namespace std;
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-bool sign_trpl_limit(const vector<int> &time_line_A, 
-                                        const vector<int> &time_line_C, int Dt);
+bool sign_trpl_limit(const int time_line_A[], int time_line_A_size, 
+                        const int time_line_C[], int time_line_C_size, int Dt);

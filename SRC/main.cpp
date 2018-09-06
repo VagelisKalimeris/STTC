@@ -130,12 +130,11 @@ int main(int argc, char const *argv[])
 // All T for tuplets
     double T_Aplus[neurons];
     double T_Bminus[neurons];
-    #pragma omp parallel for default(none) shared(spike_trains, \
-                                                total_time_samples, T_Aplus, T_Bminus)
     for(int neur = 0; neur < neurons; ++neur) {
         vector<int> time_line = spike_trains[neur];
-        T_Aplus[neur] = T_A_plus(time_line, total_time_samples, Dt);
-        T_Bminus[neur] = T_B_minus(time_line, total_time_samples, Dt);
+        int time_line_size = time_line.size();
+        T_Aplus[neur] = T_A_plus(&time_line[0], time_line_size, total_time_samples, Dt);
+        T_Bminus[neur] = T_B_minus(&time_line[0], time_line_size, total_time_samples, Dt);
     }
     
 // Significant tuplets
@@ -157,68 +156,65 @@ int main(int argc, char const *argv[])
     tuplets<<"NeuronA,NeuronB,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
-        #pragma omp parallel default(none) shared(a, spike_trains, \
-                            time_line_A, T_Aplus, map, sgnfcnt_tuplets, \
-                            sgnfcnt_limit, T_Aplus_tripl, total_time_samples, \
-                            T_Bminus, ttl_sgnfcnt_tuplets, tuplets)
-        {
-            double tAp = T_Aplus[a];
-            int a_real = map[a];
+        double tAp = T_Aplus[a];
+        int a_real = map[a];
+        int time_line_A_size = time_line_A.size();
+        for (int b = 0; b < neurons; b++) { // Neuron B
+        // It will be used to help in categorization of motifs
+            sgnfcnt_tuplets[a][b] = false;
+            if (a == b) {continue;} // Skip same neurons
+            vector<int> time_line_B = spike_trains[b];
+            int time_line_B_size = time_line_B.size();
+            sgnfcnt_limit[a][b] = sign_trpl_limit(&time_line_A[0], 
+                    time_line_A_size, &time_line_B[0], time_line_B_size, Dt);
+            if (sgnfcnt_limit[a][b]) {
+                T_Aplus_tripl[a][b] = T_A_plus_tripl(&time_line_A[0], 
+                                    time_line_A_size, &time_line_B[0], 
+                                    time_line_B_size, total_time_samples, Dt);
+            }
+            double tBm = T_Bminus[b];
+            double tupl_sttc = STTC_A_B(&time_line_A[0], time_line_A_size, 
+                            &time_line_B[0], time_line_B_size, Dt, tBm, tAp);
+            if (tupl_sttc == 2.0) {continue;}
+            int denominator = circ_shifts_num;
+            double mean = 0;
         // STTC values of shifted spike trains
             double shifted_res_arr[circ_shifts_num];
-            #pragma omp for
-            for (int b = 0; b < neurons; b++) { // Neuron B
-            // It will be used to help in categorization of motifs
-                sgnfcnt_tuplets[a][b] = false;
-                if (a == b) {continue;} // Skip same neurons
-                vector<int> time_line_B = spike_trains[b];
-                sgnfcnt_limit[a][b] = sign_trpl_limit(time_line_A, 
-                                                            time_line_B, Dt);
-                if (sgnfcnt_limit[a][b]) {
-                    T_Aplus_tripl[a][b] = T_A_plus_tripl(time_line_A, 
-                                        time_line_B, total_time_samples, Dt);
+            for (int shift = 0; shift < circ_shifts_num; shift++) {
+            // Shifted spike trains will be copied here
+                vector<int> to_shift = time_line_A;
+                unsigned int random = random_gen(total_time_samples);
+                circular_shift(&to_shift[0], time_line_A_size, random, 
+                                                        total_time_samples);
+                tAp = T_A_plus(&to_shift[0], time_line_A_size, 
+                                                    total_time_samples, Dt);
+                shifted_res_arr[shift] = STTC_A_B(&to_shift[0], 
+                                            time_line_A_size, &time_line_B[0], 
+                                            time_line_B_size, Dt, tBm, tAp);
+                if (shifted_res_arr[shift] == 2.0) {
+                    --denominator;
                 }
-                double tBm = T_Bminus[b];
-                double tupl_sttc = STTC_A_B(time_line_A, time_line_B, 
-                                                        Dt, tBm, tAp);
-                if (tupl_sttc == 2.0) {continue;}
-                int denominator = circ_shifts_num;
-                double mean = 0;
-                for (int shift = 0; shift < circ_shifts_num; shift++) {
-                // Shifted spike trains will be copied here
-                    vector<int> to_shift = time_line_A;
-                    unsigned int random = random_gen(total_time_samples);
-                    circular_shift(to_shift, random, total_time_samples);
-                    tAp = T_A_plus(to_shift, total_time_samples, Dt);
-                    shifted_res_arr[shift] = STTC_A_B(to_shift, time_line_B, 
-                                                            Dt, tBm, tAp);
-                    if (shifted_res_arr[shift] == 2.0) {
-                        --denominator;
-                    }
-                    else {
-                        mean += shifted_res_arr[shift];
-                    }
+                else {
+                    mean += shifted_res_arr[shift];
                 }
-                mean /= denominator;
-                double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num, 
+            }
+            mean /= denominator;
+            double st_dev = std_STTC_dir(shifted_res_arr, circ_shifts_num, 
                                                                         mean);
-                double threshold = sign_thresh(mean, st_dev);
-                if (tupl_sttc > threshold) {
-                    #pragma omp atomic
-                    ++ttl_sgnfcnt_tuplets;
-                    sgnfcnt_tuplets[a][b] = true;
-                    sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
-                    int pos = 0; 
-                    while (pos < denominator && 
+            double threshold = sign_thresh(mean, st_dev);
+            if (tupl_sttc > threshold) {
+                ++ttl_sgnfcnt_tuplets;
+                sgnfcnt_tuplets[a][b] = true;
+                sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
+                int pos = 0; 
+                while (pos < denominator && 
                                         shifted_res_arr[pos] <= tupl_sttc) {
-                        ++pos;
-                    }
-                    int b_real = map[b];
-                    double percentile = pos / double(denominator);
-                    #pragma omp critical
-                    tuplets<<a_real + 1<<','<<b_real + 1<<','<<tupl_sttc<<','
-                                                            <<percentile<<endl;
+                    ++pos;
                 }
+                int b_real = map[b];
+                double percentile = pos / double(denominator);
+                tuplets<<a_real + 1<<','<<b_real + 1<<','<<tupl_sttc<<','
+                                                            <<percentile<<endl;
             }
         }
     }
@@ -242,80 +238,73 @@ int main(int argc, char const *argv[])
     triplets<<"NeuronA,NeuronB,NeuronC,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
-        #pragma omp parallel default(none) shared(a, spike_trains, \
-                            time_line_A, map, sgnfcnt_limit, T_Aplus_tripl, \
-                            sgnfcnt_tuplets, motifs_triplets, T_Bminus, \
-                            total_time_samples, ttl_sgnfcnt_triplets, \
-                            motifs_sgnfcnts, triplets)
-        {
-            int a_real = map[a];
-        // STTC values of shifted spike trains
-            double shifted_res_arr[circ_shifts_num];
-            #pragma omp for
-            for (int c = 0; c < neurons; c++) { // Neuron C
-                if (a == c) {continue;} // Skip same neurons
-                vector<int> time_line_C = spike_trains[c];
-                bool sign_trplt_limit = sgnfcnt_limit[a][c];
-                double tApt = T_Aplus_tripl[a][c];
-                int c_real = map[c];
-                for (int b = 0; b < neurons; b++) { // Neuron B
-                    if (b == a || b == c) {continue;} // Skip same neurons
-                    int pos = sgnfcnt_tuplets[c][a] * 4 + 
+        int a_real = map[a];
+        int time_line_A_size = time_line_A.size();
+        for (int c = 0; c < neurons; c++) { // Neuron C
+            if (a == c) {continue;} // Skip same neurons
+            vector<int> time_line_C = spike_trains[c];
+            int time_line_C_size = time_line_C.size();
+            bool sign_trplt_limit = sgnfcnt_limit[a][c];
+            double tApt = T_Aplus_tripl[a][c];
+            int c_real = map[c];
+            for (int b = 0; b < neurons; b++) { // Neuron B
+                if (b == a || b == c) {continue;} // Skip same neurons
+                int pos = sgnfcnt_tuplets[c][a] * 4 + 
                         sgnfcnt_tuplets[c][b] * 2 + sgnfcnt_tuplets[a][b] * 1;
-                    #pragma omp atomic
-                    ++motifs_triplets[pos];
-                    if (!sign_trplt_limit) {
-                        continue; // Reduced A spike train has < 5 spikes
+                ++motifs_triplets[pos];
+                if (!sign_trplt_limit) {
+                    continue; // Reduced A spike train has < 5 spikes
+                }
+                vector<int> time_line_B = spike_trains[b];
+                int time_line_B_size = time_line_B.size();
+                double tBm = T_Bminus[b];
+                double trip_sttc = STTC_AB_C(&time_line_A[0], 
+                        time_line_A_size, &time_line_B[0], time_line_B_size, 
+                        &time_line_C[0], time_line_C_size, Dt, tBm, tApt);
+                if (trip_sttc == 2.0) {
+                    --motifs_triplets[pos];
+                    continue;
+                }
+                int denominator = circ_shifts_num;
+                double mean = 0;
+            // STTC values of shifted spike trains
+                double shifted_res_arr[circ_shifts_num];
+                for (int shift = 0; shift < circ_shifts_num; shift++) {
+                // Shifted spike trains will be copied here
+                    vector<int> to_shift = time_line_C;
+                    unsigned int random = random_gen(total_time_samples);
+                    circular_shift(&to_shift[0], time_line_C_size, random, 
+                                                        total_time_samples);
+                    tApt = T_A_plus_tripl(&time_line_A[0], time_line_A_size, 
+                                            &to_shift[0], time_line_C_size, 
+                                            total_time_samples, Dt);
+                    shifted_res_arr[shift] = STTC_AB_C(&time_line_A[0], 
+                        time_line_A_size, &time_line_B[0], time_line_B_size, 
+                        &to_shift[0], time_line_C_size, Dt, tBm, tApt);
+                    if (shifted_res_arr[shift] == 2.0) {
+                        --denominator;
                     }
-                    vector<int> time_line_B = spike_trains[b];
-                    double tBm = T_Bminus[b];
-                    double trip_sttc = STTC_AB_C(time_line_A, time_line_B, 
-                                                time_line_C, Dt, tBm, tApt);
-                    if (trip_sttc == 2.0) {
-                        #pragma omp atomic
-                        --motifs_triplets[pos];
-                        continue;
+                    else {
+                        mean += shifted_res_arr[shift];
                     }
-                    int denominator = circ_shifts_num;
-                    double mean = 0;
-                    for (int shift = 0; shift < circ_shifts_num; shift++) {
-                    // Shifted spike trains will be copied here
-                        vector<int> to_shift = time_line_C;
-                        unsigned int random = random_gen(total_time_samples);
-                        circular_shift(to_shift, random, total_time_samples);
-                        tApt = T_A_plus_tripl(time_line_A, to_shift, 
-                                                    total_time_samples, Dt);
-                        shifted_res_arr[shift] = STTC_AB_C(time_line_A, 
-                                    time_line_B, to_shift, Dt, tBm, tApt);
-                        if (shifted_res_arr[shift] == 2.0) {
-                            --denominator;
-                        }
-                        else {
-                            mean += shifted_res_arr[shift];
-                        }
-                    }
-                    mean /= denominator;
-                    double st_dev = std_STTC_dir(shifted_res_arr, 
+                }
+                mean /= denominator;
+                double st_dev = std_STTC_dir(shifted_res_arr, 
                                                         circ_shifts_num, mean);
-                    double threshold = sign_thresh(mean, st_dev);
-                    if ( trip_sttc > threshold) {
-                        #pragma omp atomic
-                        ++ttl_sgnfcnt_triplets;
-                        #pragma omp atomic
-                        ++motifs_sgnfcnts[pos];
-                        sort(shifted_res_arr, (shifted_res_arr + 
-                                                            circ_shifts_num));
-                        pos = 0; 
-                        while (pos < denominator && 
+                double threshold = sign_thresh(mean, st_dev);
+                if ( trip_sttc > threshold) {
+                    ++ttl_sgnfcnt_triplets;
+                    ++motifs_sgnfcnts[pos];
+                    sort(shifted_res_arr, (shifted_res_arr + circ_shifts_num));
+                    pos = 0; 
+                    while (pos < denominator && 
                                         shifted_res_arr[pos] <= trip_sttc) {
-                            ++pos;
-                        }
-                        int b_real = map[b];
-                        double percentile = pos / double(denominator);
-                        #pragma omp critical
-                        triplets<<a_real + 1<<','<<b_real + 1<<','<<c_real + 1
-                                    <<','<<trip_sttc<<','<<percentile<<endl;
+                        ++pos;
                     }
+                    int b_real = map[b];
+                    double percentile = pos / double(denominator);
+                    triplets<<a_real + 1<<','<<b_real + 1<<','<<c_real + 1<<','
+                                            <<trip_sttc<<','<<percentile<<endl;
                 }
             }
         }

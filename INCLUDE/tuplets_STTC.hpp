@@ -9,10 +9,6 @@
 ******************************************************************************/
 
 
-#include <iostream>
-#include <cmath>
-#include <vector>
-
 using namespace std;
 
 /******************************************************************************
@@ -29,8 +25,8 @@ using namespace std;
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double T_A_plus(const vector<int> &time_line_A, int total_time_samples, 
-                                                                       int Dt);
+double T_A_plus(const int time_line_A[], int time_line_A_size, 
+                                                int total_time_samples, int Dt);
 
 
 /******************************************************************************
@@ -39,36 +35,34 @@ double T_A_plus(const vector<int> &time_line_A, int total_time_samples,
 * ARGUMENTS: Two neuron's timelines(references to vectors), and a time        *
 *             interval(int).                                                  *
 *                                                                             *
-* PURPOSE: Calculates the fraction of the number of the firing events of A    *
-*           which fall within Δt before each firing event of B by the number  *
-*            of firing events of A.                                           *
+* PURPOSE: Finds the number of firing events of the spike train A that fall   *
+*           within the tiles Δt before the firing events of spike train B.    *
 *                                                                             *
-* RETURNS: A double > 0 and < 1.                                              *
+* RETURNS: A number(int) of events.                                           *
 *                                                                             *
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double N_A_B_minus(const vector<int> &time_line_A,
-                                        const vector<int> &time_line_B, int Dt);
+double N_A_B_minus(const int time_line_A[], int time_line_A_size, 
+                        const int time_line_B[], int time_line_B_size, int Dt);
 
 
 /******************************************************************************
-* FUNCTION NAME: P_B_A_plus                                                   *
+* FUNCTION NAME: N_A_B_minus                                                  *
 *                                                                             *
 * ARGUMENTS: Two neuron's timelines(references to vectors), and a time        *
 *             interval(int).                                                  *
 *                                                                             *
-* PURPOSE: Calculates the fraction of the number of the firing events of B    *
-*           which fall within Δt after each firing event of A by the number   *
-*            of firing events of A.                                           *
+* PURPOSE: Finds the number of firing events of the spike train B that fall   *
+*           within the tiles Δt after the firing events of spike train A.     *
 *                                                                             *
-* RETURNS: A double > 0 and < 1.                                              *
+* RETURNS: A number(int) of events.                                           *
 *                                                                             *
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double N_B_A_plus(const vector<int> &time_line_A,
-                                        const vector<int> &time_line_B, int Dt);
+double N_B_A_plus(const int time_line_A[], int time_line_A_size, 
+                        const int time_line_B[], int time_line_B_size, int Dt);
 
 
 /******************************************************************************
@@ -86,5 +80,6 @@ double N_B_A_plus(const vector<int> &time_line_A,
 * I/O: None.                                                                  *
 *                                                                             *
 ******************************************************************************/
-double STTC_A_B(const vector<int> &time_line_A, const vector<int> &time_line_B,
-                                                int Dt, double tBm, double tAp);
+double STTC_A_B(const int time_line_A[], int time_line_A_size, 
+                                const int time_line_B[], int time_line_B_size, 
+                                int Dt, double tBm, double tAp);
