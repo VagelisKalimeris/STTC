@@ -157,10 +157,10 @@ int main(int argc, char const *argv[])
     tuplets<<"NeuronA,NeuronB,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
-        #pragma omp parallel default(none) shared(a, time_line_A, \
-                            spike_trains, map, T_Aplus, sgnfcnt_tuplets, \
-                            sgnfcnt_limit, T_Aplus_tripl, T_Bminus, \
-                            total_time_samples, ttl_sgnfcnt_tuplets, tuplets)
+        #pragma omp parallel default(none) shared(a, spike_trains, \
+                            time_line_A, T_Aplus, map, sgnfcnt_tuplets, \
+                            sgnfcnt_limit, T_Aplus_tripl, total_time_samples, \
+                            T_Bminus, ttl_sgnfcnt_tuplets, tuplets)
         {
             double tAp = T_Aplus[a];
             int a_real = map[a];
@@ -242,10 +242,11 @@ int main(int argc, char const *argv[])
     triplets<<"NeuronA,NeuronB,NeuronC,STTC,Percentile\n";
     for (int a = 0; a < neurons; a++) { // Neuron A
         vector<int> time_line_A = spike_trains[a];
-        #pragma omp parallel default(none) shared(a, time_line_A, \
-                    spike_trains, map, sgnfcnt_tuplets, motifs_triplets, \
-                    sgnfcnt_limit, T_Aplus_tripl, total_time_samples, \
-                    T_Bminus, ttl_sgnfcnt_triplets, motifs_sgnfcnts, triplets)
+        #pragma omp parallel default(none) shared(a, spike_trains, \
+                            time_line_A, map, sgnfcnt_limit, T_Aplus_tripl, \
+                            sgnfcnt_tuplets, motifs_triplets, T_Bminus, \
+                            total_time_samples, ttl_sgnfcnt_triplets, \
+                            motifs_sgnfcnts, triplets)
         {
             int a_real = map[a];
         // STTC values of shifted spike trains
