@@ -8,7 +8,7 @@
 
 
 
-CXXFLAGS =  -Wall -Wextra -g -O3
+CXXFLAGS =  -Wall -Wextra -g -O3 -fopenmp
 
 INCLUDES = INCLUDE/
 OBJS = OBJ/
