@@ -16,6 +16,7 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <cstdio>
 
 #include "../INCLUDE/common.hpp"
 #include "../INCLUDE/p_p_null_dist.hpp"
@@ -115,14 +116,18 @@ int main(int argc, char const *argv[])
     astros.close();
     
 // Print the data structure and total number of firings in experiment
+    char str[33];
+    sprintf(str, "%d", Dt);
+    const string Dt_s = string(str);
     ofstream info;
-    info.open(("RESULTS/" + string(argv[3]) + "_neurons_info.txt").c_str());
+    info.open(("RESULTS/" + string(argv[3]) + "_neurons-info_dt-" + Dt_s + 
+                                                            ".txt").c_str());
     if (!info.is_open()) {
         cout<<"Error opening results neurons info file!"<<endl;
         return 0;
     }
     print_all_spikes(spike_trains, neurons + astro_size, astrocytes, info, 
-                                                            string(argv[3]));
+                                                        string(argv[3]), Dt_s);
     
 // Start random sequence
     srand(time(NULL));
@@ -167,7 +172,8 @@ int main(int argc, char const *argv[])
     
 // Calculate per pair STTC
     ofstream tuplets;
-    tuplets.open(("RESULTS/" + string(argv[3]) + "_tuplets.csv").c_str());
+    tuplets.open(("RESULTS/" + string(argv[3]) + "_tuplets_dt-" + Dt_s + 
+                                                            ".csv").c_str());
     if (!tuplets.is_open()) {
         cout<<"Error opening results tuplets file!"<<endl;
         return 0;
@@ -256,7 +262,8 @@ int main(int argc, char const *argv[])
     
 // Calculate conditional STTC
     ofstream triplets;
-    triplets.open(("RESULTS/" + string(argv[3]) + "_triplets.csv").c_str());
+    triplets.open(("RESULTS/" + string(argv[3]) + "_triplets_dt-" + Dt_s + 
+                                                            ".csv").c_str());
     if (!triplets.is_open()) {
         cout<<"Error opening results triplets file!"<<endl;
         return 0;
@@ -359,7 +366,7 @@ int main(int argc, char const *argv[])
     }
     
 // Print Motifs
-    print_motifs(motifs_triplets, motifs_sgnfcnts, info, string(argv[3]));
+    print_motifs(motifs_triplets, motifs_sgnfcnts, info, string(argv[3]), Dt_s);
     
 // Close output files
     info.close();
