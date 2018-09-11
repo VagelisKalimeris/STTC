@@ -34,7 +34,8 @@ using namespace std;
 ******************************************************************************/
 void print_all_spikes(const vector<int> spike_trains[], 
                         const int total_neurons, const vector<int> &astrocytes, 
-                        ofstream &info, const string output, const string Dt);
+                        ofstream &info, const string output, 
+                        const string shifts, const string Dt);
 
 
 /******************************************************************************
@@ -52,4 +53,5 @@ void print_all_spikes(const vector<int> spike_trains[],
 *                                                                             *
 ******************************************************************************/
 void print_motifs(const int *triplets, const int *significants, 
-                        ofstream &info, const string output, const string Dt);
+                                    ofstream &info, const string output, 
+                                    const string shifts, const string Dt);

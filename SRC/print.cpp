@@ -27,7 +27,8 @@
 ******************************************************************************/
 void print_all_spikes(const vector<int> spike_trains[], 
                         const int total_neurons, const vector<int> &astrocytes, 
-                        ofstream &info, const string output, const string Dt)
+                        ofstream &info, const string output, 
+                        const string shifts, const string Dt)
 {
     int total_firings = 0, max = 0, min = 100000;
     const int astro_size = astrocytes.size();
@@ -36,8 +37,8 @@ void print_all_spikes(const vector<int> spike_trains[],
     vector<int> time_lines;
     
     ofstream spikes;
-    spikes.open(("RESULTS/" + output + "_neurons-spikes_dt-" + Dt + 
-                                                            ".txt").c_str());
+    spikes.open(("RESULTS/" + output + "_" + shifts + "-shifts_" + Dt + 
+                                            "-dt_neurons_spikes.txt").c_str());
     if (!spikes.is_open()) {
         cout<<"Error opening results neurons spikes file!"<<endl;
         return;
@@ -107,12 +108,14 @@ void print_all_spikes(const vector<int> spike_trains[],
 *                                                                             *
 ******************************************************************************/
 void print_motifs(const int *triplets, const int *significants, 
-                        ofstream &info, const string output, const string Dt)
+                                    ofstream &info, const string output, 
+                                    const string shifts, const string Dt)
 {
     int ttl_triplets = 0, ttl_sgnfcnt_triplets = 0;
     
     ofstream motifs;
-    motifs.open(("RESULTS/" + output + "_motifs_dt-" + Dt + ".txt").c_str());
+    motifs.open(("RESULTS/" + output + "_" + shifts + "-shifts_" + Dt + 
+                                                    "-dt_motifs.txt").c_str());
     if (!motifs.is_open()) {
         cout<<"Error opening results motifs file!"<<endl;
         return;
