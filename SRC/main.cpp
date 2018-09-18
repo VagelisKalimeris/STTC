@@ -84,17 +84,18 @@ int main(int argc, char const *argv[])
 // Store each neuron's firing (1's) to the data structure
     int total_time_samples = 0;
     while (getline(data, line)) {
-        int astro = 0;
-        int astrocyte = astrocytes[0];
-        for (int neur = 0; neur < neurons; ++neur) {
-            while ((neur + astro) == astrocyte) {
-                if (line[neur + astro] == '1') {
-                    spike_trains[neurons + astro].push_back(total_time_samples);
-                }
-                astrocyte = astrocytes[(++astro) % astro_size];
+        int astros_count = 0;
+        int push_count = 0;
+        for (int neur = 0; neur < neurons + astro_size; ++neur) {
+            int pos;
+            if (neur == astrocytes[astros_count]) {
+                pos = neurons + astros_count++;
             }
-            if (line[neur + astro] == '1') {
-                spike_trains[neur].push_back(total_time_samples);
+            else {
+                pos = push_count++;
+            }
+            if (line[neur] == '1') {
+                spike_trains[pos].push_back(total_time_samples);
             }
         }
         total_time_samples++;
@@ -264,8 +265,8 @@ int main(int argc, char const *argv[])
     
 // Calculate conditional STTC
     ofstream triplets;
-    triplets.open(("RESULTS/" + string(argv[3]) + "_" + shifts_s + "-shifts_" + 
-                                            Dt_s + "-dt_triplets.csv").c_str());
+    triplets.open(("RESULTS/" + string(argv[3]) + "_" + shifts_s + 
+                            "-shifts_" + Dt_s + "-dt_triplets.csv").c_str());
     if (!triplets.is_open()) {
         cout<<"Error opening results triplets file!"<<endl;
         return 0;
@@ -349,7 +350,7 @@ int main(int argc, char const *argv[])
                         double percentile = pos / double(denominator);
                         #pragma omp critical
                         triplets<<a_real + 1<<','<<b_real + 1<<','<<c_real + 1
-                                        <<','<<trip_sttc<<','<<percentile<<'\n';
+                                    <<','<<trip_sttc<<','<<percentile<<'\n';
                     }
                 }
             }
