@@ -85,11 +85,13 @@ int main(int argc, char const *argv[])
     int total_time_samples = 0;
     while (getline(data, line)) {
         int astros_count = 0;
+        int astrocyte = astrocytes[0];
         int push_count = 0;
         for (int neur = 0; neur < neurons + astro_size; ++neur) {
             int pos;
-            if (neur == astrocytes[astros_count]) {
+            if (neur == astrocyte) {
                 pos = neurons + astros_count++;
+                astrocyte = astrocytes[astros_count];
             }
             else {
                 pos = push_count++;
