@@ -61,8 +61,8 @@ int main(int argc, char const *argv[])
     }
     astros.open((string("ASTROCYTES/") + argv[3]).c_str(), ifstream::in);
     if (!astros.is_open()) {
-        cout<<"Error opening astrocytes file!"<<endl;
-        return 0;
+        cout<<"Problem opening astrocytes file!"<<endl;
+        //return 0;
     }
     string line;
     
@@ -85,11 +85,14 @@ int main(int argc, char const *argv[])
     int total_time_samples = 0;
     while (getline(data, line)) {
         int astros_count = 0;
-        int astrocyte = astrocytes[0];
+        int astrocyte = 0;
+        if (astro_size) {
+            astrocyte = astrocytes[0];
+        }
         int push_count = 0;
         for (int neur = 0; neur < neurons + astro_size; ++neur) {
             int pos;
-            if (neur == astrocyte) {
+            if (astro_size && neur == astrocyte) {
                 pos = neurons + astros_count++;
                 astrocyte = astrocytes[astros_count];
             }
@@ -106,12 +109,15 @@ int main(int argc, char const *argv[])
 // Make the mapping from virtual to real neuron's number
     int map[neurons];
     int astro = 0;
-    int astrocyte = astrocytes[0];
+    int astrocyte = 0;
+    if (astro_size) {
+        astrocyte = astrocytes[0];
+    }
     for (int neur = 0; neur < neurons; ++neur) {
-        while ((neur + astro) == astrocyte) {
+        while (astro_size && (neur + astro) == astrocyte) {
             astrocyte = astrocytes[(++astro) % astro_size];
         }
-        map[neur] = neur + astro;
+        map[neur] = neur + astro + 1;
     }
 
 // Close input files
@@ -248,8 +254,8 @@ int main(int argc, char const *argv[])
                     int b_real = map[b];
                     double percentile = pos / double(denominator);
                     #pragma omp critical
-                    tuplets<<a_real + 1<<','<<b_real + 1<<','<<tupl_sttc<<','
-                                                            <<percentile<<'\n';
+                    tuplets << a_real << ',' << b_real << ',' << tupl_sttc
+                                                 << ',' << percentile << '\n';
                 }
             }
             free(to_shift);
@@ -351,8 +357,8 @@ int main(int argc, char const *argv[])
                         int b_real = map[b];
                         double percentile = pos / double(denominator);
                         #pragma omp critical
-                        triplets<<a_real + 1<<','<<b_real + 1<<','<<c_real + 1
-                                    <<','<<trip_sttc<<','<<percentile<<'\n';
+                        triplets << a_real << ',' << b_real << ',' << c_real 
+                            << ',' << trip_sttc << ',' << percentile << '\n';
                     }
                 }
             }
