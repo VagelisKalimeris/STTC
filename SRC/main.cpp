@@ -75,15 +75,7 @@ int main(int argc, char const *argv[])
     
 // Get total number of neurons from file
     getline(data, line);
-    //const int neurons = line.length() - astro_size - 1;
-    int n = 0, p = 0;
-    while (line[p] != '\n' && line[p] != '\0') {
-        if (line[p] == '0' || line[p] == '1') {
-            ++n;
-        }
-        ++p;
-    }
-    const int neurons = n - astro_size;
+    const int neurons = line.length() - astro_size;
     data.seekg(0, data.beg);
     
 // Our main data structure and astrocyte list
