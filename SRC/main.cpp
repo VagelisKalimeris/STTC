@@ -75,11 +75,12 @@ int main(int argc, char const *argv[])
     
 // Get total number of neurons from file
     getline(data, line);
+    const int ttl_neurons = line.length();
     const int neurons = line.length() - astro_size;
     data.seekg(0, data.beg);
     
 // Our main data structure and astrocyte list
-    vector<int> spike_trains[neurons + astro_size];
+    vector<int> spike_trains[ttl_neurons];
     
 // Store each neuron's firing (1's) to the data structure
     int total_time_samples = 0;
@@ -90,7 +91,7 @@ int main(int argc, char const *argv[])
             astrocyte = astrocytes[0];
         }
         int push_count = 0;
-        for (int neur = 0; neur < neurons + astro_size; ++neur) {
+        for (int neur = 0; neur < ttl_neurons; ++neur) {
             int pos;
             if (astro_size && neur == astrocyte) {
                 pos = neurons + astros_count++;
@@ -137,7 +138,7 @@ int main(int argc, char const *argv[])
         cout<<"Error opening results neurons info file!"<<endl;
         return 0;
     }
-    print_all_spikes(spike_trains, neurons + astro_size, astrocytes, info, 
+    print_all_spikes(spike_trains, ttl_neurons, astrocytes, info, 
                                             string(argv[3]), shifts_s, Dt_s);
     
 // Start random sequence
@@ -263,8 +264,8 @@ int main(int argc, char const *argv[])
     }
     tuplets.close();
     info<<"\nNumber of total significant tuplets: "<<ttl_sgnfcnt_tuplets<<" ( "
-                            <<(ttl_sgnfcnt_tuplets * 100 / double(neurons * 
-                            (neurons - 1)))<<"% )"<<endl;
+                            <<(ttl_sgnfcnt_tuplets * 100 / double(ttl_neurons * 
+                            (ttl_neurons - 1)))<<"% )"<<endl;
     
     
 // Motif arrays
@@ -367,8 +368,8 @@ int main(int argc, char const *argv[])
     }
     triplets.close();
     info<<"\nNumber of total significant triplets: "<<ttl_sgnfcnt_triplets
-                    <<" ( "<<(ttl_sgnfcnt_triplets * 100 / double(neurons * 
-                    (neurons - 1) * (neurons - 2)))<<"% )"<<endl;
+                    <<" ( "<<(ttl_sgnfcnt_triplets * 100 / double(ttl_neurons * 
+                    (ttl_neurons - 1) * (ttl_neurons - 2)))<<"% )"<<endl;
     
     
 // Free memory
