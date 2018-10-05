@@ -61,8 +61,8 @@ int main(int argc, char const *argv[])
     }
     astros.open((string("ASTROCYTES/") + argv[3]).c_str(), ifstream::in);
     if (!astros.is_open()) {
-        cout<<"Problem opening astrocytes file!"<<endl;
-        //return 0;
+        cout<<"Problem opening astrocytes file!\
+                                Continuing without astrocyte removal!"<<endl;
     }
     string line;
     
@@ -124,6 +124,10 @@ int main(int argc, char const *argv[])
 // Close input files
     data.close();
     astros.close();
+    
+// Print message that computation is starting
+    cout<<"Computing dataset "<<argv[3]<<" with Dt = "<<argv[2]
+        <<" and control group = "<<argv[1]<<"."<<endl;
     
 // Print the data structure and total number of firings in experiment
     char str[33];

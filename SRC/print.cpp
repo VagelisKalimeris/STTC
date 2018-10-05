@@ -15,8 +15,8 @@
 * FUNCTION NAME: print_all_spikes                                             *
 *                                                                             *
 * ARGUMENTS: A neuron's timeline(reference to a vector), the total number of  *
-*             neurons(int).                                                   *   
-*                                                                             *  
+*             neurons(int).                                                   *
+*                                                                             *
 * PURPOSE: Prints all the spikes of each neuron of the dataset, as well as    *
 *           the total number of spikes.                                       *
 *                                                                             *
@@ -30,7 +30,7 @@ void print_all_spikes(const vector<int> spike_trains[],
                         ofstream &info, const string output, 
                         const string shifts, const string Dt)
 {
-    int total_firings = 0, max = 0, min = 100000;
+    int ttl_firings = 0, max = 0, min = 100000;
     const int astro_size = astrocytes.size();
     const int neur_clean = total_neurons - astro_size;
     int astro = 0, astrocyte = 0;
@@ -61,7 +61,7 @@ void print_all_spikes(const vector<int> spike_trains[],
             time_line_size = spike_trains[pos].size();
             spikes<<"No "<<neur + 1<<" neuron's spikes ("
                                                     <<time_line_size<<"):\n";
-            total_firings += time_line_size;
+            ttl_firings += time_line_size;
             if (time_line_size > max) {
                 max = time_line_size;
             }
@@ -86,13 +86,15 @@ void print_all_spikes(const vector<int> spike_trains[],
         median = (time_lines[neur_clean/2 - 1] + time_lines[neur_clean/2])/2.0;
     }
     
-    info<<"\nNeurons' info without astrocytes:"<<endl;
-    info<<"Total number of spikes: "<<total_firings<<endl;
-    info<<"Max spikes for neurons: "<<max<<endl;
-    info<<"Min spikes for neurons: "<<min<<endl;
-    info<<"Average spikes in each neuron: "
-                                    <<total_firings / double(neur_clean)<<endl;
-    info<<"Median spikes for neurons: "<<median<<endl;
+    info<<"\nNeurons' analytics:"<<endl;
+    info<<"Total number of neurons: "<<total_neurons<<endl;
+    info<<"Total number of astrocytes: "<<astro_size<<endl;
+    info<<"\nSpikes info excluding astrocytes:"<<endl;
+    info<<"Total number of spikes in all neurons: "<<ttl_firings<<endl;
+    info<<"Maximum number of spikes in a neuron: "<<max<<endl;
+    info<<"Minimum number of spikes in a neuron: "<<min<<endl;
+    info<<"Average number of spikes: "<<ttl_firings / double(neur_clean)<<endl;
+    info<<"Median number of spikes: "<<median<<endl;
 }
 
 
