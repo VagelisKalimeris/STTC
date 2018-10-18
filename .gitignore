@@ -1,13 +1,11 @@
 *
 !*/
 !*.*
+!*/*
 !Makefile
-!ASTROCYTES/*
-!DATASETS/*
-!INCLUDE/*
-!SRC/*
 OBJ/*
 RESULTS/*
+.DS_Store
 
 # Prerequisites
 *.d
